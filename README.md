@@ -3,9 +3,9 @@
 Varde is an independent, Enhanced-first roleplay framework for FiveM. It is built from
 scratch and does not require Qbox, QBCore, ESX, ox_lib, or oxmysql.
 
-[Documentation](https://github.com/LordM8YT/varde-framework/wiki) ·
-[Installation](https://github.com/LordM8YT/varde-framework/wiki/Installation) ·
-[Developer guide](https://github.com/LordM8YT/varde-framework/wiki/Developer-Guide)
+[Documentation](https://varde-framework.gitbook.io/varde-framework-docs/) ·
+[Installation](https://varde-framework.gitbook.io/varde-framework-docs/installation) ·
+[Developer guide](https://varde-framework.gitbook.io/varde-framework-docs/developer-guide)
 
 The current pre-alpha foundation includes:
 
@@ -67,7 +67,7 @@ https://raw.githubusercontent.com/LordM8YT/varde-framework/main/recipe.yaml
 The recipe creates a complete server-data directory with the standard CFX
 resources, Varde, a generated `server.cfg`, and no external framework or
 database dependency. See the
-[Installation guide](https://github.com/LordM8YT/varde-framework/wiki/Installation)
+[Installation guide](https://varde-framework.gitbook.io/varde-framework-docs/installation)
 for the full setup flow and Enhanced notes.
 
 ## Development
@@ -81,7 +81,7 @@ npm test
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for design and review rules,
 [SECURITY.md](SECURITY.md) for private reporting, and
-[Database and Backups](https://github.com/LordM8YT/varde-framework/wiki/Database-and-Backups)
+[Database and Backups](https://varde-framework.gitbook.io/varde-framework-docs/database-and-backups)
 for backup and migration
 procedures.
 
@@ -92,11 +92,11 @@ QBCore, Qbox, or ESX compatibility patterns.
 
 Language is selected once in `server.cfg` with `setr varde_locale "en"` or
 `setr varde_locale "no"`. See
-[Localization](https://github.com/LordM8YT/varde-framework/wiki/Localization)
+[Localization](https://varde-framework.gitbook.io/varde-framework-docs/localization)
 for the runtime API and instructions for adding another language.
 
 The first public artifact should be validated with the
-[Enhanced test plan](https://github.com/LordM8YT/varde-framework/wiki/Enhanced-Test-Plan)
+[Enhanced test plan](https://varde-framework.gitbook.io/varde-framework-docs/enhanced-test-plan)
 before an
 alpha release is tagged.
 
@@ -125,7 +125,7 @@ The text-only communication MVP is documented in
 [varde_phone](<resources/[varde]/varde_phone/README.md>).
 
 Frontend contributors should use the versioned
-[Varde UI contracts](https://github.com/LordM8YT/varde-framework/wiki/UI-Contracts)
+[Varde UI contracts](https://varde-framework.gitbook.io/varde-framework-docs/ui-contracts)
 and bundled mock payloads under `contracts/ui/v1`.
 NUI code never accesses a framework export or database directly.
 
