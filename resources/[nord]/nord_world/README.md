@@ -1,4 +1,4 @@
-# varde_world
+# nord_world
 
 Config-driven shops, vehicle dealerships, and persistent job-managed doors.
 Prices, inventory capacity, player position, permissions, and ownership are

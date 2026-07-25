@@ -1,6 +1,6 @@
-# varde_vehicles
+# nord_vehicles
 
-Persistent, server-authoritative vehicle ownership for Varde Framework.
+Persistent, server-authoritative vehicle ownership for Nord Framework.
 
 ## Included
 
@@ -8,10 +8,10 @@ Persistent, server-authoritative vehicle ownership for Varde Framework.
 - Server-created OneSync vehicles with stored/out lifecycle recovery.
 - Replicated initialization state bags so the current entity owner applies
   plate, locks, and trusted properties after orphaned server creation.
-- Qbox's familiar default public parking locations, represented in Varde's
+- Qbox's familiar default public parking locations, represented in Nord's
   own JSON format and logic.
 - Server-validated spawn, storage, lock, and trunk interactions.
-- Per-vehicle trunk containers provided by `varde_inventory`.
+- Per-vehicle trunk containers provided by `nord_inventory`.
 - Trusted exports for dealerships, rewards, and admin resources.
 
 No garage or dealership UI is bundled. The temporary `/garage`,
@@ -33,20 +33,20 @@ garages can opt into their matching `vehicleTypes` in `config/vehicles.json`.
 ## Server exports
 
 ```lua
-local result = exports.varde_vehicles:RegisterOwnedVehicle(source, {
+local result = exports.nord_vehicles:RegisterOwnedVehicle(source, {
     model = 'sultan',
     vehicleType = 'automobile',
     garageId = 'pillboxgarage',
     properties = {}
 })
 
-local vehicles = exports.varde_vehicles:GetVehicles(source)
-local hasKey = exports.varde_vehicles:HasKey(source, vehicleId)
+local vehicles = exports.nord_vehicles:GetVehicles(source)
+local hasKey = exports.nord_vehicles:HasKey(source, vehicleId)
 
-exports.varde_vehicles:GiveKey(ownerSource, targetSource, vehicleId)
-exports.varde_vehicles:RevokeKey(ownerSource, targetSource, vehicleId)
-exports.varde_vehicles:SpawnVehicle(source, vehicleId, 'pillboxgarage')
+exports.nord_vehicles:GiveKey(ownerSource, targetSource, vehicleId)
+exports.nord_vehicles:RevokeKey(ownerSource, targetSource, vehicleId)
+exports.nord_vehicles:SpawnVehicle(source, vehicleId, 'pillboxgarage')
 ```
 
-Mutation exports return Varde's `{ ok, data, error }` envelope. Clients never
+Mutation exports return Nord's `{ ok, data, error }` envelope. Clients never
 choose an owner, trunk container, world position, or stored vehicle state.

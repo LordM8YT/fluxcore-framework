@@ -1,6 +1,6 @@
-# varde_status
+# nord_status
 
-`varde_status` owns persistent character needs and supplies a complete,
+`nord_status` owns persistent character needs and supplies a complete,
 UI-independent HUD snapshot. It does not ship a visual HUD.
 
 ## Ownership
@@ -15,12 +15,12 @@ UI-independent HUD snapshot. It does not ship a visual HUD.
 ## Server exports
 
 ```lua
-local status = exports.varde_status:GetStatus(source)
+local status = exports.nord_status:GetStatus(source)
 
-local result = exports.varde_status:RemoveStatus(source, 'hunger', 10)
-local result = exports.varde_status:AddStatus(source, 'stress', 5)
-local result = exports.varde_status:SetStatus(source, 'thirst', 100)
-local result = exports.varde_status:ResetStatus(source)
+local result = exports.nord_status:RemoveStatus(source, 'hunger', 10)
+local result = exports.nord_status:AddStatus(source, 'stress', 5)
+local result = exports.nord_status:SetStatus(source, 'thirst', 100)
+local result = exports.nord_status:ResetStatus(source)
 ```
 
 Mutation exports return the standard `{ ok, data, error }` envelope. Only
@@ -29,13 +29,13 @@ server resources can mutate needs.
 ## Client exports and events
 
 ```lua
-local needs = exports.varde_status:GetStatus()
-local hud = exports.varde_status:GetHudData()
+local needs = exports.nord_status:GetStatus()
+local hud = exports.nord_status:GetHudData()
 
-AddEventHandler('varde_status:client:hudUpdated', function(snapshot)
-    -- snapshot follows varde.hud.bootstrap.v1, or is nil after logout
+AddEventHandler('nord_status:client:hudUpdated', function(snapshot)
+    -- snapshot follows Nord.hud.bootstrap.v1, or is nil after logout
 end)
 ```
 
 The frontend contract and mock data are documented in
-[the Varde UI Contracts Wiki page](https://github.com/LordM8YT/varde-framework/wiki/UI-Contracts).
+[the Nord UI Contracts Wiki page](https://github.com/LordM8YT/Nord-framework/wiki/UI-Contracts).

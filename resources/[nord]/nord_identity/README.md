@@ -1,17 +1,17 @@
-# varde_identity
+# nord_identity
 
-Character selection, creation, deletion, and spawn choice for Varde Framework.
+Character selection, creation, deletion, and spawn choice for Nord Framework.
 The resource uses plain HTML, CSS, and JavaScript and has no package-manager
 dependencies.
 
 ## Start order
 
 ```cfg
-ensure varde_core
-ensure varde_identity
+ensure nord_core
+ensure nord_identity
 ```
 
-When `varde_identity` is running, `varde_core` delegates post-login spawning to
+When `nord_identity` is running, `nord_core` delegates post-login spawning to
 it. If the identity resource is absent, core falls back to the character's last
 saved position.
 
@@ -24,7 +24,7 @@ Edit `config.lua` to change:
 - available spawn locations
 
 Character ownership, slot limits, deletion confirmation, and selection remain
-server-authoritative in `varde_core`.
+server-authoritative in `nord_core`.
 
 ## Browser preview
 

@@ -1,6 +1,6 @@
-# Contributing to Varde
+# Contributing to Nord
 
-Varde is an independent framework. Contributions may learn from public APIs and
+Nord is an independent framework. Contributions may learn from public APIs and
 general architecture elsewhere, but should not copy implementation code,
 branding, UI assets, or database schemas from Qbox, QBCore, ESX, or another
 project unless the source license, attribution, and reason are explicitly
@@ -26,7 +26,7 @@ No `npm install` is required. Runtime and test code use Node built-ins.
 ## Change design
 
 - Give each domain one owning resource and database.
-- Keep `varde_core` small; domain resources should consume its public API.
+- Keep `nord_core` small; domain resources should consume its public API.
 - Treat every client event and NUI callback as untrusted input.
 - Do not put private player data in replicated state bags.
 - Use result envelopes for fallible mutation exports.
@@ -41,7 +41,7 @@ the owning resource's README.
 ## Database changes
 
 Read
-[Database and Backups](https://github.com/LordM8YT/varde-framework/wiki/Database-and-Backups)
+[Database and Backups](https://github.com/LordM8YT/Nord-framework/wiki/Database-and-Backups)
 before changing a schema.
 Migrations are forward-only, transactional, resource-owned, and covered by
 tests. Never edit an operator's database or `PRAGMA user_version` manually.

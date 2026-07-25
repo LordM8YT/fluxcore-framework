@@ -1,8 +1,8 @@
-# varde_core
+# nord_core
 
-`varde_core` is the first resource in the Varde Framework. It owns accounts,
+`nord_core` is the first resource in the Nord Framework. It owns accounts,
 characters, online sessions, money, the active-job snapshot, metadata, and last
-known positions. Persistent job assignments are owned by `varde_jobs`.
+known positions. Persistent job assignments are owned by `nord_jobs`.
 
 It is not a fork and has no runtime dependency on another roleplay framework.
 
@@ -17,21 +17,21 @@ The resource has no package-manager or database-server dependency.
 
 ## Start it
 
-Place the resources under a server's `resources/[varde]` directory and add:
+Place the resources under a server's `resources/[nord]` directory and add:
 
 ```cfg
 # OneSync is built into Cfx Server for Enhanced. Do not set its read-only convar.
 set sv_stateBagStrictMode true
 
-ensure varde_core
-ensure varde_jobs
-ensure varde_example
+ensure nord_core
+ensure nord_jobs
+ensure nord_example
 ```
 
 For a local early-access test server, see the repository's
 `server.cfg.example`.
 
-The SQLite database is created automatically at `data/varde.sqlite`. The
+The SQLite database is created automatically at `data/Nord.sqlite`. The
 database and its WAL files are ignored by Git.
 
 ## Configuration
@@ -41,12 +41,12 @@ Defaults live in `config/defaults.json`.
 Core values can be overridden with convars:
 
 ```cfg
-setr varde_locale "en"
-set varde_maxCharacters 4
-set varde_saveIntervalMs 60000
+setr nord_locale "en"
+set nord_maxCharacters 4
+set nord_saveIntervalMs 60000
 ```
 
-`varde_locale` is replicated because clients and NUI use the same language as
+`nord_locale` is replicated because clients and NUI use the same language as
 the server. English (`en`) and Norwegian (`no`) are bundled. Missing keys fall
 back to English.
 
@@ -58,18 +58,18 @@ rejected.
 The same export is available to client and server resources:
 
 ```lua
-local text = exports.varde_core:Locale(
+local text = exports.nord_core:Locale(
     'vehicles.created',
-    { model = 'sultan', plate = 'VARDE', source = 7 }
+    { model = 'sultan', plate = 'Nord', source = 7 }
 )
 
-local localeName = exports.varde_core:GetLocale()
-local identityTranslations = exports.varde_core:GetLocaleData('identity')
+local localeName = exports.nord_core:GetLocale()
+local identityTranslations = exports.nord_core:GetLocaleData('identity')
 ```
 
 Pass an English fallback as the third argument for keys owned by another
 resource. See the
-[localization guide](https://github.com/LordM8YT/varde-framework/wiki/Localization)
+[localization guide](https://github.com/LordM8YT/Nord-framework/wiki/Localization)
 before adding keys or a language.
 
 ## Client exports
@@ -98,10 +98,10 @@ Failures return:
 ### Character and session API
 
 ```lua
-local response = exports.varde_core:ListCharacters()
-local response = exports.varde_core:GetCharacterBootstrap()
+local response = exports.nord_core:ListCharacters()
+local response = exports.nord_core:GetCharacterBootstrap()
 
-local response = exports.varde_core:CreateCharacter({
+local response = exports.nord_core:CreateCharacter({
     slot = 1,
     firstName = 'Kari',
     lastName = 'Nordmann',
@@ -110,23 +110,23 @@ local response = exports.varde_core:CreateCharacter({
     nationality = 'Norwegian'
 })
 
-local response = exports.varde_core:SelectCharacter('vrd_0123456789abcdef')
-local response = exports.varde_core:DeleteCharacter('vrd_0123456789abcdef')
-local response = exports.varde_core:Logout()
+local response = exports.nord_core:SelectCharacter('vrd_0123456789abcdef')
+local response = exports.nord_core:DeleteCharacter('vrd_0123456789abcdef')
+local response = exports.nord_core:Logout()
 
-local playerData = exports.varde_core:GetPlayerData()
-local loggedIn = exports.varde_core:IsLoggedIn()
+local playerData = exports.nord_core:GetPlayerData()
+local loggedIn = exports.nord_core:IsLoggedIn()
 
 -- Used by spawn/identity resources. The position must contain x, y, z, heading.
-exports.varde_core:SpawnAt(position)
+exports.nord_core:SpawnAt(position)
 ```
 
 ### Generic RPC API
 
 ```lua
-local response = exports.varde_core:Call('characters:list', {})
+local response = exports.nord_core:Call('characters:list', {})
 
-exports.varde_core:CallAsync('characters:list', {}, function(response)
+exports.nord_core:CallAsync('characters:list', {}, function(response)
     if response.ok then
         print(json.encode(response.data))
     end
@@ -144,8 +144,8 @@ An `identifier` can be an online server ID or an online `characterId`.
 `nil`. `GetPlayer` is the preferred name for new server resources:
 
 ```lua
-local player = exports.varde_core:GetPlayer(source)
-local source = exports.varde_core:GetPlayerSource(characterId)
+local player = exports.nord_core:GetPlayer(source)
+local source = exports.nord_core:GetPlayerSource(characterId)
 ```
 
 Changing fields on the returned table never mutates core state. Use the
@@ -155,7 +155,7 @@ Characters can also be deleted from a trusted server resource while the owning
 player is logged out:
 
 ```lua
-local result = exports.varde_core:DeleteCharacter(
+local result = exports.nord_core:DeleteCharacter(
     source,
     characterId,
     characterId
@@ -165,7 +165,7 @@ local result = exports.varde_core:DeleteCharacter(
 Mutation exports return the same `ok/data/error` envelope used by client calls:
 
 ```lua
-local result = exports.varde_core:AddMoney(
+local result = exports.nord_core:AddMoney(
     source,
     'cash',
     250,
@@ -173,7 +173,7 @@ local result = exports.varde_core:AddMoney(
     'delivery:841'
 )
 
-local result = exports.varde_core:RemoveMoney(
+local result = exports.nord_core:RemoveMoney(
     source,
     'bank',
     100,
@@ -181,7 +181,7 @@ local result = exports.varde_core:RemoveMoney(
     'invoice:95'
 )
 
-local result = exports.varde_core:SetMoney(
+local result = exports.nord_core:SetMoney(
     source,
     'cash',
     500,
@@ -189,13 +189,13 @@ local result = exports.varde_core:SetMoney(
     'ticket:12'
 )
 
-local result = exports.varde_core:SetMetadata(
+local result = exports.nord_core:SetMetadata(
     source,
     'licenses.driving',
     { granted = true, issuedAt = os.time() }
 )
 
-local result = exports.varde_core:SetJob(source, {
+local result = exports.nord_core:SetJob(source, {
     name = 'police',
     label = 'Police',
     type = 'leo',
@@ -205,7 +205,7 @@ local result = exports.varde_core:SetJob(source, {
     onDuty = false
 })
 
-local result = exports.varde_core:SavePlayer(source)
+local result = exports.nord_core:SavePlayer(source)
 ```
 
 The invoking resource name is written to every money ledger entry. Resources
@@ -216,13 +216,13 @@ should supply a stable `reason` and `reference` so transactions are auditable.
 Other client resources can listen for:
 
 ```lua
-RegisterNetEvent('varde:client:playerLoaded', function(playerData)
+RegisterNetEvent('Nord:client:playerLoaded', function(playerData)
 end)
 
-RegisterNetEvent('varde:client:playerUpdated', function(playerData)
+RegisterNetEvent('Nord:client:playerUpdated', function(playerData)
 end)
 
-RegisterNetEvent('varde:client:playerLoggedOut', function()
+RegisterNetEvent('Nord:client:playerLoggedOut', function()
 end)
 ```
 
@@ -230,9 +230,9 @@ These events originate on the server, so every consuming client resource must
 register them with `RegisterNetEvent`. `playerUpdated` currently fires after
 money, metadata, or job changes.
 
-Server resources can listen for `varde:server:playerLoaded`,
-`varde:server:playerLoggedOut`, `varde:server:playerDropped`,
-`varde:server:characterDeleted`, and `varde:server:jobUpdated`. These are local
+Server resources can listen for `Nord:server:playerLoaded`,
+`Nord:server:playerLoggedOut`, `Nord:server:playerDropped`,
+`Nord:server:characterDeleted`, and `Nord:server:jobUpdated`. These are local
 server events; clients cannot invoke them over the network.
 
 ## Player data
@@ -271,9 +271,9 @@ updatedAt
 
 Only these public facts are replicated to other clients through state bags:
 
-- `varde:loaded`
-- `varde:characterId`
-- `varde:job`
+- `Nord:loaded`
+- `Nord:characterId`
+- `Nord:job`
 
 Balances, profile details, position, and metadata are never put into replicated
 state bags.
@@ -293,8 +293,8 @@ state bags.
 - Wallet changes and ledger insertion occur in one SQLite transaction.
 - Duplicate connections for the same Rockstar account are rejected.
 
-`varde_example` contains an ACE-protected `/grantcash` command. Give trusted
-administrators the `varde.admin` ACE if you want to use it.
+`nord_example` contains an ACE-protected `/grantcash` command. Give trusted
+administrators the `Nord.admin` ACE if you want to use it.
 
 ## Local tests
 
@@ -315,7 +315,7 @@ Run these checks against the latest public Cfx Server artifact:
 1. Confirm `node_version '26'` is accepted by the Enhanced resource loader.
 2. Confirm Cfx Server's Node build exposes `node:sqlite`.
 3. Connect, create a character, select it, reconnect, and verify persistence.
-4. Restart `varde_core` while connected and verify a fresh character
+4. Restart `nord_core` while connected and verify a fresh character
    selection works.
 5. Verify all three public state bags with strict mode enabled.
 6. Record a Perfetto trace during repeated position sync and autosave.

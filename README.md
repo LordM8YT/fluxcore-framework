@@ -1,11 +1,11 @@
-# Varde Framework
+# Nord Framework
 
-Varde is an independent, Enhanced-first roleplay framework for FiveM. It is built from
+Nord is an independent, Enhanced-first roleplay framework for FiveM. It is built from
 scratch and does not require Qbox, QBCore, ESX, ox_lib, or oxmysql.
 
-[Documentation](https://varde-framework.gitbook.io/varde-framework-docs/) ·
-[Installation](https://varde-framework.gitbook.io/varde-framework-docs/installation) ·
-[Developer guide](https://varde-framework.gitbook.io/varde-framework-docs/developer-guide)
+[Documentation](https://Nord-framework.gitbook.io/Nord-framework-docs/) ·
+[Installation](https://Nord-framework.gitbook.io/Nord-framework-docs/installation) ·
+[Developer guide](https://Nord-framework.gitbook.io/Nord-framework-docs/developer-guide)
 
 The current pre-alpha foundation includes:
 
@@ -38,26 +38,26 @@ Server. Client gameplay code uses Lua 5.4.
 
 ```text
 resources/
-  [varde]/
-    varde_core/       Framework core
-    varde_identity/   Character and spawn UI
-    varde_jobs/       Jobs, grades, duty, and permissions
-    varde_inventory/  Server-authoritative items and containers
-    varde_banking/    Accounts, wallet movement, and transfers
-    varde_status/     Persistent needs and HUD telemetry
-    varde_vehicles/   Ownership, keys, garages, and trunks
-    varde_appearance/ Persistent freemode character appearance
-    varde_businesses/ Companies, roles, and treasuries
-    varde_services/   Rosters and invoices
-    varde_dispatch/   Emergency calls and unit assignment
-    varde_mdt/        Police reports, warrants, and BOLOs
-    varde_properties/ Ownership, access, locks, and storage
-    varde_world/      Shops, dealerships, and persistent doors
-    varde_admin/      ACE-secured operations and audit panel
-    varde_phone/      Contacts and offline text messaging
-    varde_example/    Commands showing the public API
+  [nord]/
+    nord_core/       Framework core
+    nord_identity/   Character and spawn UI
+    nord_jobs/       Jobs, grades, duty, and permissions
+    nord_inventory/  Server-authoritative items and containers
+    nord_banking/    Accounts, wallet movement, and transfers
+    nord_status/     Persistent needs and HUD telemetry
+    nord_vehicles/   Ownership, keys, garages, and trunks
+    nord_appearance/ Persistent freemode character appearance
+    nord_businesses/ Companies, roles, and treasuries
+    nord_services/   Rosters and invoices
+    nord_dispatch/   Emergency calls and unit assignment
+    nord_mdt/        Police reports, warrants, and BOLOs
+    nord_properties/ Ownership, access, locks, and storage
+    nord_world/      Shops, dealerships, and persistent doors
+    nord_admin/      ACE-secured operations and audit panel
+    nord_phone/      Contacts and offline text messaging
+    nord_example/    Commands showing the public API
 templates/
-  varde_resource/     Copyable starter for new Varde resources
+  nord_resource/     Copyable starter for new Nord resources
 contracts/
   ui/v1/              Versioned UI mock payloads
 server.cfg.example       Minimal development configuration
@@ -75,13 +75,13 @@ an alpha tag.
 Choose **Remote URL Template** during txAdmin setup and paste:
 
 ```text
-https://raw.githubusercontent.com/LordM8YT/varde-framework/main/recipe.yaml
+https://raw.githubusercontent.com/LordM8YT/Nord-framework/main/recipe.yaml
 ```
 
 The recipe creates a complete server-data directory with the standard CFX
-resources, Varde, a generated `server.cfg`, and no external framework or
+resources, Nord, a generated `server.cfg`, and no external framework or
 database dependency. See the
-[Installation guide](https://varde-framework.gitbook.io/varde-framework-docs/installation)
+[Installation guide](https://Nord-framework.gitbook.io/Nord-framework-docs/installation)
 for the full setup flow and Enhanced notes.
 
 ## Development
@@ -95,75 +95,75 @@ npm test
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for design and review rules,
 [SECURITY.md](SECURITY.md) for private reporting, and
-[Database and Backups](https://varde-framework.gitbook.io/varde-framework-docs/database-and-backups)
+[Database and Backups](https://Nord-framework.gitbook.io/Nord-framework-docs/database-and-backups)
 for backup and migration
 procedures.
 
 External resources should begin with the
-[Varde resource starter](templates/varde_resource). It demonstrates direct
+[Nord resource starter](templates/nord_resource). It demonstrates direct
 exports, replicated State Bags, and native ACE-protected commands without
 QBCore, Qbox, or ESX compatibility patterns.
 
-Language is selected once in `server.cfg` with `setr varde_locale "en"` or
-`setr varde_locale "no"`. See
-[Localization](https://varde-framework.gitbook.io/varde-framework-docs/localization)
+Language is selected once in `server.cfg` with `setr nord_locale "en"` or
+`setr nord_locale "no"`. See
+[Localization](https://Nord-framework.gitbook.io/Nord-framework-docs/localization)
 for the runtime API and instructions for adding another language.
 
 The first public artifact should be validated with the
-[Enhanced test plan](https://varde-framework.gitbook.io/varde-framework-docs/enhanced-test-plan)
+[Enhanced test plan](https://Nord-framework.gitbook.io/Nord-framework-docs/enhanced-test-plan)
 before an
 alpha release is tagged.
 
-See [the core documentation](<resources/[varde]/varde_core/README.md>) for
+See [the core documentation](<resources/[nord]/nord_core/README.md>) for
 installation, exports, events, and the security model.
 
 Job definitions and the permission API are documented in
-[varde_jobs](<resources/[varde]/varde_jobs/README.md>).
+[nord_jobs](<resources/[nord]/nord_jobs/README.md>).
 
 Item, container, and transfer APIs are documented in
-[varde_inventory](<resources/[varde]/varde_inventory/README.md>).
+[nord_inventory](<resources/[nord]/nord_inventory/README.md>).
 
 Accounts, deposits, withdrawals, and transfers are documented in
-[varde_banking](<resources/[varde]/varde_banking/README.md>).
+[nord_banking](<resources/[nord]/nord_banking/README.md>).
 
 Needs and HUD telemetry are documented in
-[varde_status](<resources/[varde]/varde_status/README.md>).
+[nord_status](<resources/[nord]/nord_status/README.md>).
 
 Vehicle ownership, keys, garages, and trunks are documented in
-[varde_vehicles](<resources/[varde]/varde_vehicles/README.md>).
+[nord_vehicles](<resources/[nord]/nord_vehicles/README.md>).
 
 Persistent character customization is documented in
-[varde_appearance](<resources/[varde]/varde_appearance/README.md>).
+[nord_appearance](<resources/[nord]/nord_appearance/README.md>).
 
 Companies, employee roles, and treasury access are documented in
-[varde_businesses](<resources/[varde]/varde_businesses/README.md>).
+[nord_businesses](<resources/[nord]/nord_businesses/README.md>).
 
 On-duty rosters and secure invoices are documented in
-[varde_services](<resources/[varde]/varde_services/README.md>).
+[nord_services](<resources/[nord]/nord_services/README.md>).
 
 Emergency calls and unit assignment are documented in
-[varde_dispatch](<resources/[varde]/varde_dispatch/README.md>).
+[nord_dispatch](<resources/[nord]/nord_dispatch/README.md>).
 
 Police records, warrants, reports, and BOLOs are documented in
-[varde_mdt](<resources/[varde]/varde_mdt/README.md>).
+[nord_mdt](<resources/[nord]/nord_mdt/README.md>).
 
 Property ownership, keys, storage, and integration points are documented in
-[varde_properties](<resources/[varde]/varde_properties/README.md>).
+[nord_properties](<resources/[nord]/nord_properties/README.md>).
 
 Shops, dealerships, and persistent doors are documented in
-[varde_world](<resources/[varde]/varde_world/README.md>).
+[nord_world](<resources/[nord]/nord_world/README.md>).
 
 Administration permissions and actions are documented in
-[varde_admin](<resources/[varde]/varde_admin/README.md>).
+[nord_admin](<resources/[nord]/nord_admin/README.md>).
 
 The text-only communication MVP is documented in
-[varde_phone](<resources/[varde]/varde_phone/README.md>).
+[nord_phone](<resources/[nord]/nord_phone/README.md>).
 
 Frontend contributors should use the versioned
-[Varde UI contracts](https://varde-framework.gitbook.io/varde-framework-docs/ui-contracts)
+[Nord UI contracts](https://Nord-framework.gitbook.io/Nord-framework-docs/ui-contracts)
 and bundled mock payloads under `contracts/ui/v1`.
 NUI code never accesses a framework export or database directly.
 
 ## License
 
-Varde Framework is available under the [MIT License](LICENSE).
+Nord Framework is available under the [MIT License](LICENSE).

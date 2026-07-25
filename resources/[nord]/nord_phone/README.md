@@ -1,6 +1,6 @@
-# varde_phone
+# nord_phone
 
-`varde_phone` is the text-only communication MVP for Varde. It owns phone
+`nord_phone` is the text-only communication MVP for Nord. It owns phone
 numbers, contacts, SMS-style conversations, unread state, and read receipts in
 its own SQLite database.
 
@@ -22,7 +22,7 @@ early-access test flow usable. To require the configured `phone` item:
 }
 ```
 
-The check is performed on the server through `varde_inventory`. A stopped
+The check is performed on the server through `nord_inventory`. A stopped
 inventory resource produces an explicit integration error when hardware is
 required.
 
@@ -44,9 +44,9 @@ and product migration.
 ## Server exports
 
 ```lua
-local number = exports.varde_phone:GetPhoneNumber(source)
+local number = exports.nord_phone:GetPhoneNumber(source)
 
-local result = exports.varde_phone:SendMessage(
+local result = exports.nord_phone:SendMessage(
     source,
     recipientNumber,
     'Your vehicle is ready.'
@@ -54,7 +54,7 @@ local result = exports.varde_phone:SendMessage(
 ```
 
 `GetPhoneNumber` returns a string or `nil`. `SendMessage` returns the standard
-`{ ok, data, error }` result envelope and supports an online source or a Varde
+`{ ok, data, error }` result envelope and supports an online source or a Nord
 character ID as sender. This makes service notifications possible even when
 the sending character is not online.
 
@@ -62,9 +62,9 @@ the sending character is not online.
 
 The phone UI consumes owner-only network events:
 
-- `varde_phone:client:newMessage`
-- `varde_phone:client:messagesRead`
-- `varde_phone:client:contactsUpdated`
+- `nord_phone:client:newMessage`
+- `nord_phone:client:messagesRead`
+- `nord_phone:client:contactsUpdated`
 
 Other resources should prefer the server exports instead of emitting these
 events themselves.

@@ -1,6 +1,6 @@
-# varde_inventory
+# nord_inventory
 
-`varde_inventory` is Varde's server-authoritative item layer. It stores player
+`nord_inventory` is Nord's server-authoritative item layer. It stores player
 inventories, registered containers, and temporary world drops in its own
 SQLite database. The data model is exposed through a versioned UI contract
 instead of being coupled to one inventory frontend.
@@ -26,31 +26,31 @@ Configure item labels, gram weights, and stack limits in `config/items.json`.
 Read exports return data directly:
 
 ```lua
-local inventory = exports.varde_inventory:GetInventory(source)
-local count = exports.varde_inventory:GetItemCount(source, 'water')
-local hasItem = exports.varde_inventory:HasItem(source, 'radio', 1)
-local canCarry = exports.varde_inventory:CanCarryItem(source, 'water', 2)
+local inventory = exports.nord_inventory:GetInventory(source)
+local count = exports.nord_inventory:GetItemCount(source, 'water')
+local hasItem = exports.nord_inventory:HasItem(source, 'radio', 1)
+local canCarry = exports.nord_inventory:CanCarryItem(source, 'water', 2)
 ```
 
 Mutation exports return `{ ok, data, error }` envelopes:
 
 ```lua
-exports.varde_inventory:AddItem(source, 'water', 2, {
+exports.nord_inventory:AddItem(source, 'water', 2, {
     quality = 100
 })
 
-exports.varde_inventory:RemoveItem(source, 'water', 1)
-exports.varde_inventory:MoveItem(source, 1, 8, 1)
-exports.varde_inventory:TransferItem(source, targetSource, 1, 1)
+exports.nord_inventory:RemoveItem(source, 'water', 1)
+exports.nord_inventory:MoveItem(source, 1, 8, 1)
+exports.nord_inventory:TransferItem(source, targetSource, 1, 1)
 
-exports.varde_inventory:RegisterStash(
+exports.nord_inventory:RegisterStash(
     'police_evidence',
     'Police Evidence',
     100,
     500000
 )
 
-exports.varde_inventory:RegisterContainer(
+exports.nord_inventory:RegisterContainer(
     'vehicle:AB12CD',
     'vehicle',
     'AB12CD',
@@ -59,9 +59,9 @@ exports.varde_inventory:RegisterContainer(
     100000
 )
 
-exports.varde_inventory:DeleteContainer('vehicle:veh_0123456789abcdef')
+exports.nord_inventory:DeleteContainer('vehicle:veh_0123456789abcdef')
 
-exports.varde_inventory:OpenInventory(source, 'stash:police_evidence')
+exports.nord_inventory:OpenInventory(source, 'stash:police_evidence')
 ```
 
 The same APIs accept a character ID or a full container ID such as
@@ -73,7 +73,7 @@ IDs also support trusted offline mutations.
 A server resource can register a synchronous handler:
 
 ```js
-exports.varde_inventory.RegisterUsableItem('bandage', (source, item) => {
+exports.nord_inventory.RegisterUsableItem('bandage', (source, item) => {
   // Validate and apply the effect.
   return { consume: 1 };
 });
@@ -86,13 +86,13 @@ so a client cannot queue overlapping uses while a handler is suspended.
 ## Client API
 
 `GetInventory`, `GetItemCount`, and `HasItem` read the owner-only cache. The
-`varde_inventory:client:updated` local event fires after every server update.
+`nord_inventory:client:updated` local event fires after every server update.
 
 The frontend contract is documented in the
-[Varde Wiki](https://github.com/LordM8YT/varde-framework/wiki/UI-Contracts).
+[Nord Wiki](https://github.com/LordM8YT/Nord-framework/wiki/UI-Contracts).
 Mock payloads live under `contracts/ui/v1`. `config/ui.json` keeps the NUI
 disabled by default until a frontend is installed. The local
-`varde_inventory:client:uiOpenRequested` event receives the exact bootstrap
+`nord_inventory:client:uiOpenRequested` event receives the exact bootstrap
 payload for frontend development.
 
 Temporary text commands are included for early-access testing:

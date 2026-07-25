@@ -1,6 +1,6 @@
-# varde_businesses
+# nord_businesses
 
-Dynamic, MLO-agnostic businesses for Varde Framework.
+Dynamic, MLO-agnostic businesses for Nord Framework.
 
 The resource owns business identity, membership roles, active membership,
 permission evaluation, a bounded treasury ledger, and audit records. It does

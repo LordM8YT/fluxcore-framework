@@ -1,6 +1,6 @@
-# varde_appearance
+# nord_appearance
 
-Persistent freemode character appearance for Varde Framework. The resource is
+Persistent freemode character appearance for Nord Framework. The resource is
 deliberately independent from an editor UI, so a designer can replace the
 frontend without changing character storage or spawn behavior.
 
@@ -12,16 +12,16 @@ frontend without changing character storage or spawn behavior.
 - Head overlays and overlay colors.
 
 All client saves are normalized against strict server-side ranges. The default
-model follows the character gender from `varde_core`, and appearance is
+model follows the character gender from `nord_core`, and appearance is
 reapplied after every `playerSpawned` event.
 
 ## Integration
 
-The local `varde_appearance:client:openRequested` event receives the current
+The local `nord_appearance:client:openRequested` event receives the current
 appearance when `/appearance` is used. An editor can submit its result with:
 
 ```lua
-exports.varde_appearance:SaveAppearance(appearance)
+exports.nord_appearance:SaveAppearance(appearance)
 ```
 
 Client exports:
