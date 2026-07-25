@@ -1,0 +1,37 @@
+{
+  "contract": "varde.world.bootstrap.v1",
+  "shops": [
+    {
+      "id": "strawberry_247",
+      "label": "24/7 Strawberry",
+      "position": { "x": 25.74, "y": -1347.28, "z": 29.5 },
+      "items": { "water": 8, "sandwich": 12, "bandage": 35 }
+    }
+  ],
+  "dealerships": [
+    {
+      "id": "pdm",
+      "label": "Premium Deluxe Motorsport",
+      "position": { "x": -56.79, "y": -1096.75, "z": 26.42 },
+      "garageId": "pillboxgarage",
+      "vehicles": {
+        "blista": {
+          "model": "blista",
+          "label": "Dinka Blista",
+          "price": 18000,
+          "type": "automobile"
+        }
+      }
+    }
+  ],
+  "doors": [
+    {
+      "id": "mrpd_front_left",
+      "label": "MRPD Front Left",
+      "modelHash": -1215222675,
+      "position": { "x": 434.75, "y": -980.62, "z": 30.84 },
+      "locked": false,
+      "canManage": true
+    }
+  ]
+}

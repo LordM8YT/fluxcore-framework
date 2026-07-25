@@ -19,15 +19,15 @@ function fixture(name) {
 }
 
 test('UI v1 mock payloads are parseable and versioned', () => {
-  const mocks = [
-    fixture('hud.bootstrap.json'),
-    fixture('inventory.bootstrap.json'),
-    fixture('phone.bootstrap.json'),
-  ];
+  const mocks = fs
+    .readdirSync(contractRoot)
+    .filter((name) => name.endsWith('.bootstrap.json'))
+    .map(fixture);
 
   for (const mock of mocks) {
     assert.match(mock.contract, /^varde\.[a-z]+\.bootstrap\.v1$/u);
   }
+  assert.ok(mocks.length >= 10);
 });
 
 test('inventory mock uses opaque sides instead of trusted container input', () => {

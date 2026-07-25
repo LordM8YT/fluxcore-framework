@@ -1,0 +1,27 @@
+{
+  "databaseFile": "data/services.sqlite",
+  "currency": "bank",
+  "historyLimit": 100,
+  "requestWindowMs": 10000,
+  "requestLimit": 15,
+  "services": {
+    "police": {
+      "label": "Police",
+      "jobNames": ["police"],
+      "invoicePermission": "police.records.write",
+      "maximumInvoice": 100000
+    },
+    "ems": {
+      "label": "Emergency Medical Services",
+      "jobNames": ["ambulance"],
+      "invoicePermission": "ems.patient.write",
+      "maximumInvoice": 100000
+    },
+    "mechanic": {
+      "label": "Mechanic",
+      "jobNames": ["mechanic"],
+      "invoicePermission": "mechanic.invoice",
+      "maximumInvoice": 1000000
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "name": "varde-banking",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Server-authoritative personal banking for Varde Framework",
+  "license": "MIT",
+  "scripts": {
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=24"
+  }
+}

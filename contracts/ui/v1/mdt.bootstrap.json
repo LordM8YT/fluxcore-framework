@@ -1,0 +1,42 @@
+{
+  "contract": "varde.mdt.bootstrap.v1",
+  "warrants": [
+    {
+      "id": "war_0123456789abcdef",
+      "subjectCharacterId": "vrd_0123456789abcdef",
+      "reason": "Failure to appear",
+      "authorCharacterId": "vrd_fedcba9876543210",
+      "status": "active",
+      "createdAt": "2026-07-25T00:00:00.000Z",
+      "closedAt": null
+    }
+  ],
+  "bolos": [
+    {
+      "id": "bol_0123456789abcdef",
+      "type": "vehicle",
+      "value": "ABC123",
+      "reason": "Vehicle connected to an active investigation",
+      "authorCharacterId": "vrd_fedcba9876543210",
+      "status": "active",
+      "createdAt": "2026-07-25T00:00:00.000Z",
+      "closedAt": null
+    }
+  ],
+  "reports": [
+    {
+      "id": "rpt_0123456789abcdef",
+      "title": "Traffic stop",
+      "narrative": "A complete example report narrative.",
+      "authorCharacterId": "vrd_fedcba9876543210",
+      "subjects": ["vrd_0123456789abcdef"],
+      "createdAt": "2026-07-25T00:00:00.000Z"
+    }
+  ],
+  "dispatch": {
+    "contract": "varde.dispatch.bootstrap.v1",
+    "services": ["police"],
+    "calls": [],
+    "roster": { "police": [] }
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "contract": "varde.dispatch.bootstrap.v1",
+  "services": ["police"],
+  "calls": [
+    {
+      "id": "dsp_0123456789abcdef",
+      "service": "police",
+      "callerCharacterId": "vrd_0123456789abcdef",
+      "title": "Police",
+      "description": "Suspicious vehicle outside the store.",
+      "priority": 2,
+      "position": { "x": 25.74, "y": -1347.28, "z": 29.5 },
+      "status": "assigned",
+      "createdAt": "2026-07-25T00:00:00.000Z",
+      "closedAt": null,
+      "units": [
+        {
+          "characterId": "vrd_fedcba9876543210",
+          "assignedAt": "2026-07-25T00:01:00.000Z"
+        }
+      ]
+    }
+  ],
+  "roster": {
+    "police": [
+      {
+        "source": 7,
+        "characterId": "vrd_fedcba9876543210",
+        "name": "Jamie Officer",
+        "job": { "name": "police", "grade": 1, "onDuty": true }
+      }
+    ]
+  }
+}

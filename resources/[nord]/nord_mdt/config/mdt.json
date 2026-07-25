@@ -1,0 +1,9 @@
+{
+  "databaseFile": "data/mdt.sqlite",
+  "readPermission": "police.records.read",
+  "writePermission": "police.records.write",
+  "historyLimit": 100,
+  "searchLimit": 25,
+  "requestWindowMs": 10000,
+  "requestLimit": 20
+}

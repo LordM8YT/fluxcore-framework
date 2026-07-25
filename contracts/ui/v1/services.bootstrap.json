@@ -1,0 +1,27 @@
+{
+  "contract": "varde.services.bootstrap.v1",
+  "invoices": {
+    "issued": [],
+    "received": [
+      {
+        "id": "inv_0123456789abcdef",
+        "service": "mechanic",
+        "issuerCharacterId": "vrd_0123456789abcdef",
+        "recipientCharacterId": "vrd_fedcba9876543210",
+        "businessId": "biz_0123456789abcdef",
+        "amount": 1250,
+        "description": "Engine repair",
+        "status": "pending",
+        "paymentReference": null,
+        "createdAt": "2026-07-25T00:00:00.000Z",
+        "paidAt": null,
+        "cancelledAt": null
+      }
+    ]
+  },
+  "roster": {
+    "police": [],
+    "ems": [],
+    "mechanic": []
+  }
+}

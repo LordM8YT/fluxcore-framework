@@ -57,6 +57,10 @@ test('generated server config exposes every txAdmin placeholder', () => {
     serverConfig,
     /^add_ace group\.admin varde\.vehicles\.manage allow$/mu,
   );
+  assert.match(
+    serverConfig,
+    /^add_ace group\.admin varde\.businesses\.manage allow$/mu,
+  );
 });
 
 test('Varde resources start after core in dependency order', () => {
@@ -65,8 +69,15 @@ test('Varde resources start after core in dependency order', () => {
     'ensure varde_status',
     'ensure varde_jobs',
     'ensure varde_inventory',
+    'ensure varde_banking',
     'ensure varde_vehicles',
     'ensure varde_appearance',
+    'ensure varde_businesses',
+    'ensure varde_services',
+    'ensure varde_dispatch',
+    'ensure varde_mdt',
+    'ensure varde_properties',
+    'ensure varde_world',
     'ensure varde_admin',
     'ensure varde_phone',
     'ensure varde_identity',

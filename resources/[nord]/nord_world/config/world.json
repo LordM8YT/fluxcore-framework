@@ -1,0 +1,96 @@
+{
+  "databaseFile": "data/world.sqlite",
+  "currency": "bank",
+  "interactionDistance": 4,
+  "requestWindowMs": 10000,
+  "requestLimit": 25,
+  "maximumPurchaseQuantity": 20,
+  "shops": {
+    "strawberry_247": {
+      "label": "24/7 Strawberry",
+      "position": { "x": 25.74, "y": -1347.28, "z": 29.5 },
+      "items": {
+        "water": 8,
+        "sandwich": 12,
+        "bandage": 35,
+        "phone": 450,
+        "radio": 275
+      }
+    },
+    "innocence_ltd": {
+      "label": "LTD Innocence Boulevard",
+      "position": { "x": -47.42, "y": -1758.67, "z": 29.42 },
+      "items": {
+        "water": 8,
+        "sandwich": 12,
+        "bandage": 35,
+        "phone": 450,
+        "radio": 275
+      }
+    },
+    "mirrorpark_ltd": {
+      "label": "LTD Mirror Park",
+      "position": { "x": 1163.54, "y": -323.04, "z": 69.21 },
+      "items": {
+        "water": 8,
+        "sandwich": 12,
+        "bandage": 35,
+        "phone": 450,
+        "radio": 275
+      }
+    },
+    "sandy_247": {
+      "label": "24/7 Sandy Shores",
+      "position": { "x": 1961.43, "y": 3740.85, "z": 32.34 },
+      "items": {
+        "water": 8,
+        "sandwich": 12,
+        "bandage": 35,
+        "phone": 450,
+        "radio": 275
+      }
+    },
+    "paleto_247": {
+      "label": "24/7 Paleto Bay",
+      "position": { "x": 1729.24, "y": 6414.85, "z": 35.04 },
+      "items": {
+        "water": 8,
+        "sandwich": 12,
+        "bandage": 35,
+        "phone": 450,
+        "radio": 275
+      }
+    }
+  },
+  "dealerships": {
+    "pdm": {
+      "label": "Premium Deluxe Motorsport",
+      "position": { "x": -56.79, "y": -1096.75, "z": 26.42 },
+      "garageId": "pillboxgarage",
+      "vehicles": {
+        "blista": { "label": "Dinka Blista", "price": 18000, "type": "automobile" },
+        "bati": { "label": "Pegassi Bati 801", "price": 35000, "type": "bike" },
+        "sultan": { "label": "Karin Sultan", "price": 65000, "type": "automobile" },
+        "buffalo": { "label": "Bravado Buffalo", "price": 85000, "type": "automobile" }
+      }
+    }
+  },
+  "doors": {
+    "mrpd_front_left": {
+      "label": "MRPD Front Left",
+      "modelHash": -1215222675,
+      "position": { "x": 434.75, "y": -980.62, "z": 30.84 },
+      "defaultLocked": false,
+      "jobNames": ["police"],
+      "permission": "police.duty"
+    },
+    "mrpd_front_right": {
+      "label": "MRPD Front Right",
+      "modelHash": -1215222675,
+      "position": { "x": 434.75, "y": -983.22, "z": 30.84 },
+      "defaultLocked": false,
+      "jobNames": ["police"],
+      "permission": "police.duty"
+    }
+  }
+}

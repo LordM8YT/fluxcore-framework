@@ -8,13 +8,22 @@ const test = require('node:test');
 const root = path.resolve(__dirname, '..', '..');
 const resourceRoot = path.join(root, 'resources', '[varde]');
 
-const nodeResources = [
-  'varde_core',
-  'varde_jobs',
-  'varde_inventory',
-  'varde_admin',
-  'varde_phone',
-];
+const nodeResources = fs
+  .readdirSync(resourceRoot, { withFileTypes: true })
+  .filter((entry) => entry.isDirectory())
+  .map((entry) => entry.name)
+  .filter((resourceName) => {
+    const manifestPath = path.join(
+      resourceRoot,
+      resourceName,
+      'fxmanifest.lua',
+    );
+    return (
+      fs.existsSync(manifestPath) &&
+      /^node_version '26'$/mu.test(fs.readFileSync(manifestPath, 'utf8'))
+    );
+  })
+  .sort();
 
 test('Enhanced Node resources enter CommonJS through a root loader', () => {
   for (const resourceName of nodeResources) {

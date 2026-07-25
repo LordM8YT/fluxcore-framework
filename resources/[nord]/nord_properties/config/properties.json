@@ -1,0 +1,49 @@
+{
+  "databaseFile": "data/properties.sqlite",
+  "currency": "bank",
+  "interactionDistance": 4,
+  "requestWindowMs": 10000,
+  "requestLimit": 20,
+  "properties": {
+    "pinkcage_1": {
+      "label": "Pink Cage Apartment 1",
+      "type": "apartment",
+      "price": 75000,
+      "entry": { "x": 312.92, "y": -218.82, "z": 54.22 },
+      "stash": { "slots": 40, "maxWeight": 100000 },
+      "garageId": "motelgarage"
+    },
+    "alta_1": {
+      "label": "Alta Street Apartment 1",
+      "type": "apartment",
+      "price": 180000,
+      "entry": { "x": 269.85, "y": -640.76, "z": 42.02 },
+      "stash": { "slots": 50, "maxWeight": 140000 },
+      "garageId": "pillboxgarage"
+    },
+    "delperro_1": {
+      "label": "Del Perro Heights 1",
+      "type": "apartment",
+      "price": 260000,
+      "entry": { "x": -1457.59, "y": -539.44, "z": 34.74 },
+      "stash": { "slots": 60, "maxWeight": 180000 },
+      "garageId": "beachp"
+    },
+    "arcadius_1": {
+      "label": "Arcadius Executive Suite 1",
+      "type": "office",
+      "price": 450000,
+      "entry": { "x": -116.7, "y": -604.69, "z": 36.28 },
+      "stash": { "slots": 60, "maxWeight": 180000 },
+      "garageId": "littleseoul"
+    },
+    "sandy_1": {
+      "label": "Sandy Shores Home 1",
+      "type": "house",
+      "price": 95000,
+      "entry": { "x": 1845.87, "y": 3914.47, "z": 33.46 },
+      "stash": { "slots": 45, "maxWeight": 120000 },
+      "garageId": "liqourparking"
+    }
+  }
+}

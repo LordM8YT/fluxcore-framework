@@ -1,0 +1,77 @@
+{
+  "databaseFile": "data/businesses.sqlite",
+  "maximumMemberships": 10,
+  "maximumTreasury": 1000000000,
+  "requestWindowMs": 10000,
+  "requestLimit": 15,
+  "types": {
+    "restaurant": {
+      "label": "Restaurant",
+      "roles": {
+        "employee": {
+          "label": "Employee",
+          "permissions": ["business.view", "business.sales"]
+        },
+        "manager": {
+          "label": "Manager",
+          "permissions": ["business.view", "business.sales", "business.members.manage", "business.treasury.view"]
+        },
+        "owner": {
+          "label": "Owner",
+          "permissions": ["*"]
+        }
+      }
+    },
+    "mechanic": {
+      "label": "Mechanic Shop",
+      "roles": {
+        "employee": {
+          "label": "Mechanic",
+          "permissions": ["business.view", "business.sales", "business.workorders"]
+        },
+        "manager": {
+          "label": "Shop Manager",
+          "permissions": ["business.view", "business.sales", "business.workorders", "business.members.manage", "business.treasury.view"]
+        },
+        "owner": {
+          "label": "Owner",
+          "permissions": ["*"]
+        }
+      }
+    },
+    "dealership": {
+      "label": "Vehicle Dealership",
+      "roles": {
+        "employee": {
+          "label": "Salesperson",
+          "permissions": ["business.view", "business.sales"]
+        },
+        "manager": {
+          "label": "Sales Manager",
+          "permissions": ["business.view", "business.sales", "business.members.manage", "business.treasury.view"]
+        },
+        "owner": {
+          "label": "Owner",
+          "permissions": ["*"]
+        }
+      }
+    },
+    "real_estate": {
+      "label": "Real Estate Agency",
+      "roles": {
+        "employee": {
+          "label": "Agent",
+          "permissions": ["business.view", "business.sales", "business.properties"]
+        },
+        "manager": {
+          "label": "Broker",
+          "permissions": ["business.view", "business.sales", "business.properties", "business.members.manage", "business.treasury.view"]
+        },
+        "owner": {
+          "label": "Owner",
+          "permissions": ["*"]
+        }
+      }
+    }
+  }
+}

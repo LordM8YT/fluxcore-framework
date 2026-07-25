@@ -1,0 +1,21 @@
+{
+  "databaseFile": "data/banking.sqlite",
+  "currency": "bank",
+  "cashCurrency": "cash",
+  "accountPrefix": "VRD",
+  "accountDigits": 10,
+  "historyLimit": 50,
+  "minimumAmount": 1,
+  "maximumAmount": 100000000,
+  "requestWindowMs": 10000,
+  "requestLimit": 12,
+  "accessPoints": [
+    { "label": "Legion Square Fleeca", "x": 149.14, "y": -1040.54, "z": 29.37, "radius": 4.0 },
+    { "label": "Hawick Fleeca", "x": 314.18, "y": -278.62, "z": 54.17, "radius": 4.0 },
+    { "label": "Del Perro Fleeca", "x": -1212.98, "y": -330.84, "z": 37.79, "radius": 4.0 },
+    { "label": "Great Ocean Highway Fleeca", "x": -2962.58, "y": 482.63, "z": 15.7, "radius": 4.0 },
+    { "label": "Route 68 Fleeca", "x": 1175.06, "y": 2706.64, "z": 38.09, "radius": 4.0 },
+    { "label": "Blaine County Savings", "x": -112.2, "y": 6469.29, "z": 31.63, "radius": 4.0 },
+    { "label": "Pacific Standard", "x": 246.64, "y": 223.2, "z": 106.29, "radius": 5.0 }
+  ]
+}

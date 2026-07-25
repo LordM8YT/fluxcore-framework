@@ -1,0 +1,21 @@
+{
+  "contract": "varde.banking.bootstrap.v1",
+  "account": {
+    "characterId": "vrd_0123456789abcdef",
+    "accountNumber": "VRD0123456789",
+    "createdAt": "2026-07-25T00:00:00.000Z"
+  },
+  "balance": 28750,
+  "currency": "bank",
+  "transactions": [
+    {
+      "currency": "bank",
+      "delta": -750,
+      "balanceAfter": 28750,
+      "reason": "Rent",
+      "reference": "bank:5ac68da3-534d-45ef-9db1-503d55f2d0ff",
+      "actor": "varde_banking",
+      "createdAt": "2026-07-25T00:00:00.000Z"
+    }
+  ]
+}

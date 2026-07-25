@@ -1,0 +1,21 @@
+{
+  "databaseFile": "data/dispatch.sqlite",
+  "historyLimit": 100,
+  "requestWindowMs": 10000,
+  "requestLimit": 20,
+  "minimumDescriptionLength": 4,
+  "services": {
+    "police": {
+      "label": "Police",
+      "jobNames": ["police"],
+      "permission": "police.records.read",
+      "defaultPriority": 2
+    },
+    "ambulance": {
+      "label": "Emergency Medical Services",
+      "jobNames": ["ambulance"],
+      "permission": "ems.patient.read",
+      "defaultPriority": 1
+    }
+  }
+}

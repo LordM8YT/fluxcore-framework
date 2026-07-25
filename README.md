@@ -17,8 +17,15 @@ The current pre-alpha foundation includes:
 - jobs, metadata, and last position
 - persistent hunger, thirst, stress, and a versioned HUD data provider
 - server-authoritative inventory sessions, world drops, and UI contracts
+- stable bank account numbers, deposits, withdrawals, transfers, and ledgers
 - persistent vehicle ownership, keys, garages, locks, and trunks
 - persistent freemode appearance reapplied after spawn
+- player-owned businesses with roles, permissions, treasuries, and audit logs
+- service rosters and secure personal or business invoicing
+- emergency dispatch with live calls, priorities, and unit assignments
+- police MDT records with reports, warrants, BOLOs, people, and vehicle lookup
+- configurable property ownership, shared keys, locks, storage, and garage links
+- server-validated shops, vehicle dealerships, and persistent job doors
 - shared English/Norwegian localization with English fallback
 - a rate-limited client/server RPC layer
 - explicit, minimal state bag replication
@@ -36,9 +43,16 @@ resources/
     varde_identity/   Character and spawn UI
     varde_jobs/       Jobs, grades, duty, and permissions
     varde_inventory/  Server-authoritative items and containers
+    varde_banking/    Accounts, wallet movement, and transfers
     varde_status/     Persistent needs and HUD telemetry
     varde_vehicles/   Ownership, keys, garages, and trunks
     varde_appearance/ Persistent freemode character appearance
+    varde_businesses/ Companies, roles, and treasuries
+    varde_services/   Rosters and invoices
+    varde_dispatch/   Emergency calls and unit assignment
+    varde_mdt/        Police reports, warrants, and BOLOs
+    varde_properties/ Ownership, access, locks, and storage
+    varde_world/      Shops, dealerships, and persistent doors
     varde_admin/      ACE-secured operations and audit panel
     varde_phone/      Contacts and offline text messaging
     varde_example/    Commands showing the public API
@@ -109,6 +123,9 @@ Job definitions and the permission API are documented in
 Item, container, and transfer APIs are documented in
 [varde_inventory](<resources/[varde]/varde_inventory/README.md>).
 
+Accounts, deposits, withdrawals, and transfers are documented in
+[varde_banking](<resources/[varde]/varde_banking/README.md>).
+
 Needs and HUD telemetry are documented in
 [varde_status](<resources/[varde]/varde_status/README.md>).
 
@@ -117,6 +134,24 @@ Vehicle ownership, keys, garages, and trunks are documented in
 
 Persistent character customization is documented in
 [varde_appearance](<resources/[varde]/varde_appearance/README.md>).
+
+Companies, employee roles, and treasury access are documented in
+[varde_businesses](<resources/[varde]/varde_businesses/README.md>).
+
+On-duty rosters and secure invoices are documented in
+[varde_services](<resources/[varde]/varde_services/README.md>).
+
+Emergency calls and unit assignment are documented in
+[varde_dispatch](<resources/[varde]/varde_dispatch/README.md>).
+
+Police records, warrants, reports, and BOLOs are documented in
+[varde_mdt](<resources/[varde]/varde_mdt/README.md>).
+
+Property ownership, keys, storage, and integration points are documented in
+[varde_properties](<resources/[varde]/varde_properties/README.md>).
+
+Shops, dealerships, and persistent doors are documented in
+[varde_world](<resources/[varde]/varde_world/README.md>).
 
 Administration permissions and actions are documented in
 [varde_admin](<resources/[varde]/varde_admin/README.md>).

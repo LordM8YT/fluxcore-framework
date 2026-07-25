@@ -1,0 +1,25 @@
+{
+  "contract": "varde.properties.bootstrap.v1",
+  "properties": [
+    {
+      "id": "pinkcage_1",
+      "label": "Pink Cage Apartment 1",
+      "type": "apartment",
+      "price": 75000,
+      "entry": { "x": 312.92, "y": -218.82, "z": 54.22 },
+      "garageId": "motelgarage",
+      "owned": true,
+      "isOwner": true,
+      "hasAccess": true,
+      "locked": true,
+      "purchasedAt": "2026-07-25T00:00:00.000Z",
+      "keys": [
+        {
+          "characterId": "vrd_fedcba9876543210",
+          "grantedByCharacterId": "vrd_0123456789abcdef",
+          "grantedAt": "2026-07-25T00:01:00.000Z"
+        }
+      ]
+    }
+  ]
+}

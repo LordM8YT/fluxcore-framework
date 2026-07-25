@@ -1,0 +1,31 @@
+{
+  "contract": "varde.businesses.bootstrap.v1",
+  "businesses": [
+    {
+      "id": "biz_0123456789abcdef",
+      "type": "mechanic",
+      "typeLabel": "Mechanic Shop",
+      "name": "Harmony Repairs",
+      "ownerCharacterId": "vrd_0123456789abcdef",
+      "treasury": 3750,
+      "active": true,
+      "createdAt": "2026-07-25T00:00:00.000Z",
+      "updatedAt": "2026-07-25T00:00:00.000Z",
+      "membership": {
+        "businessId": "biz_0123456789abcdef",
+        "characterId": "vrd_0123456789abcdef",
+        "role": "owner",
+        "roleLabel": "Owner",
+        "active": true,
+        "permissions": ["*"],
+        "joinedAt": "2026-07-25T00:00:00.000Z",
+        "updatedAt": "2026-07-25T00:00:00.000Z"
+      }
+    }
+  ],
+  "activeBusiness": {
+    "id": "biz_0123456789abcdef",
+    "type": "mechanic",
+    "name": "Harmony Repairs"
+  }
+}
