@@ -2,7 +2,7 @@
   "name": "Nord-services",
   "version": "0.1.0",
   "private": true,
-  "description": "Service rosters and secure invoicing for Varde Framework",
+  "description": "Service rosters and secure invoicing for Nord Framework",
   "license": "MIT",
   "scripts": {
     "test": "node --test"

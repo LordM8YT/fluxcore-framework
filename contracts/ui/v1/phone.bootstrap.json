@@ -1,5 +1,5 @@
 {
-  "contract": "varde.phone.bootstrap.v1",
+  "contract": "nord.phone.bootstrap.v1",
   "account": {
     "characterId": "vrd_0123456789abcdef",
     "phoneNumber": "51234567",

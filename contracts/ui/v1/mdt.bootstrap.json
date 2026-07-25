@@ -1,5 +1,5 @@
 {
-  "contract": "varde.mdt.bootstrap.v1",
+  "contract": "nord.mdt.bootstrap.v1",
   "warrants": [
     {
       "id": "war_0123456789abcdef",
@@ -34,7 +34,7 @@
     }
   ],
   "dispatch": {
-    "contract": "varde.dispatch.bootstrap.v1",
+    "contract": "nord.dispatch.bootstrap.v1",
     "services": ["police"],
     "calls": [],
     "roster": { "police": [] }

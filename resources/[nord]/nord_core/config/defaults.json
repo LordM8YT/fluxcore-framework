@@ -1,7 +1,7 @@
 {
   "locale": "en",
   "fallbackLocale": "en",
-  "databaseFile": "data/varde.sqlite",
+  "databaseFile": "data/nord.sqlite",
   "maxCharacters": 4,
   "saveIntervalMs": 60000,
   "positionSyncMs": 15000,

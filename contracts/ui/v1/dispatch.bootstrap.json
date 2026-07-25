@@ -1,5 +1,5 @@
 {
-  "contract": "varde.dispatch.bootstrap.v1",
+  "contract": "nord.dispatch.bootstrap.v1",
   "services": ["police"],
   "calls": [
     {

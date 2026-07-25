@@ -121,7 +121,7 @@
   },
   "core": {
     "connection": {
-      "preparing": "Preparing your Varde Framework account…",
+      "preparing": "Preparing your Nord Framework account…",
       "failed": "Nord Framework could not prepare your account."
     },
     "rpcTimeout": "RPC {{method}} timed out.",
@@ -289,7 +289,7 @@
       "contacts": "Contacts",
       "addContact": "Add contact",
       "noContacts": "No contacts",
-      "noContactsHint": "Save a registered Varde phone number here.",
+      "noContactsHint": "Save a registered Nord phone number here.",
       "phoneApps": "Phone apps",
       "newContact": "New contact",
       "saveNumber": "Save a number",
@@ -307,7 +307,7 @@
       "contactSaved": "Contact saved."
     },
     "newMessage": "New message from {{name}}",
-    "openKey": "Open Varde Phone"
+    "openKey": "Open Nord Phone"
   },
   "inventory": {
     "noInventory": "No inventory is loaded.",
@@ -347,7 +347,7 @@
     "driveToStore": "Drive your vehicle to a garage store marker.",
     "usageGarage": "Usage: /garage [spawn <vehicle id>|store]",
     "noNearbyVehicle": "No networked vehicle is nearby.",
-    "lockKey": "Lock or unlock your Varde vehicle",
+    "lockKey": "Lock or unlock your Nord vehicle",
     "viewGarage": "Press ~INPUT_CONTEXT~ to view your garage",
     "storeVehicle": "Use /garage store to store this vehicle",
     "locked": "Vehicle locked.",
@@ -370,7 +370,7 @@
     "loggedOut": "Character logged out.",
     "notLoggedIn": "No character is logged in.",
     "identity": "{{firstName}} {{lastName}} | cash: {{cash}} | bank: {{bank}} | job: {{job}}",
-    "adminRequired": "You do not have varde.admin.",
+    "adminRequired": "You do not have nord.admin.",
     "usageGrantCash": "Usage: /grantcash <serverId> <amount>",
     "cashGranted": "Granted {{amount}} cash to {{source}}. New balance: {{balance}}.",
     "cashReceived": "You received {{amount}} cash."

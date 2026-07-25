@@ -121,7 +121,7 @@
   },
   "core": {
     "connection": {
-      "preparing": "Forbereder Varde Framework-kontoen din…",
+      "preparing": "Forbereder Nord Framework-kontoen din…",
       "failed": "Nord Framework kunne ikke klargjøre kontoen din."
     },
     "rpcTimeout": "RPC {{method}} tok for lang tid.",
@@ -289,7 +289,7 @@
       "contacts": "Kontakter",
       "addContact": "Legg til kontakt",
       "noContacts": "Ingen kontakter",
-      "noContactsHint": "Lagre et registrert Varde-telefonnummer her.",
+      "noContactsHint": "Lagre et registrert Nord-telefonnummer her.",
       "phoneApps": "Telefonapper",
       "newContact": "Ny kontakt",
       "saveNumber": "Lagre et nummer",
@@ -307,7 +307,7 @@
       "contactSaved": "Kontakten ble lagret."
     },
     "newMessage": "Ny melding fra {{name}}",
-    "openKey": "Åpne Varde Telefon"
+    "openKey": "Åpne Nord Telefon"
   },
   "inventory": {
     "noInventory": "Ingen inventar er lastet.",
@@ -347,7 +347,7 @@
     "driveToStore": "Kjør kjøretøyet til innleveringsmarkøren.",
     "usageGarage": "Bruk: /garage [spawn <kjøretøy-ID>|store]",
     "noNearbyVehicle": "Ingen nettverkstilkoblede kjøretøy er i nærheten.",
-    "lockKey": "Lås eller lås opp Varde-kjøretøyet ditt",
+    "lockKey": "Lås eller lås opp Nord-kjøretøyet ditt",
     "viewGarage": "Trykk ~INPUT_CONTEXT~ for å vise garasjen din",
     "storeVehicle": "Bruk /garage store for å parkere kjøretøyet",
     "locked": "Kjøretøyet er låst.",
@@ -370,7 +370,7 @@
     "loggedOut": "Karakteren ble logget ut.",
     "notLoggedIn": "Ingen karakter er logget inn.",
     "identity": "{{firstName}} {{lastName}} | kontanter: {{cash}} | bank: {{bank}} | jobb: {{job}}",
-    "adminRequired": "Du mangler varde.admin.",
+    "adminRequired": "Du mangler nord.admin.",
     "usageGrantCash": "Bruk: /grantcash <server-ID> <beløp>",
     "cashGranted": "Ga {{amount}} kontanter til {{source}}. Ny saldo: {{balance}}.",
     "cashReceived": "Du mottok {{amount}} kontanter."

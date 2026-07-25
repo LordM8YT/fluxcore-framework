@@ -2,7 +2,7 @@
   "name": "Nord-banking",
   "version": "0.1.0",
   "private": true,
-  "description": "Server-authoritative personal banking for Varde Framework",
+  "description": "Server-authoritative personal banking for Nord Framework",
   "license": "MIT",
   "scripts": {
     "test": "node --test"

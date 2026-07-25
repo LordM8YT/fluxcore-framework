@@ -1,5 +1,5 @@
 {
-  "contract": "varde.services.bootstrap.v1",
+  "contract": "nord.services.bootstrap.v1",
   "invoices": {
     "issued": [],
     "received": [

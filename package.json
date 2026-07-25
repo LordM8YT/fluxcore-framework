@@ -1,13 +1,13 @@
 {
-  "name": "varde-framework",
+  "name": "nord-framework",
   "version": "0.1.0",
   "private": true,
-  "description": "Development commands for Varde Framework",
+  "description": "Development commands for Nord Framework",
   "license": "MIT",
   "scripts": {
     "test": "node tools/test-all.js",
-    "data:backup": "node tools/varde-data.js backup",
-    "data:inspect": "node tools/varde-data.js inspect"
+    "data:backup": "node tools/nord-data.js backup",
+    "data:inspect": "node tools/nord-data.js inspect"
   },
   "engines": {
     "node": ">=24"

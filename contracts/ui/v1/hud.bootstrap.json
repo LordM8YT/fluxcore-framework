@@ -1,5 +1,5 @@
 {
-  "contract": "varde.hud.bootstrap.v1",
+  "contract": "nord.hud.bootstrap.v1",
   "player": {
     "characterId": "vrd_0123456789abcdef",
     "name": "Nora Varde",

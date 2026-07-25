@@ -2,7 +2,7 @@
   "name": "Nord-inventory",
   "version": "0.1.0",
   "private": true,
-  "description": "Server-authoritative inventory primitives for Varde Framework",
+  "description": "Server-authoritative inventory primitives for Nord Framework",
   "license": "MIT",
   "scripts": {
     "test": "node --test"

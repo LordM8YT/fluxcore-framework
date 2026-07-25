@@ -2,7 +2,7 @@
   "name": "Nord-admin",
   "version": "0.1.0",
   "private": true,
-  "description": "ACE-secured administration for Varde Framework",
+  "description": "ACE-secured administration for Nord Framework",
   "license": "MIT",
   "scripts": {
     "test": "node --test"

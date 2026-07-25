@@ -2,7 +2,7 @@
   "name": "Nord-jobs",
   "version": "0.1.0",
   "private": true,
-  "description": "Jobs, grades, duty, and permissions for Varde Framework",
+  "description": "Jobs, grades, duty, and permissions for Nord Framework",
   "license": "MIT",
   "scripts": {
     "test": "node --test"
