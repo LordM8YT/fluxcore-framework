@@ -5,7 +5,7 @@ local pending = {}
 local snapshot = nil
 
 local function locale(key, replacements, fallback)
-    return exports.varde_core:Locale(key, replacements, fallback)
+    return exports.nord_core:Locale(key, replacements, fallback)
 end
 
 local function copy(value)
@@ -19,9 +19,9 @@ local function message(text, kind)
     local color = kind == 'error' and { 220, 70, 70 } or { 90, 180, 255 }
     TriggerEvent('chat:addMessage', {
         color = color,
-        args = { 'Varde Bank', tostring(text) }
+        args = { 'Nord Bank', tostring(text) }
     })
-    print(('[varde_banking] %s'):format(tostring(text)))
+    print(('[nord_banking] %s'):format(tostring(text)))
 end
 
 local function nextRequestId()
@@ -48,7 +48,7 @@ local function call(method, payload)
     end
 
     TriggerServerEvent(
-        'varde_banking:server:request',
+        'nord_banking:server:request',
         requestId,
         method,
         payload or {}
@@ -74,21 +74,21 @@ local function call(method, payload)
     return Citizen.Await(deferred)
 end
 
-RegisterNetEvent('varde_banking:client:response', function(requestId, response)
+RegisterNetEvent('nord_banking:client:response', function(requestId, response)
     local resolver = pending[tostring(requestId)]
     if resolver then
         resolver(response)
     end
 end)
 
-RegisterNetEvent('varde_banking:client:update', function(value)
+RegisterNetEvent('nord_banking:client:update', function(value)
     snapshot = copy(value)
-    TriggerEvent('varde_banking:client:updated', copy(snapshot))
+    TriggerEvent('nord_banking:client:updated', copy(snapshot))
 end)
 
-RegisterNetEvent('varde:client:playerLoggedOut', function()
+RegisterNetEvent('Nord:client:playerLoggedOut', function()
     snapshot = nil
-    TriggerEvent('varde_banking:client:updated', nil)
+    TriggerEvent('nord_banking:client:updated', nil)
 end)
 
 RegisterCommand('bank', function()
@@ -106,7 +106,7 @@ RegisterCommand('bank', function()
         return
     end
     snapshot = copy(response.data)
-    TriggerEvent('varde_banking:client:open', copy(snapshot))
+    TriggerEvent('nord_banking:client:open', copy(snapshot))
 end, false)
 
 exports('GetBanking', function()
@@ -126,7 +126,7 @@ AddEventHandler('onResourceStop', function(stoppedResource)
             ok = false,
             error = {
                 code = 'RESOURCE_STOPPED',
-                message = 'Varde Banking stopped.'
+                message = 'Nord Banking stopped.'
             }
         })
         pending[requestId] = nil

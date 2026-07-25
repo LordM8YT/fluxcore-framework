@@ -10,7 +10,7 @@ const { VehiclesService, normalizeProperties } = require('../server/service');
 const { validateConfig } = require('../server/config');
 
 function harness(t) {
-  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'varde-vehicles-'));
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'Nord-vehicles-'));
   const database = new VehiclesDatabase(path.join(directory, 'vehicles.sqlite'));
   const players = new Map([
     [7, { characterId: 'vrd_0123456789abcdef' }],
@@ -129,7 +129,7 @@ test('ownership, sharing, spawn, store, and lock flow is authoritative', (t) => 
   assert.equal(stored.properties.primaryColor, 1);
 
   service.sync(8);
-  assert.equal(events.at(-1).eventName, 'varde_vehicles:client:update');
+  assert.equal(events.at(-1).eventName, 'nord_vehicles:client:update');
   assert.equal(database.getByNetwork(99), null);
 });
 

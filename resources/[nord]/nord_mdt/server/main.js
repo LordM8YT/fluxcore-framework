@@ -15,7 +15,7 @@ const runtime = {
     emitNet(eventName, source, ...args);
   },
   log(level, message) {
-    const output = `[varde_mdt] [${level}] ${message}`;
+    const output = `[nord_mdt] [${level}] ${message}`;
     if (level === 'error') console.error(output);
     else if (level === 'warn') console.warn(output);
     else console.log(output);
@@ -31,22 +31,22 @@ function requireResource(name) {
 const integrations = {
   core: {
     getPlayerData(identifier) {
-      return globalThis.exports.varde_core.GetPlayerData(identifier);
+      return globalThis.exports.nord_core.GetPlayerData(identifier);
     },
     getPlayerSource(characterId) {
-      return globalThis.exports.varde_core.GetPlayerSource(characterId);
+      return globalThis.exports.nord_core.GetPlayerSource(characterId);
     },
     getPlayers() {
-      return globalThis.exports.varde_core.GetPlayers();
+      return globalThis.exports.nord_core.GetPlayers();
     },
     getCharacterData(identifier) {
-      return globalThis.exports.varde_core.GetCharacterData(identifier);
+      return globalThis.exports.nord_core.GetCharacterData(identifier);
     },
   },
   jobs: {
     hasPermission(identifier, permission, options) {
-      requireResource('varde_jobs');
-      return globalThis.exports.varde_jobs.HasPermission(
+      requireResource('nord_jobs');
+      return globalThis.exports.nord_jobs.HasPermission(
         identifier,
         permission,
         options,
@@ -55,14 +55,14 @@ const integrations = {
   },
   vehicles: {
     getVehicles(identifier) {
-      requireResource('varde_vehicles');
-      return globalThis.exports.varde_vehicles.GetVehicles(identifier);
+      requireResource('nord_vehicles');
+      return globalThis.exports.nord_vehicles.GetVehicles(identifier);
     },
   },
   dispatch: {
     getDispatch(identifier) {
-      requireResource('varde_dispatch');
-      return globalThis.exports.varde_dispatch.GetDispatch(identifier);
+      requireResource('nord_dispatch');
+      return globalThis.exports.nord_dispatch.GetDispatch(identifier);
     },
   },
 };
@@ -103,7 +103,7 @@ function allow(source) {
   return true;
 }
 
-onNet('varde_mdt:server:request', (requestId, method, payload) => {
+onNet('nord_mdt:server:request', (requestId, method, payload) => {
   const source = Number(global.source);
   const input =
     payload && typeof payload === 'object' && !Array.isArray(payload)
@@ -147,13 +147,13 @@ onNet('varde_mdt:server:request', (requestId, method, payload) => {
       };
   runtime.emitClient(
     source,
-    'varde_mdt:client:response',
+    'nord_mdt:client:response',
     String(requestId || '').slice(0, 96),
     response,
   );
 });
 
-on('varde:server:characterDeleted', (_source, characterId) => {
+on('Nord:server:characterDeleted', (_source, characterId) => {
   result(() => mdt.deleteCharacter(characterId));
 });
 on('playerDropped', () => {

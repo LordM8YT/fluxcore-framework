@@ -8,7 +8,7 @@ const path = require('node:path');
 const { BusinessesDatabase } = require('../server/database');
 
 test('business ownership, memberships, and treasury persist', (t) => {
-  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'varde-businesses-'));
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'Nord-businesses-'));
   const database = new BusinessesDatabase(
     path.join(directory, 'businesses.sqlite'),
   );
@@ -52,7 +52,7 @@ test('business ownership, memberships, and treasury persist', (t) => {
 });
 
 test('character deletion disables owned businesses and clears memberships', (t) => {
-  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'varde-businesses-'));
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'Nord-businesses-'));
   const database = new BusinessesDatabase(
     path.join(directory, 'businesses.sqlite'),
   );

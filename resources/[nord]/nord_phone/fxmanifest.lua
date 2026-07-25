@@ -1,15 +1,15 @@
 fx_version 'cerulean'
 game 'gta5'
 
-name 'varde_phone'
-author 'Varde Framework contributors'
+name 'nord_phone'
+author 'Nord Framework contributors'
 description 'Text-first phone for Varde Framework'
 version '0.1.0'
 license 'MIT'
 
 node_version '26'
 
-dependency 'varde_core'
+dependency 'nord_core'
 
 ui_page 'web/index.html'
 

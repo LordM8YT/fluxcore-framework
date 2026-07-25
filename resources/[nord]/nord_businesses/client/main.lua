@@ -32,7 +32,7 @@ local function call(method, payload)
         deferred:resolve(response)
     end
     TriggerServerEvent(
-        'varde_businesses:server:request',
+        'nord_businesses:server:request',
         requestId,
         method,
         payload or {}
@@ -52,26 +52,26 @@ local function call(method, payload)
     return Citizen.Await(deferred)
 end
 
-RegisterNetEvent('varde_businesses:client:response', function(requestId, response)
+RegisterNetEvent('nord_businesses:client:response', function(requestId, response)
     local resolver = pending[tostring(requestId)]
     if resolver then
         resolver(response)
     end
 end)
 
-RegisterNetEvent('varde_businesses:client:update', function(value)
+RegisterNetEvent('nord_businesses:client:update', function(value)
     snapshot = copy(value)
-    TriggerEvent('varde_businesses:client:updated', copy(snapshot))
+    TriggerEvent('nord_businesses:client:updated', copy(snapshot))
 end)
 
-RegisterNetEvent('varde_businesses:client:message', function(text, kind)
+RegisterNetEvent('nord_businesses:client:message', function(text, kind)
     TriggerEvent('chat:addMessage', {
         color = kind == 'error' and { 220, 70, 70 } or { 90, 180, 255 },
-        args = { 'Varde Business', tostring(text) }
+        args = { 'Nord Business', tostring(text) }
     })
 end)
 
-RegisterNetEvent('varde:client:playerLoggedOut', function()
+RegisterNetEvent('Nord:client:playerLoggedOut', function()
     snapshot = nil
 end)
 
@@ -79,9 +79,9 @@ RegisterCommand('business', function()
     local response = call('bootstrap', {})
     if response.ok then
         snapshot = copy(response.data)
-        TriggerEvent('varde_businesses:client:open', copy(snapshot))
+        TriggerEvent('nord_businesses:client:open', copy(snapshot))
     else
-        TriggerEvent('varde_businesses:client:message',
+        TriggerEvent('nord_businesses:client:message',
             response.error and response.error.message or 'Business unavailable.',
             'error'
         )

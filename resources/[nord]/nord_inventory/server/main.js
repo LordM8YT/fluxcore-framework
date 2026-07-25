@@ -19,7 +19,7 @@ const runtime = {
     emitNet(eventName, -1, ...args);
   },
   log(level, message) {
-    const output = `[varde_inventory] [${level}] ${message}`;
+    const output = `[nord_inventory] [${level}] ${message}`;
     if (level === 'error') {
       console.error(output);
     } else if (level === 'warn') {
@@ -32,13 +32,13 @@ const runtime = {
 
 const core = {
   getPlayerData(identifier) {
-    return globalThis.exports.varde_core.GetPlayerData(identifier);
+    return globalThis.exports.nord_core.GetPlayerData(identifier);
   },
   getPlayers() {
-    return globalThis.exports.varde_core.GetPlayers();
+    return globalThis.exports.nord_core.GetPlayers();
   },
   getPlayerSource(characterId) {
-    return globalThis.exports.varde_core.GetPlayerSource(characterId);
+    return globalThis.exports.nord_core.GetPlayerSource(characterId);
   },
 };
 
@@ -84,7 +84,7 @@ function notifyError(source, response) {
   if (!response.ok && Number(source) > 0) {
     runtime.emitClient(
       Number(source),
-      'varde_inventory:client:error',
+      'nord_inventory:client:error',
       response.error.message,
       response.error.code,
     );
@@ -109,30 +109,30 @@ function playerPosition(source) {
   };
 }
 
-on('varde:server:playerLoaded', (source) => {
+on('Nord:server:playerLoaded', (source) => {
   notifyError(source, result(() => inventory.sync(Number(source))));
-  runtime.emitClient(Number(source), 'varde_inventory:client:drops', inventory.getDrops());
+  runtime.emitClient(Number(source), 'nord_inventory:client:drops', inventory.getDrops());
 });
 
-on('varde:server:characterDeleted', (_source, characterId) => {
+on('Nord:server:characterDeleted', (_source, characterId) => {
   inventory.deleteCharacter(characterId);
 });
 
-onNet('varde_inventory:server:request', () => {
+onNet('nord_inventory:server:request', () => {
   const source = Number(global.source);
   if (rateLimit(source, 'request', 500)) {
     notifyError(source, result(() => inventory.sync(source)));
   }
 });
 
-onNet('varde_inventory:server:requestDrops', () => {
+onNet('nord_inventory:server:requestDrops', () => {
   const source = Number(global.source);
   if (rateLimit(source, 'drops', 1000)) {
-    runtime.emitClient(source, 'varde_inventory:client:drops', inventory.getDrops());
+    runtime.emitClient(source, 'nord_inventory:client:drops', inventory.getDrops());
   }
 });
 
-onNet('varde_inventory:server:openDrop', (dropId) => {
+onNet('nord_inventory:server:openDrop', (dropId) => {
   const source = Number(global.source);
   if (!rateLimit(source, 'openDrop', 250)) {
     return;
@@ -142,11 +142,11 @@ onNet('varde_inventory:server:openDrop', (dropId) => {
     result(() => controller.openDrop(source, dropId, playerPosition(source))),
   );
   if (response.ok) {
-    runtime.emitClient(source, 'varde_inventory:client:open', response.data);
+    runtime.emitClient(source, 'nord_inventory:client:open', response.data);
   }
 });
 
-onNet('varde_inventory:server:nui', (requestId, method, payload) => {
+onNet('nord_inventory:server:nui', (requestId, method, payload) => {
   const source = Number(global.source);
   const id = String(requestId || '').slice(0, 64);
   if (!id) {
@@ -155,7 +155,7 @@ onNet('varde_inventory:server:nui', (requestId, method, payload) => {
   if (!rateLimit(source, 'nui', 75)) {
     runtime.emitClient(
       source,
-      'varde_inventory:client:nuiResponse',
+      'nord_inventory:client:nuiResponse',
       id,
       {
         ok: false,
@@ -179,13 +179,13 @@ onNet('varde_inventory:server:nui', (requestId, method, payload) => {
   );
   runtime.emitClient(
     source,
-    'varde_inventory:client:nuiResponse',
+    'nord_inventory:client:nuiResponse',
     id,
     response,
   );
 });
 
-onNet('varde_inventory:server:move', (fromSlot, toSlot, amount) => {
+onNet('nord_inventory:server:move', (fromSlot, toSlot, amount) => {
   const source = Number(global.source);
   if (rateLimit(source, 'move', 250)) {
     notifyError(
@@ -203,7 +203,7 @@ onNet('varde_inventory:server:move', (fromSlot, toSlot, amount) => {
   }
 });
 
-onNet('varde_inventory:server:use', (slot) => {
+onNet('nord_inventory:server:use', (slot) => {
   const source = Number(global.source);
   if (rateLimit(source, 'use', 750)) {
     notifyError(source, result(() => inventory.useItem(source, slot)));
@@ -306,7 +306,7 @@ globalThis.exports('OpenInventory', (source, secondaryContainerId) => {
     controller.open(Number(source), secondaryContainerId),
   );
   if (response.ok) {
-    runtime.emitClient(Number(source), 'varde_inventory:client:open', response.data);
+    runtime.emitClient(Number(source), 'nord_inventory:client:open', response.data);
   }
   return response;
 });

@@ -3,7 +3,7 @@ local hasSpawned = false
 local applying = false
 
 local function locale(key, replacements, fallback)
-    return exports.varde_core:Locale(key, replacements, fallback)
+    return exports.nord_core:Locale(key, replacements, fallback)
 end
 
 local function nativeTrue(value)
@@ -21,9 +21,9 @@ local function message(text, kind)
     local color = kind == 'error' and { 220, 70, 70 } or { 90, 180, 255 }
     TriggerEvent('chat:addMessage', {
         color = color,
-        args = { 'Varde', tostring(text) }
+        args = { 'Nord', tostring(text) }
     })
-    print(('[varde_appearance] %s'):format(tostring(text)))
+    print(('[nord_appearance] %s'):format(tostring(text)))
 end
 
 local function loadModel(model)
@@ -142,13 +142,13 @@ local function apply(value)
     end
 
     applying = false
-    TriggerEvent('varde_appearance:client:applied', copy(value))
+    TriggerEvent('nord_appearance:client:applied', copy(value))
     return true
 end
 
-RegisterNetEvent('varde_appearance:client:update', function(value)
+RegisterNetEvent('nord_appearance:client:update', function(value)
     appearance = copy(value)
-    TriggerEvent('varde_appearance:client:updated', copy(value))
+    TriggerEvent('nord_appearance:client:updated', copy(value))
     if hasSpawned then
         CreateThread(function()
             apply(appearance)
@@ -156,18 +156,18 @@ RegisterNetEvent('varde_appearance:client:update', function(value)
     end
 end)
 
-RegisterNetEvent('varde_appearance:client:error', function(text, code)
+RegisterNetEvent('nord_appearance:client:error', function(text, code)
     local key = code and ('errors.%s'):format(tostring(code)) or nil
     local translated = key and locale(key) or nil
     message(translated and translated ~= key and translated or text, 'error')
 end)
 
-RegisterNetEvent('varde:client:playerLoaded', function()
+RegisterNetEvent('Nord:client:playerLoaded', function()
     hasSpawned = false
-    TriggerServerEvent('varde_appearance:server:request')
+    TriggerServerEvent('nord_appearance:server:request')
 end)
 
-RegisterNetEvent('varde:client:playerLoggedOut', function()
+RegisterNetEvent('Nord:client:playerLoggedOut', function()
     hasSpawned = false
     appearance = nil
 end)
@@ -179,7 +179,7 @@ AddEventHandler('playerSpawned', function()
         if appearance then
             apply(appearance)
         else
-            TriggerServerEvent('varde_appearance:server:request')
+            TriggerServerEvent('nord_appearance:server:request')
         end
     end)
 end)
@@ -193,7 +193,7 @@ RegisterCommand('appearance', function()
         ), 'error')
         return
     end
-    TriggerEvent('varde_appearance:client:openRequested', copy(appearance))
+    TriggerEvent('nord_appearance:client:openRequested', copy(appearance))
     message(locale(
         'appearance.editorHook',
         nil,
@@ -202,7 +202,7 @@ RegisterCommand('appearance', function()
 end, false)
 
 RegisterCommand('resetappearance', function()
-    TriggerServerEvent('varde_appearance:server:reset')
+    TriggerServerEvent('nord_appearance:server:reset')
 end, false)
 
 exports('GetAppearance', function()
@@ -214,12 +214,12 @@ exports('ApplyAppearance', function(value)
 end)
 
 exports('SaveAppearance', function(value)
-    TriggerServerEvent('varde_appearance:server:save', value)
+    TriggerServerEvent('nord_appearance:server:save', value)
     return true
 end)
 
 exports('ResetAppearance', function()
-    TriggerServerEvent('varde_appearance:server:reset')
+    TriggerServerEvent('nord_appearance:server:reset')
     return true
 end)
 
@@ -227,9 +227,9 @@ CreateThread(function()
     while not nativeTrue(NetworkIsPlayerActive(PlayerId())) do
         Wait(250)
     end
-    if GetResourceState('varde_core') == 'started'
-        and exports.varde_core:IsLoggedIn() then
+    if GetResourceState('nord_core') == 'started'
+        and exports.nord_core:IsLoggedIn() then
         hasSpawned = nativeTrue(DoesEntityExist(PlayerPedId()))
-        TriggerServerEvent('varde_appearance:server:request')
+        TriggerServerEvent('nord_appearance:server:request')
     end
 end)

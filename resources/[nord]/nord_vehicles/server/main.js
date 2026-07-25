@@ -18,7 +18,7 @@ const runtime = {
     emitNet(eventName, -1, ...args);
   },
   log(level, message) {
-    const output = `[varde_vehicles] [${level}] ${message}`;
+    const output = `[nord_vehicles] [${level}] ${message}`;
     if (level === 'error') {
       console.error(output);
     } else if (level === 'warn') {
@@ -31,13 +31,13 @@ const runtime = {
 
 const core = {
   getPlayerData(identifier) {
-    return globalThis.exports.varde_core.GetPlayerData(identifier);
+    return globalThis.exports.nord_core.GetPlayerData(identifier);
   },
   getPlayers() {
-    return globalThis.exports.varde_core.GetPlayers();
+    return globalThis.exports.nord_core.GetPlayers();
   },
   getPlayerSource(characterId) {
-    return globalThis.exports.varde_core.GetPlayerSource(characterId);
+    return globalThis.exports.nord_core.GetPlayerSource(characterId);
   },
 };
 
@@ -69,7 +69,7 @@ function result(work) {
 
 function translate(key, replacements, fallback) {
   try {
-    const handler = globalThis.exports.varde_core.Locale;
+    const handler = globalThis.exports.nord_core.Locale;
     if (typeof handler === 'function') {
       return handler(key, replacements, fallback);
     }
@@ -83,7 +83,7 @@ function notify(source, text, kind = 'info', code = null) {
   if (Number(source) > 0) {
     runtime.emitClient(
       Number(source),
-      'varde_vehicles:client:message',
+      'nord_vehicles:client:message',
       String(text),
       kind,
       code,
@@ -158,7 +158,7 @@ function requireSpawnClear(position, radius = 4) {
 }
 
 function registerTrunk(vehicle) {
-  const response = globalThis.exports.varde_inventory.RegisterContainer(
+  const response = globalThis.exports.nord_inventory.RegisterContainer(
     `vehicle:${vehicle.id}`,
     'vehicle',
     vehicle.id,
@@ -226,7 +226,7 @@ function spawnFor(source, vehicleId, garageId) {
     SetVehicleNumberPlateText(entity, prepared.vehicle.plate);
     SetVehicleDoorsLocked(entity, prepared.vehicle.locked ? 2 : 1);
     Entity(entity).state.set(
-      'varde:initVehicle',
+      'Nord:initVehicle',
       {
         plate: prepared.vehicle.plate,
         locked: prepared.vehicle.locked,
@@ -242,7 +242,7 @@ function spawnFor(source, vehicleId, garageId) {
     );
     runtime.emitClient(
       source,
-      'varde_vehicles:client:spawned',
+      'nord_vehicles:client:spawned',
       networkId,
       vehicle,
     );
@@ -262,17 +262,17 @@ if (recovered > 0) {
   runtime.log('info', `recovered ${recovered} active vehicle(s) into storage`);
 }
 
-on('varde:server:playerLoaded', (source) => {
+on('Nord:server:playerLoaded', (source) => {
   handle(source, () => vehicles.sync(Number(source)));
 });
 
-on('varde:server:characterDeleted', (_source, characterId) => {
+on('Nord:server:characterDeleted', (_source, characterId) => {
   const owned = database
     .listAll()
     .filter((vehicle) => vehicle.ownerCharacterId === characterId);
   handle(0, () => vehicles.deleteCharacter(characterId));
   for (const vehicle of owned) {
-    const response = globalThis.exports.varde_inventory.DeleteContainer(
+    const response = globalThis.exports.nord_inventory.DeleteContainer(
       `vehicle:${vehicle.id}`,
     );
     if (!response?.ok) {
@@ -286,21 +286,21 @@ on('varde:server:characterDeleted', (_source, characterId) => {
   }
 });
 
-onNet('varde_vehicles:server:request', () => {
+onNet('nord_vehicles:server:request', () => {
   const source = Number(global.source);
   if (rateLimit(source, 'request', 500)) {
     handle(source, () => vehicles.sync(source));
   }
 });
 
-onNet('varde_vehicles:server:spawn', (vehicleId, garageId) => {
+onNet('nord_vehicles:server:spawn', (vehicleId, garageId) => {
   const source = Number(global.source);
   if (rateLimit(source, 'spawn', 1500)) {
     handle(source, () => spawnFor(source, vehicleId, garageId));
   }
 });
 
-onNet('varde_vehicles:server:store', (networkId, garageId, properties) => {
+onNet('nord_vehicles:server:store', (networkId, garageId, properties) => {
   const source = Number(global.source);
   if (!rateLimit(source, 'store', 1000)) {
     return;
@@ -331,7 +331,7 @@ onNet('varde_vehicles:server:store', (networkId, garageId, properties) => {
   });
 });
 
-onNet('varde_vehicles:server:trunk', (networkId) => {
+onNet('nord_vehicles:server:trunk', (networkId) => {
   const source = Number(global.source);
   if (!rateLimit(source, 'trunk', 750)) {
     return;
@@ -345,7 +345,7 @@ onNet('varde_vehicles:server:trunk', (networkId) => {
       coordinates(ped),
       coordinates(entity),
     );
-    const response = globalThis.exports.varde_inventory.OpenInventory(
+    const response = globalThis.exports.nord_inventory.OpenInventory(
       source,
       `vehicle:${access.vehicle.id}`,
     );
@@ -359,7 +359,7 @@ onNet('varde_vehicles:server:trunk', (networkId) => {
   });
 });
 
-onNet('varde_vehicles:server:toggleLock', (networkId) => {
+onNet('nord_vehicles:server:toggleLock', (networkId) => {
   const source = Number(global.source);
   if (!rateLimit(source, 'lock', 500)) {
     return;
@@ -375,7 +375,7 @@ onNet('varde_vehicles:server:toggleLock', (networkId) => {
     );
     SetVehicleDoorsLocked(entity, vehicle.locked ? 2 : 1);
     runtime.emitAll(
-      'varde_vehicles:client:lockChanged',
+      'nord_vehicles:client:lockChanged',
       Number(networkId),
       vehicle.locked,
     );
@@ -389,7 +389,7 @@ onNet('varde_vehicles:server:toggleLock', (networkId) => {
   });
 });
 
-onNet('varde_vehicles:server:initialized', (networkId) => {
+onNet('nord_vehicles:server:initialized', (networkId) => {
   const source = Number(global.source);
   if (!rateLimit(source, 'initialized', 250)) {
     return;
@@ -402,7 +402,7 @@ onNet('varde_vehicles:server:initialized', (networkId) => {
     DoesEntityExist(entity) &&
     Number(NetworkGetEntityOwner(entity)) === source
   ) {
-    Entity(entity).state.set('varde:initVehicle', null, true);
+    Entity(entity).state.set('Nord:initVehicle', null, true);
   }
 });
 
@@ -411,7 +411,7 @@ RegisterCommand(
   (source, args) => {
     if (
       Number(source) !== 0 &&
-      !IsPlayerAceAllowed(String(source), 'varde.vehicles.manage')
+      !IsPlayerAceAllowed(String(source), 'Nord.vehicles.manage')
     ) {
       notify(
         source,

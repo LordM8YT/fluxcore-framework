@@ -3,7 +3,7 @@ local playerData = nil
 local lastSnapshotJson = nil
 
 local function locale(key, replacements, fallback)
-    return exports.varde_core:Locale(key, replacements, fallback)
+    return exports.nord_core:Locale(key, replacements, fallback)
 end
 
 local function nativeTrue(value)
@@ -105,7 +105,7 @@ local function buildHudSnapshot()
     local vehicle = vehicleSnapshot()
     local ped = PlayerPedId()
     return {
-        contract = 'varde.hud.bootstrap.v1',
+        contract = 'Nord.hud.bootstrap.v1',
         player = {
             characterId = playerData.characterId,
             name = playerName(),
@@ -137,31 +137,31 @@ local function publishHud(force)
     local encoded = snapshot and json.encode(snapshot) or ''
     if force or encoded ~= lastSnapshotJson then
         lastSnapshotJson = encoded
-        TriggerEvent('varde_status:client:hudUpdated', copy(snapshot))
+        TriggerEvent('nord_status:client:hudUpdated', copy(snapshot))
     end
     return snapshot
 end
 
-RegisterNetEvent('varde_status:client:update', function(snapshot)
+RegisterNetEvent('nord_status:client:update', function(snapshot)
     needs = copy(snapshot)
     publishHud(true)
 end)
 
-RegisterNetEvent('varde:client:playerLoaded', function(snapshot)
+RegisterNetEvent('Nord:client:playerLoaded', function(snapshot)
     playerData = copy(snapshot)
-    TriggerServerEvent('varde_status:server:request')
+    TriggerServerEvent('nord_status:server:request')
 end)
 
-RegisterNetEvent('varde:client:playerUpdated', function(snapshot)
+RegisterNetEvent('Nord:client:playerUpdated', function(snapshot)
     playerData = copy(snapshot)
     publishHud(true)
 end)
 
-RegisterNetEvent('varde:client:playerLoggedOut', function()
+RegisterNetEvent('Nord:client:playerLoggedOut', function()
     needs = nil
     playerData = nil
     lastSnapshotJson = nil
-    TriggerEvent('varde_status:client:hudUpdated', nil)
+    TriggerEvent('nord_status:client:hudUpdated', nil)
 end)
 
 exports('GetStatus', function()
@@ -176,10 +176,10 @@ CreateThread(function()
     while not nativeTrue(NetworkIsPlayerActive(PlayerId())) do
         Wait(250)
     end
-    if GetResourceState('varde_core') == 'started'
-        and exports.varde_core:IsLoggedIn() then
-        playerData = exports.varde_core:GetPlayerData()
-        TriggerServerEvent('varde_status:server:request')
+    if GetResourceState('nord_core') == 'started'
+        and exports.nord_core:IsLoggedIn() then
+        playerData = exports.nord_core:GetPlayerData()
+        TriggerServerEvent('nord_status:server:request')
     end
 end)
 

@@ -1,8 +1,8 @@
 fx_version 'cerulean'
 game 'gta5'
 
-name 'varde_services'
-author 'Varde Framework contributors'
+name 'nord_services'
+author 'Nord Framework contributors'
 description 'Service rosters and secure invoicing for Varde Framework'
 version '0.1.0'
 license 'MIT'
@@ -10,10 +10,10 @@ license 'MIT'
 node_version '26'
 
 dependencies {
-    'varde_core',
-    'varde_jobs',
-    'varde_banking',
-    'varde_businesses'
+    'nord_core',
+    'nord_jobs',
+    'nord_banking',
+    'nord_businesses'
 }
 
 files {

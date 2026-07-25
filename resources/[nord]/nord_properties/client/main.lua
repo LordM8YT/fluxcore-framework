@@ -23,7 +23,7 @@ local function call(method, payload)
         deferred:resolve(response)
     end
     TriggerServerEvent(
-        'varde_properties:server:request',
+        'nord_properties:server:request',
         requestId,
         method,
         payload or {}
@@ -43,17 +43,17 @@ local function call(method, payload)
     return Citizen.Await(deferred)
 end
 
-RegisterNetEvent('varde_properties:client:response', function(requestId, response)
+RegisterNetEvent('nord_properties:client:response', function(requestId, response)
     local resolver = pending[tostring(requestId)]
     if resolver then resolver(response) end
 end)
 
-RegisterNetEvent('varde_properties:client:update', function(value)
+RegisterNetEvent('nord_properties:client:update', function(value)
     snapshot = copy(value)
-    TriggerEvent('varde_properties:client:updated', copy(snapshot))
+    TriggerEvent('nord_properties:client:updated', copy(snapshot))
 end)
 
-RegisterNetEvent('varde:client:playerLoggedOut', function()
+RegisterNetEvent('Nord:client:playerLoggedOut', function()
     snapshot = nil
 end)
 
@@ -61,12 +61,12 @@ RegisterCommand('properties', function()
     local response = call('bootstrap', {})
     if response.ok then
         snapshot = copy(response.data)
-        TriggerEvent('varde_properties:client:open', copy(snapshot))
+        TriggerEvent('nord_properties:client:open', copy(snapshot))
     else
         TriggerEvent('chat:addMessage', {
             color = { 220, 70, 70 },
             args = {
-                'Varde Properties',
+                'Nord Properties',
                 response.error and response.error.message
                     or 'Properties unavailable.'
             }

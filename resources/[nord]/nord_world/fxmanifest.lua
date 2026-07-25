@@ -1,8 +1,8 @@
 fx_version 'cerulean'
 game 'gta5'
 
-name 'varde_world'
-author 'Varde Framework contributors'
+name 'nord_world'
+author 'Nord Framework contributors'
 description 'Shops, dealerships, and persistent doors for Varde Framework'
 version '0.1.0'
 license 'MIT'
@@ -10,11 +10,11 @@ license 'MIT'
 node_version '26'
 
 dependencies {
-    'varde_core',
-    'varde_jobs',
-    'varde_inventory',
-    'varde_vehicles',
-    'varde_banking'
+    'nord_core',
+    'nord_jobs',
+    'nord_inventory',
+    'nord_vehicles',
+    'nord_banking'
 }
 
 files {

@@ -32,7 +32,7 @@ function profile(slot = 1) {
 }
 
 test('database persists characters and records atomic money changes', (t) => {
-  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'varde-core-'));
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'Nord-core-'));
   const filename = path.join(directory, 'test.sqlite');
   const database = new FrameworkDatabase(filename);
   t.after(() => {
@@ -95,7 +95,7 @@ test('database persists characters and records atomic money changes', (t) => {
 });
 
 test('a character slot can only be used once per account', (t) => {
-  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'varde-core-'));
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'Nord-core-'));
   const database = new FrameworkDatabase(path.join(directory, 'test.sqlite'));
   t.after(() => {
     database.close();
@@ -111,7 +111,7 @@ test('a character slot can only be used once per account', (t) => {
 });
 
 test('owned character deletion cascades wallets and ledger entries', (t) => {
-  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'varde-core-'));
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'Nord-core-'));
   const database = new FrameworkDatabase(path.join(directory, 'test.sqlite'));
   t.after(() => {
     database.close();
@@ -135,7 +135,7 @@ test('owned character deletion cascades wallets and ledger entries', (t) => {
 });
 
 test('wallet moves and offline transfers commit atomically', (t) => {
-  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'varde-core-'));
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'Nord-core-'));
   const database = new FrameworkDatabase(path.join(directory, 'test.sqlite'));
   t.after(() => {
     database.close();

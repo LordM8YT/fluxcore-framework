@@ -10,7 +10,7 @@ const { BusinessesService } = require('../server/service');
 const { validateConfig } = require('../server/config');
 
 function harness(t) {
-  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'varde-businesses-'));
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'Nord-businesses-'));
   const database = new BusinessesDatabase(
     path.join(directory, 'businesses.sqlite'),
   );
@@ -90,8 +90,8 @@ test('owner creates a company and receives replicated active state', (t) => {
     snapshot.activeBusiness.membership.permissions.includes('*'),
     true,
   );
-  assert.equal(events.at(-1).eventName, 'varde_businesses:client:update');
-  assert.equal(states.at(-1).key, 'varde:business');
+  assert.equal(events.at(-1).eventName, 'nord_businesses:client:update');
+  assert.equal(states.at(-1).key, 'Nord:business');
 });
 
 test('business permissions protect employee management', (t) => {

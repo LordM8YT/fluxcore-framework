@@ -1,8 +1,8 @@
 local function message(text, color)
-    print(('[varde_example] %s'):format(text))
+    print(('[nord_example] %s'):format(text))
     TriggerEvent('chat:addMessage', {
         color = color or { 160, 210, 255 },
-        args = { 'Varde', text }
+        args = { 'Nord', text }
     })
 end
 
@@ -15,7 +15,7 @@ local function showError(response)
 end
 
 RegisterCommand('characters', function()
-    exports.varde_core:CallAsync('characters:list', {}, function(response)
+    exports.nord_core:CallAsync('characters:list', {}, function(response)
         if not response.ok then
             showError(response)
             return
@@ -56,7 +56,7 @@ RegisterCommand('newchar', function(_, args)
         return
     end
 
-    exports.varde_core:CallAsync('characters:create', {
+    exports.nord_core:CallAsync('characters:create', {
         slot = slot,
         firstName = firstName,
         lastName = lastName,
@@ -95,7 +95,7 @@ RegisterCommand('playchar', function(_, args)
         return
     end
 
-    exports.varde_core:CallAsync(
+    exports.nord_core:CallAsync(
         'characters:select',
         { characterId = args[1] },
         function(response)
@@ -119,7 +119,7 @@ RegisterCommand('playchar', function(_, args)
 end, false)
 
 RegisterCommand('logout', function()
-    exports.varde_core:CallAsync('session:logout', {}, function(response)
+    exports.nord_core:CallAsync('session:logout', {}, function(response)
         if not response.ok then
             showError(response)
             return
@@ -129,7 +129,7 @@ RegisterCommand('logout', function()
 end, false)
 
 RegisterCommand('whoami', function()
-    local data = exports.varde_core:GetPlayerData()
+    local data = exports.nord_core:GetPlayerData()
     if not data then
         message(locale(
             'example.notLoggedIn',
@@ -162,9 +162,9 @@ RegisterCommand('whoami', function()
     ))
 end, false)
 
-RegisterNetEvent('varde_example:client:message', function(text, success)
+RegisterNetEvent('nord_example:client:message', function(text, success)
     message(text, success and { 120, 255, 160 } or { 255, 100, 100 })
 end)
 local function locale(key, replacements, fallback)
-    return exports.varde_core:Locale(key, replacements, fallback)
+    return exports.nord_core:Locale(key, replacements, fallback)
 end

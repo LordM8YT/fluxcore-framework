@@ -192,7 +192,7 @@ class PhoneService {
     );
     this.runtime.emitClient(
       online.source,
-      'varde_phone:client:contactsUpdated',
+      'nord_phone:client:contactsUpdated',
     );
     return contact;
   }
@@ -212,7 +212,7 @@ class PhoneService {
     }
     this.runtime.emitClient(
       online.source,
-      'varde_phone:client:contactsUpdated',
+      'nord_phone:client:contactsUpdated',
     );
     return contact;
   }
@@ -226,7 +226,7 @@ class PhoneService {
     }
     this.runtime.emitClient(
       online.source,
-      'varde_phone:client:contactsUpdated',
+      'nord_phone:client:contactsUpdated',
     );
     return true;
   }
@@ -261,7 +261,7 @@ class PhoneService {
       if (Number.isSafeInteger(peerSource) && peerSource > 0) {
         this.runtime.emitClient(
           peerSource,
-          'varde_phone:client:messagesRead',
+          'nord_phone:client:messagesRead',
           account.phoneNumber,
           read.readAt,
         );
@@ -305,7 +305,7 @@ class PhoneService {
     );
     this.runtime.emitClient(
       recipientSource,
-      'varde_phone:client:newMessage',
+      'nord_phone:client:newMessage',
       incoming,
     );
   }

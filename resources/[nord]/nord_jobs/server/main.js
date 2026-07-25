@@ -15,7 +15,7 @@ const runtime = {
     emitNet(eventName, source, ...args);
   },
   log(level, message) {
-    const output = `[varde_jobs] [${level}] ${message}`;
+    const output = `[nord_jobs] [${level}] ${message}`;
     if (level === 'error') {
       console.error(output);
     } else if (level === 'warn') {
@@ -28,16 +28,16 @@ const runtime = {
 
 const core = {
   getPlayerData(identifier) {
-    return globalThis.exports.varde_core.GetPlayerData(identifier);
+    return globalThis.exports.nord_core.GetPlayerData(identifier);
   },
   getPlayers() {
-    return globalThis.exports.varde_core.GetPlayers();
+    return globalThis.exports.nord_core.GetPlayers();
   },
   getPlayerSource(characterId) {
-    return globalThis.exports.varde_core.GetPlayerSource(characterId);
+    return globalThis.exports.nord_core.GetPlayerSource(characterId);
   },
   setJob(identifier, job) {
-    return globalThis.exports.varde_core.SetJob(identifier, job);
+    return globalThis.exports.nord_core.SetJob(identifier, job);
   },
 };
 
@@ -80,7 +80,7 @@ function result(work) {
 
 function translate(key, replacements, fallback) {
   try {
-    const handler = globalThis.exports.varde_core.Locale;
+    const handler = globalThis.exports.nord_core.Locale;
     if (typeof handler === 'function') {
       return handler(key, replacements, fallback);
     }
@@ -94,7 +94,7 @@ function notify(source, message, kind = 'info', code = null) {
   if (Number(source) > 0) {
     runtime.emitClient(
       Number(source),
-      'varde_jobs:client:message',
+      'nord_jobs:client:message',
       String(message),
       kind,
       code,
@@ -117,40 +117,40 @@ function actorForCommand(source) {
 }
 
 function mayManage(source) {
-  return Number(source) === 0 || IsPlayerAceAllowed(String(source), 'varde.jobs.manage');
+  return Number(source) === 0 || IsPlayerAceAllowed(String(source), 'Nord.jobs.manage');
 }
 
-on('varde:server:playerLoaded', (source) => {
+on('Nord:server:playerLoaded', (source) => {
   handle(source, () => jobs.sync(Number(source)));
 });
 
-on('varde:server:playerLoggedOut', (_source, characterId) => {
+on('Nord:server:playerLoggedOut', (_source, characterId) => {
   handle(0, () => jobs.clearDuty(characterId, 'logout'));
 });
 
-on('varde:server:playerDropped', (_source, characterId) => {
+on('Nord:server:playerDropped', (_source, characterId) => {
   handle(0, () => jobs.clearDuty(characterId, 'disconnect'));
 });
 
-on('varde:server:characterDeleted', (_source, characterId) => {
+on('Nord:server:characterDeleted', (_source, characterId) => {
   handle(0, () => jobs.deleteCharacter(characterId));
 });
 
-onNet('varde_jobs:server:request', () => {
+onNet('nord_jobs:server:request', () => {
   const source = Number(global.source);
   if (rateLimit(source, 'request', 500)) {
     handle(source, () => jobs.sync(source));
   }
 });
 
-onNet('varde_jobs:server:setActive', (jobName) => {
+onNet('nord_jobs:server:setActive', (jobName) => {
   const source = Number(global.source);
   if (rateLimit(source, 'active', 1000)) {
     handle(source, () => jobs.setActive(source, jobName));
   }
 });
 
-onNet('varde_jobs:server:clock', (jobName) => {
+onNet('nord_jobs:server:clock', (jobName) => {
   const source = Number(global.source);
   if (rateLimit(source, 'duty', 1000)) {
     handle(source, () => {

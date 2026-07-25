@@ -10,7 +10,7 @@ const { WorldDatabase } = require('../server/database');
 const { WorldService } = require('../server/service');
 
 function fixture(auditFailure = false) {
-  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'varde-world-'));
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'Nord-world-'));
   const player = {
     source: 7,
     characterId: 'vrd_1111111111111111',

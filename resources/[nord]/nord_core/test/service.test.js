@@ -9,7 +9,7 @@ const { FrameworkDatabase } = require('../server/database');
 const { CoreService } = require('../server/service');
 
 function createHarness(t) {
-  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'varde-service-'));
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'Nord-service-'));
   const database = new FrameworkDatabase(path.join(directory, 'test.sqlite'));
   const events = [];
   const states = [];
@@ -75,13 +75,13 @@ test('account, character, login, mutation, and logout form one lifecycle', (t) =
     { source: 12, ...service.getPlayerData(12) },
   ]);
   assert.equal(
-    events.some((event) => event.eventName === 'varde:client:playerLoaded'),
+    events.some((event) => event.eventName === 'Nord:client:playerLoaded'),
     true,
   );
   assert.equal(
     states.some(
       (state) =>
-        state.key === 'varde:loaded' &&
+        state.key === 'Nord:loaded' &&
         state.value === true &&
         state.replicated === true,
     ),
@@ -89,7 +89,7 @@ test('account, character, login, mutation, and logout form one lifecycle', (t) =
   );
   assert.equal(
     serverEvents.some(
-      (event) => event.eventName === 'varde:server:playerLoaded',
+      (event) => event.eventName === 'Nord:server:playerLoaded',
     ),
     true,
   );
@@ -109,7 +109,7 @@ test('account, character, login, mutation, and logout form one lifecycle', (t) =
   assert.equal(service.getPlayerData(12), null);
   assert.equal(
     states.some(
-      (state) => state.key === 'varde:loaded' && state.value === false,
+      (state) => state.key === 'Nord:loaded' && state.value === false,
     ),
     true,
   );
@@ -151,7 +151,7 @@ test('character deletion requires ownership and exact confirmation', (t) => {
   assert.equal(
     serverEvents.some(
       (event) =>
-        event.eventName === 'varde:server:characterDeleted' &&
+        event.eventName === 'Nord:server:characterDeleted' &&
         event.args[1] === created.characterId,
     ),
     true,

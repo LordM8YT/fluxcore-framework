@@ -10,7 +10,7 @@ const { JobsService } = require('../server/service');
 const { validateConfig } = require('../server/config');
 
 function createHarness(t) {
-  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'varde-jobs-service-'));
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'Nord-jobs-service-'));
   const database = new JobsDatabase(path.join(directory, 'jobs.sqlite'));
   const characterId = 'vrd_0123456789abcdef';
   const players = new Map([[7, { characterId }]]);
@@ -96,7 +96,7 @@ test('sync creates and publishes the default job', (t) => {
 
   assert.equal(snapshot.activeJob.name, 'unemployed');
   assert.equal(coreUpdates.at(-1).job.type, 'civilian');
-  assert.equal(clientEvents.at(-1).eventName, 'varde_jobs:client:update');
+  assert.equal(clientEvents.at(-1).eventName, 'nord_jobs:client:update');
 });
 
 test('assignment, active job, duty, and permissions form one lifecycle', (t) => {

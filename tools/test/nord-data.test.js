@@ -10,15 +10,15 @@ const {
   backupDatabaseSet,
   databaseFiles,
   verifyBackup,
-} = require('../varde-data');
+} = require('../nord-data');
 
 function createFixture(t) {
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'varde-data-'));
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'nord-data-'));
   const data = path.join(
     root,
     'resources',
-    '[varde]',
-    'varde_fixture',
+    '[nord]',
+    'nord_fixture',
     'data',
   );
   fs.mkdirSync(data, { recursive: true });
@@ -26,7 +26,7 @@ function createFixture(t) {
   const database = new DatabaseSync(filename);
   database.exec(`
     CREATE TABLE records (id INTEGER PRIMARY KEY, value TEXT NOT NULL) STRICT;
-    INSERT INTO records (value) VALUES ('varde');
+    INSERT INTO records (value) VALUES ('nord');
     PRAGMA user_version = 3;
   `);
   database.close();

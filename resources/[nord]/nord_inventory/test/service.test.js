@@ -10,7 +10,7 @@ const { InventoryService, normalizeMetadata } = require('../server/service');
 const { validateConfig } = require('../server/config');
 
 function createHarness(t) {
-  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'varde-inventory-'));
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'Nord-inventory-'));
   const database = new InventoryDatabase(path.join(directory, 'inventory.sqlite'));
   const players = new Map([
     [7, { characterId: 'vrd_0123456789abcdef' }],
@@ -112,7 +112,7 @@ test('add, stack, weight, remove, and owner sync are server authoritative', (t) 
   inventory = service.removeItem(7, 'water', 2, undefined, 'test');
   assert.equal(service.getItemCount(7, 'water'), 2);
   assert.equal(inventory.weight, 1000);
-  assert.equal(events.at(-1).eventName, 'varde_inventory:client:update');
+  assert.equal(events.at(-1).eventName, 'nord_inventory:client:update');
 });
 
 test('non-stackable items occupy individual slots', (t) => {
@@ -190,7 +190,7 @@ test('world drops validate distance and disappear when emptied', (t) => {
   assert.equal(service.getDrops().length, 0);
   assert.equal(
     events.some(
-      (event) => event.eventName === 'varde_inventory:client:dropRemoved',
+      (event) => event.eventName === 'nord_inventory:client:dropRemoved',
     ),
     true,
   );

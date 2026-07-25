@@ -97,7 +97,7 @@ class PropertiesService {
   snapshot(identifier) {
     const online = this.resolveOnline(identifier);
     return {
-      contract: 'varde.properties.bootstrap.v1',
+      contract: 'Nord.properties.bootstrap.v1',
       properties: this.database
         .list()
         .map((entry) => this.publicProperty(entry, online.characterId)),
@@ -109,7 +109,7 @@ class PropertiesService {
     const snapshot = this.snapshot(online.source);
     this.runtime.emitClient(
       online.source,
-      'varde_properties:client:update',
+      'nord_properties:client:update',
       clone(snapshot),
     );
     return snapshot;

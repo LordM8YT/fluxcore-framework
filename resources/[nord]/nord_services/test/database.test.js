@@ -8,7 +8,7 @@ const path = require('node:path');
 const { ServicesDatabase } = require('../server/database');
 
 test('invoice lifecycle can only be paid or cancelled once', (t) => {
-  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'varde-services-'));
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'Nord-services-'));
   const database = new ServicesDatabase(path.join(directory, 'services.sqlite'));
   t.after(() => {
     database.close();
@@ -30,7 +30,7 @@ test('invoice lifecycle can only be paid or cancelled once', (t) => {
 });
 
 test('failed payment claims can return to pending', (t) => {
-  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'varde-services-'));
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'Nord-services-'));
   const database = new ServicesDatabase(path.join(directory, 'services.sqlite'));
   t.after(() => {
     database.close();

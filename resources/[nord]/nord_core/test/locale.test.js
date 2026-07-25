@@ -46,10 +46,10 @@ test('locale service selects Norwegian and interpolates replacements', () => {
   assert.equal(
     locale.get('vehicles.created', {
       model: 'sultan',
-      plate: 'VARDE',
+      plate: 'Nord',
       source: 7,
     }),
-    'Opprettet sultan (VARDE) for kilde 7.',
+    'Opprettet sultan (Nord) for kilde 7.',
   );
 });
 

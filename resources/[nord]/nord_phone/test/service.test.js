@@ -10,7 +10,7 @@ const { PhoneService } = require('../server/service');
 const { validateConfig } = require('../server/config');
 
 function createHarness(t, options = {}) {
-  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'varde-phone-'));
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'Nord-phone-'));
   const config = validateConfig(
     {
       databaseFile: 'phone.sqlite',
@@ -104,7 +104,7 @@ test('contacts and offline-capable text messages form a private lifecycle', (t) 
     events.some(
       (event) =>
         event.source === 8 &&
-        event.eventName === 'varde_phone:client:newMessage',
+        event.eventName === 'nord_phone:client:newMessage',
     ),
     true,
   );
@@ -118,7 +118,7 @@ test('contacts and offline-capable text messages form a private lifecycle', (t) 
     events.some(
       (event) =>
         event.source === 7 &&
-        event.eventName === 'varde_phone:client:messagesRead',
+        event.eventName === 'nord_phone:client:messagesRead',
     ),
     true,
   );

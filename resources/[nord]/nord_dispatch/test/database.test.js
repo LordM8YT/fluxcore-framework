@@ -8,7 +8,7 @@ const test = require('node:test');
 const { DispatchDatabase } = require('../server/database');
 
 test('calls persist unit assignment and terminal closure', () => {
-  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'varde-dispatch-'));
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'Nord-dispatch-'));
   const database = new DispatchDatabase(path.join(directory, 'dispatch.sqlite'));
   const call = database.create(
     'police',

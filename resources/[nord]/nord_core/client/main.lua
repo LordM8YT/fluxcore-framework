@@ -34,7 +34,7 @@ local function loadLocale(locale)
     end
     local ok, parsed = pcall(json.decode, raw)
     if not ok or type(parsed) ~= 'table' then
-        print(('[varde_core] Locale locales/%s.json is invalid.'):format(locale))
+        print(('[nord_core] Locale locales/%s.json is invalid.'):format(locale))
         return nil
     end
     return parsed
@@ -59,7 +59,7 @@ end
 
 local fallbackLocaleName = normalizeLocale(config.fallbackLocale, 'en')
 local requestedLocaleName = normalizeLocale(
-    GetConvar('varde_locale', config.locale or fallbackLocaleName),
+    GetConvar('nord_locale', config.locale or fallbackLocaleName),
     fallbackLocaleName
 )
 local fallbackLocale = loadLocale(fallbackLocaleName) or {}
@@ -175,7 +175,7 @@ local function callAsync(method, payload, callback, timeoutMs)
         callback(response)
     end
 
-    TriggerServerEvent('varde:server:rpc', requestId, method, payload or {})
+    TriggerServerEvent('nord:server:rpc', requestId, method, payload or {})
 
     SetTimeout(timeoutMs or DEFAULT_TIMEOUT_MS, function()
         local resolver = pending[requestId]
@@ -216,7 +216,7 @@ local function reportSpawnDiagnostics()
     local ped = PlayerPedId()
     local pedExists = ped ~= 0 and nativeTrue(DoesEntityExist(ped))
     local coords = pedExists and GetEntityCoords(ped) or vector3(0.0, 0.0, 0.0)
-    TriggerServerEvent('varde:server:spawnDiagnostics', {
+    TriggerServerEvent('nord:server:spawnDiagnostics', {
         model = pedExists and GetEntityModel(ped) or 0,
         pedExists = pedExists,
         pedVisible = pedExists and nativeTrue(IsEntityVisible(ped)),
@@ -249,7 +249,7 @@ local function spawnAt(position)
     end
 
     if GetResourceState('spawnmanager') ~= 'started' then
-        print('[varde_core] Spawn failed: spawnmanager is not started.')
+        print('[nord_core] Spawn failed: spawnmanager is not started.')
         return false
     end
 
@@ -296,13 +296,13 @@ local function spawnAt(position)
             local spawned = nativeTrue(NetworkIsPlayerActive(PlayerId()))
                 and nativeTrue(DoesEntityExist(PlayerPedId()))
             if spawned then
-                print(('[varde_core] Spawned player at %.2f, %.2f, %.2f.'):format(
+                print(('[nord_core] Spawned player at %.2f, %.2f, %.2f.'):format(
                     x,
                     y,
                     z
                 ))
             else
-                print('[varde_core] Spawn incomplete: Cfx did not create an active player ped.')
+                print('[nord_core] Spawn incomplete: Cfx did not create an active player ped.')
             end
             reportSpawnDiagnostics()
         end)
@@ -328,29 +328,29 @@ end
 
 local function loadPlayer(snapshot)
     playerData = snapshot
-    if GetResourceState('varde_identity') == 'started' then
-        TriggerEvent('varde_identity:client:spawnRequested', copy(snapshot))
+    if GetResourceState('nord_identity') == 'started' then
+        TriggerEvent('nord_identity:client:spawnRequested', copy(snapshot))
     else
         spawnAt(snapshot and snapshot.position)
     end
 end
 
-RegisterNetEvent('varde:client:rpcResponse', function(requestId, response)
+RegisterNetEvent('Nord:client:rpcResponse', function(requestId, response)
     local resolver = pending[tostring(requestId)]
     if resolver then
         resolver(localizeResponse(response))
     end
 end)
 
-RegisterNetEvent('varde:client:playerLoaded', function(snapshot)
+RegisterNetEvent('Nord:client:playerLoaded', function(snapshot)
     loadPlayer(snapshot)
 end)
 
-RegisterNetEvent('varde:client:playerUpdated', function(snapshot)
+RegisterNetEvent('Nord:client:playerUpdated', function(snapshot)
     playerData = snapshot
 end)
 
-RegisterNetEvent('varde:client:playerLoggedOut', function()
+RegisterNetEvent('Nord:client:playerLoggedOut', function()
     playerData = nil
 end)
 
@@ -416,7 +416,7 @@ CreateThread(function()
             local ped = PlayerPedId()
             if ped ~= 0 and nativeTrue(DoesEntityExist(ped)) then
                 local coords = GetEntityCoords(ped)
-                TriggerServerEvent('varde:server:updatePosition', {
+                TriggerServerEvent('Nord:server:updatePosition', {
                     x = coords.x,
                     y = coords.y,
                     z = coords.z,
@@ -437,7 +437,7 @@ AddEventHandler('onResourceStop', function(stoppedResource)
             ok = false,
             error = {
                 code = 'RESOURCE_STOPPED',
-                message = locale('core.resourceStopped', nil, 'Varde Core stopped.')
+                message = locale('core.resourceStopped', nil, 'Nord Core stopped.')
             }
         })
         pending[requestId] = nil

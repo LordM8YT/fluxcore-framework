@@ -8,7 +8,7 @@ const path = require('node:path');
 const { BankingDatabase } = require('../server/database');
 
 test('bank profiles receive stable unique account numbers', (t) => {
-  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'varde-banking-'));
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'Nord-banking-'));
   const database = new BankingDatabase(path.join(directory, 'banking.sqlite'));
   t.after(() => {
     database.close();
@@ -30,7 +30,7 @@ test('bank profiles receive stable unique account numbers', (t) => {
 });
 
 test('deleting a character removes only its banking profile', (t) => {
-  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'varde-banking-'));
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'Nord-banking-'));
   const database = new BankingDatabase(path.join(directory, 'banking.sqlite'));
   t.after(() => {
     database.close();

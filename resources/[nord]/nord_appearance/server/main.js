@@ -15,7 +15,7 @@ const runtime = {
     emitNet(eventName, source, ...args);
   },
   log(level, message) {
-    const output = `[varde_appearance] [${level}] ${message}`;
+    const output = `[nord_appearance] [${level}] ${message}`;
     if (level === 'error') {
       console.error(output);
     } else if (level === 'warn') {
@@ -28,13 +28,13 @@ const runtime = {
 
 const core = {
   getPlayerData(identifier) {
-    return globalThis.exports.varde_core.GetPlayerData(identifier);
+    return globalThis.exports.nord_core.GetPlayerData(identifier);
   },
   getPlayers() {
-    return globalThis.exports.varde_core.GetPlayers();
+    return globalThis.exports.nord_core.GetPlayers();
   },
   getPlayerSource(characterId) {
-    return globalThis.exports.varde_core.GetPlayerSource(characterId);
+    return globalThis.exports.nord_core.GetPlayerSource(characterId);
   },
 };
 
@@ -78,7 +78,7 @@ function notifyError(source, response) {
   if (!response.ok) {
     runtime.emitClient(
       Number(source),
-      'varde_appearance:client:error',
+      'nord_appearance:client:error',
       response.error.message,
       response.error.code,
     );
@@ -94,22 +94,22 @@ function syncIfOnline(identifier) {
   }
 }
 
-on('varde:server:playerLoaded', (source) => {
+on('Nord:server:playerLoaded', (source) => {
   notifyError(source, result(() => appearance.sync(Number(source))));
 });
 
-on('varde:server:characterDeleted', (_source, characterId) => {
+on('Nord:server:characterDeleted', (_source, characterId) => {
   appearance.deleteCharacter(characterId);
 });
 
-onNet('varde_appearance:server:request', () => {
+onNet('nord_appearance:server:request', () => {
   const source = Number(global.source);
   if (rateLimit(source, 'request', 500)) {
     notifyError(source, result(() => appearance.sync(source)));
   }
 });
 
-onNet('varde_appearance:server:save', (value) => {
+onNet('nord_appearance:server:save', (value) => {
   const source = Number(global.source);
   if (!rateLimit(source, 'save', 1000)) {
     return;
@@ -121,13 +121,13 @@ onNet('varde_appearance:server:save', (value) => {
   if (response.ok) {
     runtime.emitClient(
       source,
-      'varde_appearance:client:update',
+      'nord_appearance:client:update',
       response.data,
     );
   }
 });
 
-onNet('varde_appearance:server:reset', () => {
+onNet('nord_appearance:server:reset', () => {
   const source = Number(global.source);
   if (!rateLimit(source, 'reset', 1500)) {
     return;
@@ -136,7 +136,7 @@ onNet('varde_appearance:server:reset', () => {
   if (response.ok) {
     runtime.emitClient(
       source,
-      'varde_appearance:client:update',
+      'nord_appearance:client:update',
       response.data,
     );
   }

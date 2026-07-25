@@ -6,7 +6,7 @@ local requestSequence = 0
 local uiOpen = false
 
 local function locale(key, replacements, fallback)
-    return exports.varde_core:Locale(key, replacements, fallback)
+    return exports.nord_core:Locale(key, replacements, fallback)
 end
 
 local function localizeResponse(response)
@@ -74,9 +74,9 @@ local function message(text, kind)
     local color = kind == 'error' and { 220, 70, 70 } or { 90, 180, 255 }
     TriggerEvent('chat:addMessage', {
         color = color,
-        args = { 'Varde', tostring(text) }
+        args = { 'Nord', tostring(text) }
     })
-    print(('[varde_inventory] %s'):format(tostring(text)))
+    print(('[nord_inventory] %s'):format(tostring(text)))
 end
 
 local function getItemCount(itemName)
@@ -98,12 +98,12 @@ local function closeInventory(notifyServer)
     uiOpen = false
     openPayload = nil
     SetNuiFocus(false, false)
-    SendNUIMessage({ action = 'varde:inventory:close' })
-    TriggerEvent('varde_inventory:client:closed')
+    SendNUIMessage({ action = 'Nord:inventory:close' })
+    TriggerEvent('nord_inventory:client:closed')
     if notifyServer ~= false then
         requestSequence = requestSequence + 1
         TriggerServerEvent(
-            'varde_inventory:server:nui',
+            'nord_inventory:server:nui',
             ('close:%s:%s'):format(GetGameTimer(), requestSequence),
             'close',
             {}
@@ -116,7 +116,7 @@ local function present(payload)
     localizeInventory(payload.player)
     localizeInventory(payload.secondary)
     openPayload = copy(payload)
-    TriggerEvent('varde_inventory:client:uiOpenRequested', copy(payload))
+    TriggerEvent('nord_inventory:client:uiOpenRequested', copy(payload))
 
     if not uiConfig.enabled then
         local playerInventory = payload and payload.player
@@ -165,12 +165,12 @@ local function present(payload)
     uiOpen = true
     SetNuiFocus(true, true)
     SendNUIMessage({
-        action = 'varde:inventory:open',
+        action = 'Nord:inventory:open',
         payload = payload,
-        localeName = exports.varde_core:GetLocale(),
+        localeName = exports.nord_core:GetLocale(),
         locale = {
-            inventory = exports.varde_core:GetLocaleData('inventory'),
-            labels = exports.varde_core:GetLocaleData('labels')
+            inventory = exports.nord_core:GetLocaleData('inventory'),
+            labels = exports.nord_core:GetLocaleData('labels')
         }
     })
 end
@@ -199,14 +199,14 @@ local function request(method, payload, callback)
         end)
     end
     TriggerServerEvent(
-        'varde_inventory:server:nui',
+        'nord_inventory:server:nui',
         requestId,
         method,
         payload or {}
     )
 end
 
-RegisterNetEvent('varde_inventory:client:update', function(snapshot)
+RegisterNetEvent('nord_inventory:client:update', function(snapshot)
     snapshot = localizeInventory(copy(snapshot))
     inventory = snapshot
     if openPayload then
@@ -214,18 +214,18 @@ RegisterNetEvent('varde_inventory:client:update', function(snapshot)
     end
     if uiOpen then
         SendNUIMessage({
-            action = 'varde:inventory:update',
+            action = 'Nord:inventory:update',
             payload = { player = snapshot }
         })
     end
-    TriggerEvent('varde_inventory:client:updated', copy(snapshot))
+    TriggerEvent('nord_inventory:client:updated', copy(snapshot))
 end)
 
-RegisterNetEvent('varde_inventory:client:open', function(payload)
+RegisterNetEvent('nord_inventory:client:open', function(payload)
     present(payload)
 end)
 
-RegisterNetEvent('varde_inventory:client:nuiResponse', function(requestId, response)
+RegisterNetEvent('nord_inventory:client:nuiResponse', function(requestId, response)
     response = localizeResponse(response)
     local callback = pendingRequests[tostring(requestId)]
     pendingRequests[tostring(requestId)] = nil
@@ -233,11 +233,11 @@ RegisterNetEvent('varde_inventory:client:nuiResponse', function(requestId, respo
         callback(response)
     end
     if response and response.ok and type(response.data) == 'table'
-        and response.data.contract == 'varde.inventory.bootstrap.v1' then
+        and response.data.contract == 'Nord.inventory.bootstrap.v1' then
         openPayload = copy(response.data)
         if uiOpen then
             SendNUIMessage({
-                action = 'varde:inventory:update',
+                action = 'Nord:inventory:update',
                 payload = response.data
             })
         end
@@ -254,7 +254,7 @@ RegisterNetEvent('varde_inventory:client:nuiResponse', function(requestId, respo
     end
 end)
 
-RegisterNetEvent('varde_inventory:client:drops', function(entries)
+RegisterNetEvent('nord_inventory:client:drops', function(entries)
     drops = {}
     for _, drop in ipairs(entries or {}) do
         if type(drop) == 'table' and drop.id and drop.position then
@@ -263,13 +263,13 @@ RegisterNetEvent('varde_inventory:client:drops', function(entries)
     end
 end)
 
-RegisterNetEvent('varde_inventory:client:dropCreated', function(drop)
+RegisterNetEvent('nord_inventory:client:dropCreated', function(drop)
     if type(drop) == 'table' and drop.id and drop.position then
         drops[drop.id] = drop
     end
 end)
 
-RegisterNetEvent('varde_inventory:client:dropRemoved', function(dropId)
+RegisterNetEvent('nord_inventory:client:dropRemoved', function(dropId)
     drops[tostring(dropId)] = nil
     if openPayload and openPayload.secondary
         and openPayload.secondary.id == tostring(dropId) then
@@ -277,18 +277,18 @@ RegisterNetEvent('varde_inventory:client:dropRemoved', function(dropId)
     end
 end)
 
-RegisterNetEvent('varde_inventory:client:error', function(text, code)
+RegisterNetEvent('nord_inventory:client:error', function(text, code)
     local key = code and ('errors.%s'):format(tostring(code)) or nil
     local translated = key and locale(key) or nil
     message(translated and translated ~= key and translated or text, 'error')
 end)
 
-RegisterNetEvent('varde:client:playerLoaded', function()
-    TriggerServerEvent('varde_inventory:server:request')
-    TriggerServerEvent('varde_inventory:server:requestDrops')
+RegisterNetEvent('Nord:client:playerLoaded', function()
+    TriggerServerEvent('nord_inventory:server:request')
+    TriggerServerEvent('nord_inventory:server:requestDrops')
 end)
 
-RegisterNetEvent('varde:client:playerLoggedOut', function()
+RegisterNetEvent('Nord:client:playerLoggedOut', function()
     closeInventory(false)
     inventory = nil
     drops = {}
@@ -323,7 +323,7 @@ RegisterCommand('invslot', function(_, args)
         return
     end
     TriggerServerEvent(
-        'varde_inventory:server:move',
+        'nord_inventory:server:move',
         tonumber(args[1]),
         tonumber(args[2]),
         args[3] and tonumber(args[3]) or nil
@@ -335,7 +335,7 @@ RegisterCommand('useitem', function(_, args)
         message(locale('inventory.usageUse', nil, 'Usage: /useitem <slot>'), 'error')
         return
     end
-    TriggerServerEvent('varde_inventory:server:use', tonumber(args[1]))
+    TriggerServerEvent('nord_inventory:server:use', tonumber(args[1]))
 end, false)
 
 RegisterCommand('dropitem', function(_, args)
@@ -418,10 +418,10 @@ CreateThread(function()
     while not nativeTrue(NetworkIsPlayerActive(PlayerId())) do
         Wait(250)
     end
-    if GetResourceState('varde_core') == 'started'
-        and exports.varde_core:IsLoggedIn() then
-        TriggerServerEvent('varde_inventory:server:request')
-        TriggerServerEvent('varde_inventory:server:requestDrops')
+    if GetResourceState('nord_core') == 'started'
+        and exports.nord_core:IsLoggedIn() then
+        TriggerServerEvent('nord_inventory:server:request')
+        TriggerServerEvent('nord_inventory:server:requestDrops')
     end
 end)
 
@@ -454,7 +454,7 @@ CreateThread(function()
                     if distance <= 2.0 and IsControlJustReleased(0, 38)
                         and GetGameTimer() >= nextOpenAt then
                         nextOpenAt = GetGameTimer() + 750
-                        TriggerServerEvent('varde_inventory:server:openDrop', dropId)
+                        TriggerServerEvent('nord_inventory:server:openDrop', dropId)
                     end
                 end
             end

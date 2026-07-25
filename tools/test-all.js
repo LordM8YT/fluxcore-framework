@@ -41,7 +41,7 @@ function walk(directory, predicate, output = []) {
   return output;
 }
 
-const resourceRoot = path.join(root, 'resources', '[varde]');
+const resourceRoot = path.join(root, 'resources', '[nord]');
 const packages = fs
   .readdirSync(resourceRoot, { withFileTypes: true })
   .filter((entry) => entry.isDirectory())

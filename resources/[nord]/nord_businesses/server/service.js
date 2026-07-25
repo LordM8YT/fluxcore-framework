@@ -123,7 +123,7 @@ class BusinessesService {
     const online = this.resolveOnline(identifier);
     const businesses = this.list(online.characterId);
     return {
-      contract: 'varde.businesses.bootstrap.v1',
+      contract: 'Nord.businesses.bootstrap.v1',
       businesses,
       activeBusiness:
         businesses.find((entry) => entry.membership.active) || null,
@@ -136,7 +136,7 @@ class BusinessesService {
     const active = snapshot.activeBusiness;
     this.runtime.setPlayerState(
       online.source,
-      'varde:business',
+      'Nord:business',
       active
         ? {
             id: active.id,
@@ -149,7 +149,7 @@ class BusinessesService {
     );
     this.runtime.emitClient(
       online.source,
-      'varde_businesses:client:update',
+      'nord_businesses:client:update',
       clone(snapshot),
     );
     return snapshot;

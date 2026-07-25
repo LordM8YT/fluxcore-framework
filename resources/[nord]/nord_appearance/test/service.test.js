@@ -13,7 +13,7 @@ const {
 const { validateConfig } = require('../server/config');
 
 function harness(t) {
-  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'varde-appearance-'));
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'Nord-appearance-'));
   const database = new AppearanceDatabase(path.join(directory, 'appearance.sqlite'));
   const players = new Map([
     [
@@ -101,7 +101,7 @@ test('gender default, save, reset, sync, and cleanup persist', (t) => {
   });
   assert.equal(saved.hairColor, 4);
   service.sync(7);
-  assert.equal(events.at(-1).eventName, 'varde_appearance:client:update');
+  assert.equal(events.at(-1).eventName, 'nord_appearance:client:update');
 
   const reset = service.reset(7);
   assert.equal(reset.model, 'mp_f_freemode_01');

@@ -10,7 +10,7 @@ const { DispatchDatabase } = require('../server/database');
 const { DispatchService } = require('../server/service');
 
 function fixture() {
-  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'varde-dispatch-'));
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'Nord-dispatch-'));
   const players = [
     {
       source: 7,

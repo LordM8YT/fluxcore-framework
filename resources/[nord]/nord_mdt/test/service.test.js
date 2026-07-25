@@ -10,7 +10,7 @@ const { MdtDatabase } = require('../server/database');
 const { MdtService } = require('../server/service');
 
 function fixture(permission = true) {
-  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'varde-mdt-'));
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'Nord-mdt-'));
   const players = [
     {
       source: 8,

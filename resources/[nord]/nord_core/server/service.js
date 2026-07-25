@@ -231,7 +231,7 @@ class CoreService {
     if (!this.database.deleteOwnedCharacter(context.account.id, id)) {
       throw frameworkError('CHARACTER_NOT_FOUND', 'character was not found');
     }
-    this.runtime.emitServer('varde:server:characterDeleted', playerSource, id);
+    this.runtime.emitServer('Nord:server:characterDeleted', playerSource, id);
     return true;
   }
 
@@ -255,8 +255,8 @@ class CoreService {
 
     this.setPublicState(playerSource, character);
     const snapshot = publicSnapshot(character);
-    this.runtime.emitClient(playerSource, 'varde:client:playerLoaded', snapshot);
-    this.runtime.emitServer('varde:server:playerLoaded', playerSource, snapshot);
+    this.runtime.emitClient(playerSource, 'Nord:client:playerLoaded', snapshot);
+    this.runtime.emitServer('Nord:server:playerLoaded', playerSource, snapshot);
     this.runtime.log(
       'info',
       `source ${playerSource} selected character ${character.characterId}`,
@@ -268,13 +268,13 @@ class CoreService {
     const { playerSource, context, player } = this.requirePlayer(source);
     this.database.saveCharacter(player);
     this.runtime.emitServer(
-      'varde:server:playerLoggedOut',
+      'Nord:server:playerLoggedOut',
       playerSource,
       player.characterId,
     );
     context.player = null;
     this.clearPublicState(playerSource);
-    this.runtime.emitClient(playerSource, 'varde:client:playerLoggedOut');
+    this.runtime.emitClient(playerSource, 'Nord:client:playerLoggedOut');
     return true;
   }
 
@@ -286,7 +286,7 @@ class CoreService {
     }
     if (context.player) {
       this.runtime.emitServer(
-        'varde:server:playerDropped',
+        'Nord:server:playerDropped',
         playerSource,
         context.player.characterId,
       );
@@ -518,13 +518,13 @@ class CoreService {
     player.job = validateJob(value);
     this.runtime.setPlayerState(
       player.source,
-      'varde:job',
+      'Nord:job',
       clone(player.job),
       true,
     );
     this.syncOwner(player);
     this.runtime.emitServer(
-      'varde:server:jobUpdated',
+      'Nord:server:jobUpdated',
       player.source,
       clone(player.job),
     );
@@ -559,26 +559,26 @@ class CoreService {
   syncOwner(player) {
     this.runtime.emitClient(
       player.source,
-      'varde:client:playerUpdated',
+      'Nord:client:playerUpdated',
       publicSnapshot(player),
     );
   }
 
   setPublicState(source, character) {
-    this.runtime.setPlayerState(source, 'varde:loaded', true, true);
+    this.runtime.setPlayerState(source, 'Nord:loaded', true, true);
     this.runtime.setPlayerState(
       source,
-      'varde:characterId',
+      'Nord:characterId',
       character.characterId,
       true,
     );
-    this.runtime.setPlayerState(source, 'varde:job', clone(character.job), true);
+    this.runtime.setPlayerState(source, 'Nord:job', clone(character.job), true);
   }
 
   clearPublicState(source) {
-    this.runtime.setPlayerState(source, 'varde:loaded', false, true);
-    this.runtime.setPlayerState(source, 'varde:characterId', null, true);
-    this.runtime.setPlayerState(source, 'varde:job', null, true);
+    this.runtime.setPlayerState(source, 'Nord:loaded', false, true);
+    this.runtime.setPlayerState(source, 'Nord:characterId', null, true);
+    this.runtime.setPlayerState(source, 'Nord:job', null, true);
   }
 }
 

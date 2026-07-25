@@ -75,7 +75,7 @@ function applyStaticLocale() {
 function resourceName() {
   return typeof GetParentResourceName === 'function'
     ? GetParentResourceName()
-    : 'varde_phone';
+    : 'nord_phone';
 }
 
 async function nui(endpoint, payload = {}) {
@@ -268,7 +268,7 @@ function renderChrome() {
       || t('ui.messages', {}, 'Messages');
   } else {
     headerKicker.textContent = state.account?.phoneNumber
-      || t('ui.phoneLabel', {}, 'Varde Phone');
+      || t('ui.phoneLabel', {}, 'Nord Phone');
     headerTitle.textContent =
       state.view === 'contacts'
         ? t('ui.contacts', {}, 'Contacts')

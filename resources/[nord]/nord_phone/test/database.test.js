@@ -8,7 +8,7 @@ const path = require('node:path');
 const { PhoneDatabase } = require('../server/database');
 
 function createDatabase(t) {
-  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'varde-phone-db-'));
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'Nord-phone-db-'));
   const database = new PhoneDatabase(
     path.join(directory, 'phone.sqlite'),
     '5',

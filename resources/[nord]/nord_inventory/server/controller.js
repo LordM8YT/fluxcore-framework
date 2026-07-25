@@ -41,7 +41,7 @@ class InventoryController {
   payload(source) {
     const session = this.session(source);
     return {
-      contract: 'varde.inventory.bootstrap.v1',
+      contract: 'Nord.inventory.bootstrap.v1',
       player: this.inventory.getInventory(session.player),
       secondary: session.secondary
         ? this.inventory.getInventory(session.secondary)

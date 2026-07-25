@@ -35,7 +35,7 @@ function resolveManifestPath(root, relative) {
 }
 
 function databaseFiles(root) {
-  const resourceRoot = path.join(root, 'resources', '[varde]');
+  const resourceRoot = path.join(root, 'resources', '[nord]');
   if (!fs.existsSync(resourceRoot)) {
     return [];
   }
@@ -84,7 +84,7 @@ async function backupDatabaseSet(root, destination) {
   const output = path.resolve(destination);
   const files = databaseFiles(repositoryRoot);
   if (files.length === 0) {
-    throw new Error('no Varde SQLite databases were found');
+    throw new Error('no Nord SQLite databases were found');
   }
   if (fs.existsSync(output) && fs.readdirSync(output).length > 0) {
     throw new Error(`backup destination is not empty: ${output}`);

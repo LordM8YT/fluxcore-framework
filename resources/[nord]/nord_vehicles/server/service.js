@@ -273,7 +273,7 @@ class VehiclesService {
     const snapshot = { vehicles: this.list(online.characterId) };
     this.runtime.emitClient(
       online.source,
-      'varde_vehicles:client:update',
+      'nord_vehicles:client:update',
       snapshot,
     );
     return snapshot;

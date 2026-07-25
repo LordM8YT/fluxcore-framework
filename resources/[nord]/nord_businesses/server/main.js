@@ -18,7 +18,7 @@ const runtime = {
     Player(String(source)).state.set(key, value, replicated);
   },
   log(level, message) {
-    const output = `[varde_businesses] [${level}] ${message}`;
+    const output = `[nord_businesses] [${level}] ${message}`;
     if (level === 'error') {
       console.error(output);
     } else if (level === 'warn') {
@@ -31,10 +31,10 @@ const runtime = {
 
 const core = {
   getPlayerData(identifier) {
-    return globalThis.exports.varde_core.GetPlayerData(identifier);
+    return globalThis.exports.nord_core.GetPlayerData(identifier);
   },
   getPlayerSource(characterId) {
-    return globalThis.exports.varde_core.GetPlayerSource(characterId);
+    return globalThis.exports.nord_core.GetPlayerSource(characterId);
   },
 };
 
@@ -88,7 +88,7 @@ function respond(source, requestId, work) {
       };
   runtime.emitClient(
     source,
-    'varde_businesses:client:response',
+    'nord_businesses:client:response',
     String(requestId || '').slice(0, 96),
     response,
   );
@@ -98,7 +98,7 @@ function actor(source) {
   return Number(source) === 0 ? 'console' : `source:${Number(source)}`;
 }
 
-onNet('varde_businesses:server:request', (requestId, method, payload) => {
+onNet('nord_businesses:server:request', (requestId, method, payload) => {
   const source = Number(global.source);
   const input =
     payload && typeof payload === 'object' && !Array.isArray(payload)
@@ -141,11 +141,11 @@ onNet('varde_businesses:server:request', (requestId, method, payload) => {
   });
 });
 
-on('varde:server:playerLoaded', (source) => {
+on('Nord:server:playerLoaded', (source) => {
   result(() => businesses.publish(Number(source)));
 });
 
-on('varde:server:characterDeleted', (_source, characterId) => {
+on('Nord:server:characterDeleted', (_source, characterId) => {
   result(() => businesses.deleteCharacter(characterId));
 });
 
@@ -158,11 +158,11 @@ RegisterCommand(
   (source, args) => {
     if (
       Number(source) !== 0 &&
-      !IsPlayerAceAllowed(String(source), 'varde.businesses.manage')
+      !IsPlayerAceAllowed(String(source), 'Nord.businesses.manage')
     ) {
       runtime.emitClient(
         Number(source),
-        'varde_businesses:client:message',
+        'nord_businesses:client:message',
         'You do not have permission to create businesses.',
         'error',
       );

@@ -5,7 +5,7 @@ local isLoading = false
 local selectedSpawn = 'last'
 
 local function locale(key, replacements, fallback)
-    return exports.varde_core:Locale(key, replacements, fallback)
+    return exports.nord_core:Locale(key, replacements, fallback)
 end
 
 local function nativeTrue(value)
@@ -20,14 +20,14 @@ local function send(action, data)
 end
 
 local function uiLocale()
-    local data = exports.varde_core:GetLocaleData('identity')
-    data.labels = exports.varde_core:GetLocaleData('labels')
+    local data = exports.nord_core:GetLocaleData('identity')
+    data.labels = exports.nord_core:GetLocaleData('labels')
     return data
 end
 
 local function publicSpawns()
     local spawns = {}
-    for _, spawn in ipairs(VardeIdentityConfig.spawns) do
+    for _, spawn in ipairs(NordIdentityConfig.spawns) do
         spawns[#spawns + 1] = {
             id = spawn.id,
             label = locale(spawn.labelKey, nil, spawn.label or spawn.id),
@@ -42,12 +42,12 @@ local function publicSpawns()
 end
 
 local function findSpawn(spawnId)
-    for _, spawn in ipairs(VardeIdentityConfig.spawns) do
+    for _, spawn in ipairs(NordIdentityConfig.spawns) do
         if spawn.id == spawnId then
             return spawn
         end
     end
-    return VardeIdentityConfig.spawns[1]
+    return NordIdentityConfig.spawns[1]
 end
 
 local function releaseNuiFocus()
@@ -65,24 +65,24 @@ local function closeMenu()
 end
 
 local function refreshMenu(callback)
-    exports.varde_core:CallAsync('characters:bootstrap', {}, function(response)
+    exports.nord_core:CallAsync('characters:bootstrap', {}, function(response)
         if response.ok then
             send('identity:update', {
                 title = locale(
-                    VardeIdentityConfig.titleKey,
+                    NordIdentityConfig.titleKey,
                     nil,
-                    VardeIdentityConfig.title or 'Varde'
+                    NordIdentityConfig.title or 'Nord'
                 ),
                 subtitle = locale(
-                    VardeIdentityConfig.subtitleKey,
+                    NordIdentityConfig.subtitleKey,
                     nil,
-                    VardeIdentityConfig.subtitle or 'Choose your path'
+                    NordIdentityConfig.subtitle or 'Choose your path'
                 ),
-                allowDelete = VardeIdentityConfig.allowDelete,
+                allowDelete = NordIdentityConfig.allowDelete,
                 characters = response.data.characters,
                 maxCharacters = response.data.maxCharacters,
                 spawns = publicSpawns(),
-                localeName = exports.varde_core:GetLocale(),
+                localeName = exports.nord_core:GetLocale(),
                 locale = uiLocale()
             })
         end
@@ -94,7 +94,7 @@ local function refreshMenu(callback)
 end
 
 local function openMenu()
-    if isOpen or isLoading or exports.varde_core:IsLoggedIn() then
+    if isOpen or isLoading or exports.nord_core:IsLoggedIn() then
         return
     end
 
@@ -102,7 +102,7 @@ local function openMenu()
     refreshMenu(function(response)
         isLoading = false
         if not response.ok then
-            print(('[varde_identity] %s: %s'):format(
+            print(('[nord_identity] %s: %s'):format(
                 locale(
                     'identity.errors.openFailed',
                     nil,
@@ -136,7 +136,7 @@ RegisterNUICallback('createCharacter', function(data, cb)
         return
     end
 
-    exports.varde_core:CallAsync('characters:create', data, function(response)
+    exports.nord_core:CallAsync('characters:create', data, function(response)
         cb(response)
         if response.ok then
             refreshMenu()
@@ -145,7 +145,7 @@ RegisterNUICallback('createCharacter', function(data, cb)
 end)
 
 RegisterNUICallback('deleteCharacter', function(data, cb)
-    if not isOpen or not VardeIdentityConfig.allowDelete then
+    if not isOpen or not NordIdentityConfig.allowDelete then
         cb({
             ok = false,
             error = {
@@ -161,7 +161,7 @@ RegisterNUICallback('deleteCharacter', function(data, cb)
     end
 
     local characterId = type(data) == 'table' and data.characterId or nil
-    exports.varde_core:CallAsync('characters:delete', {
+    exports.nord_core:CallAsync('characters:delete', {
         characterId = characterId,
         confirmation = characterId
     }, function(response)
@@ -189,7 +189,7 @@ RegisterNUICallback('selectCharacter', function(data, cb)
     end
 
     selectedSpawn = type(data.spawnId) == 'string' and data.spawnId or 'last'
-    exports.varde_core:CallAsync('characters:select', {
+    exports.nord_core:CallAsync('characters:select', {
         characterId = data.characterId
     }, function(response)
         cb(response)
@@ -200,7 +200,7 @@ RegisterNUICallback('selectCharacter', function(data, cb)
 end)
 
 RegisterNUICallback('close', function(_, cb)
-    if exports.varde_core:IsLoggedIn() then
+    if exports.nord_core:IsLoggedIn() then
         closeMenu()
         cb({ ok = true })
         return
@@ -219,7 +219,7 @@ RegisterNUICallback('close', function(_, cb)
     })
 end)
 
-AddEventHandler('varde_identity:client:spawnRequested', function(snapshot)
+AddEventHandler('nord_identity:client:spawnRequested', function(snapshot)
     -- The server can request the spawn before the asynchronous NUI callback
     -- has returned. Close the fullscreen frame here as well so it can never
     -- remain above the game after a successful character selection.
@@ -231,11 +231,11 @@ AddEventHandler('varde_identity:client:spawnRequested', function(snapshot)
         position = spawn.position
     end
 
-    exports.varde_core:SpawnAt(position)
+    exports.nord_core:SpawnAt(position)
     selectedSpawn = 'last'
 end)
 
-RegisterNetEvent('varde:client:playerLoggedOut', function()
+RegisterNetEvent('nord:client:playerLoggedOut', function()
     SetTimeout(250, openMenu)
 end)
 

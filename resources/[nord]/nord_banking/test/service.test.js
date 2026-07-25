@@ -10,7 +10,7 @@ const { BankingService } = require('../server/service');
 const { validateConfig } = require('../server/config');
 
 function createHarness(t) {
-  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'varde-banking-'));
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'Nord-banking-'));
   const database = new BankingDatabase(path.join(directory, 'banking.sqlite'));
   const players = new Map([
     [
@@ -153,13 +153,13 @@ test('accounts publish private balances and public account identifiers', (t) => 
 
   assert.match(snapshot.account.accountNumber, /^VRD\d{10}$/u);
   assert.equal(snapshot.balance, 5000);
-  assert.equal(events.at(-1).eventName, 'varde_banking:client:update');
+  assert.equal(events.at(-1).eventName, 'nord_banking:client:update');
   assert.equal(
-    states.find((state) => state.key === 'varde:bankAccount').replicated,
+    states.find((state) => state.key === 'Nord:bankAccount').replicated,
     true,
   );
   assert.equal(
-    states.find((state) => state.key === 'varde:bankBalance').replicated,
+    states.find((state) => state.key === 'Nord:bankBalance').replicated,
     false,
   );
 });

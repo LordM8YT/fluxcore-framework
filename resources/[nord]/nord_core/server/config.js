@@ -47,7 +47,7 @@ function validateConfig(input, resourcePath) {
   if (!databaseFile || path.isAbsolute(databaseFile) || databaseFile.includes('..')) {
     throw frameworkError(
       'CONFIG_INVALID',
-      'databaseFile must be a relative path inside varde_core',
+      'databaseFile must be a relative path inside nord_core',
     );
   }
 
@@ -110,20 +110,20 @@ function loadConfig(runtime) {
   }
 
   const maxCharacters = runtime.getConvarInt(
-    'varde_maxCharacters',
+    'nord_maxCharacters',
     parsed.maxCharacters,
   );
   const saveIntervalMs = runtime.getConvarInt(
-    'varde_saveIntervalMs',
+    'nord_saveIntervalMs',
     parsed.saveIntervalMs,
   );
   const getConvar =
     typeof runtime.getConvar === 'function'
       ? runtime.getConvar.bind(runtime)
       : (_name, fallback) => fallback;
-  const locale = getConvar('varde_locale', parsed.locale || 'en');
+  const locale = getConvar('nord_locale', parsed.locale || 'en');
   const fallbackLocale = getConvar(
-    'varde_fallbackLocale',
+    'nord_fallbackLocale',
     parsed.fallbackLocale || 'en',
   );
 

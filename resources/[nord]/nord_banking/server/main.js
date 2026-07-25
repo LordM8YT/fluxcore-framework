@@ -30,7 +30,7 @@ const runtime = {
     };
   },
   log(level, message) {
-    const output = `[varde_banking] [${level}] ${message}`;
+    const output = `[nord_banking] [${level}] ${message}`;
     if (level === 'error') {
       console.error(output);
     } else if (level === 'warn') {
@@ -43,23 +43,23 @@ const runtime = {
 
 const core = {
   getPlayerData(identifier) {
-    return globalThis.exports.varde_core.GetPlayerData(identifier);
+    return globalThis.exports.nord_core.GetPlayerData(identifier);
   },
   getPlayerSource(characterId) {
-    return globalThis.exports.varde_core.GetPlayerSource(characterId);
+    return globalThis.exports.nord_core.GetPlayerSource(characterId);
   },
   getMoney(identifier, currency) {
-    return globalThis.exports.varde_core.GetMoney(identifier, currency);
+    return globalThis.exports.nord_core.GetMoney(identifier, currency);
   },
   getMoneyLedger(identifier, currency, limit) {
-    return globalThis.exports.varde_core.GetMoneyLedger(
+    return globalThis.exports.nord_core.GetMoneyLedger(
       identifier,
       currency,
       limit,
     );
   },
   moveMoney(identifier, fromCurrency, toCurrency, amount, reason, reference) {
-    return globalThis.exports.varde_core.MoveMoney(
+    return globalThis.exports.nord_core.MoveMoney(
       identifier,
       fromCurrency,
       toCurrency,
@@ -76,7 +76,7 @@ const core = {
     reason,
     reference,
   ) {
-    return globalThis.exports.varde_core.TransferMoney(
+    return globalThis.exports.nord_core.TransferMoney(
       fromIdentifier,
       toIdentifier,
       currency,
@@ -137,7 +137,7 @@ function respond(source, requestId, work) {
       };
   runtime.emitClient(
     source,
-    'varde_banking:client:response',
+    'nord_banking:client:response',
     String(requestId || '').slice(0, 96),
     response,
   );
@@ -145,7 +145,7 @@ function respond(source, requestId, work) {
 }
 
 onNet(
-  'varde_banking:server:request',
+  'nord_banking:server:request',
   (requestId, method, payload) => {
     const source = Number(global.source);
     const input =
@@ -180,11 +180,11 @@ onNet(
   },
 );
 
-on('varde:server:playerLoaded', (source) => {
+on('Nord:server:playerLoaded', (source) => {
   result(() => banking.publish(Number(source)));
 });
 
-on('varde:server:characterDeleted', (_source, characterId) => {
+on('Nord:server:characterDeleted', (_source, characterId) => {
   result(() => banking.deleteCharacter(characterId));
 });
 

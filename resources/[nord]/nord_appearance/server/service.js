@@ -264,7 +264,7 @@ class AppearanceService {
     const appearance = this.get(online.characterId);
     this.runtime.emitClient(
       online.source,
-      'varde_appearance:client:update',
+      'nord_appearance:client:update',
       appearance,
     );
     return appearance;

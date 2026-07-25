@@ -13,7 +13,7 @@ function fixture(
   removeMoney = { ok: true, data: {} },
   emitClientFailure = false,
 ) {
-  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'varde-properties-'));
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'Nord-properties-'));
   const players = [
     {
       source: 7,

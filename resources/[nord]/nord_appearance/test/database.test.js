@@ -8,7 +8,7 @@ const path = require('node:path');
 const { AppearanceDatabase } = require('../server/database');
 
 test('appearance records persist and delete by character', (t) => {
-  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'varde-appearance-'));
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'Nord-appearance-'));
   const database = new AppearanceDatabase(path.join(directory, 'appearance.sqlite'));
   t.after(() => {
     database.close();

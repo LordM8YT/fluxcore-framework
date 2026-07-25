@@ -4,7 +4,7 @@ local rawConfig = LoadResourceFile(GetCurrentResourceName(), 'config/jobs.json')
 local jobConfig = rawConfig and json.decode(rawConfig) or { jobs = {} }
 
 local function locale(key, replacements, fallback)
-    return exports.varde_core:Locale(key, replacements, fallback)
+    return exports.nord_core:Locale(key, replacements, fallback)
 end
 
 local function nativeTrue(value)
@@ -22,9 +22,9 @@ local function message(text, kind)
     local color = kind == 'error' and { 220, 70, 70 } or { 90, 180, 255 }
     TriggerEvent('chat:addMessage', {
         color = color,
-        args = { 'Varde', tostring(text) }
+        args = { 'Nord', tostring(text) }
     })
-    print(('[varde_jobs] %s'):format(tostring(text)))
+    print(('[nord_jobs] %s'):format(tostring(text)))
 end
 
 local function localizeJob(job)
@@ -46,29 +46,29 @@ local function localizeJob(job)
     return job
 end
 
-RegisterNetEvent('varde_jobs:client:update', function(snapshot)
+RegisterNetEvent('nord_jobs:client:update', function(snapshot)
     jobs = snapshot and snapshot.jobs or {}
     activeJob = snapshot and snapshot.activeJob or nil
     for _, job in ipairs(jobs) do
         localizeJob(job)
     end
     localizeJob(activeJob)
-    TriggerEvent('varde_jobs:client:updated', copy(snapshot))
+    TriggerEvent('nord_jobs:client:updated', copy(snapshot))
 end)
 
-RegisterNetEvent('varde_jobs:client:message', function(text, kind, code)
+RegisterNetEvent('nord_jobs:client:message', function(text, kind, code)
     local key = code and ('errors.%s'):format(tostring(code)) or nil
     local translated = key and locale(key) or nil
     message(translated and translated ~= key and translated or text, kind)
 end)
 
-RegisterNetEvent('varde:client:playerLoggedOut', function()
+RegisterNetEvent('Nord:client:playerLoggedOut', function()
     jobs = {}
     activeJob = nil
 end)
 
-RegisterNetEvent('varde:client:playerLoaded', function()
-    TriggerServerEvent('varde_jobs:server:request')
+RegisterNetEvent('Nord:client:playerLoaded', function()
+    TriggerServerEvent('nord_jobs:server:request')
 end)
 
 RegisterCommand('jobs', function()
@@ -105,7 +105,7 @@ RegisterCommand('job', function(_, args)
         message(locale('jobs.usageJob', nil, 'Usage: /job <name>'), 'error')
         return
     end
-    TriggerServerEvent('varde_jobs:server:setActive', args[1])
+    TriggerServerEvent('nord_jobs:server:setActive', args[1])
 end, false)
 
 RegisterCommand('duty', function()
@@ -143,9 +143,9 @@ CreateThread(function()
     while not nativeTrue(NetworkIsPlayerActive(PlayerId())) do
         Wait(250)
     end
-    if GetResourceState('varde_core') == 'started'
-        and exports.varde_core:IsLoggedIn() then
-        TriggerServerEvent('varde_jobs:server:request')
+    if GetResourceState('nord_core') == 'started'
+        and exports.nord_core:IsLoggedIn() then
+        TriggerServerEvent('nord_jobs:server:request')
     end
 end)
 
@@ -223,7 +223,7 @@ CreateThread(function()
                         and GetGameTimer() >= cooldownUntil then
                         cooldownUntil = GetGameTimer() + 1500
                         TriggerServerEvent(
-                            'varde_jobs:server:clock',
+                            'nord_jobs:server:clock',
                             assignment.name
                         )
                     end

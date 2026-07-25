@@ -8,7 +8,7 @@ const path = require('node:path');
 const { VehiclesDatabase } = require('../server/database');
 
 function createDatabase(t) {
-  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'varde-vehicles-db-'));
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'Nord-vehicles-db-'));
   const database = new VehiclesDatabase(path.join(directory, 'vehicles.sqlite'));
   t.after(() => {
     database.close();

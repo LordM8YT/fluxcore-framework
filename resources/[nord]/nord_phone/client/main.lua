@@ -5,7 +5,7 @@ local pending = {}
 local phoneOpen = false
 
 local function locale(key, replacements, fallback)
-    return exports.varde_core:Locale(key, replacements, fallback)
+    return exports.nord_core:Locale(key, replacements, fallback)
 end
 
 local function localizeResponse(response)
@@ -28,9 +28,9 @@ local function message(text, kind)
     local color = kind == 'error' and { 220, 70, 70 } or { 90, 180, 255 }
     TriggerEvent('chat:addMessage', {
         color = color,
-        args = { 'Varde Phone', tostring(text) }
+        args = { 'Nord Phone', tostring(text) }
     })
-    print(('[varde_phone] %s'):format(tostring(text)))
+    print(('[nord_phone] %s'):format(tostring(text)))
 end
 
 local function nextRequestId()
@@ -57,7 +57,7 @@ local function call(method, payload)
     end
 
     TriggerServerEvent(
-        'varde_phone:server:request',
+        'nord_phone:server:request',
         requestId,
         method,
         payload or {}
@@ -108,19 +108,19 @@ local function openPhone()
     SendNUIMessage({
         type = 'open',
         payload = response.data,
-        localeName = exports.varde_core:GetLocale(),
-        locale = exports.varde_core:GetLocaleData('phone')
+        localeName = exports.nord_core:GetLocale(),
+        locale = exports.nord_core:GetLocaleData('phone')
     })
 end
 
-RegisterNetEvent('varde_phone:client:response', function(requestId, response)
+RegisterNetEvent('nord_phone:client:response', function(requestId, response)
     local resolver = pending[tostring(requestId)]
     if resolver then
         resolver(response)
     end
 end)
 
-RegisterNetEvent('varde_phone:client:newMessage', function(incoming)
+RegisterNetEvent('nord_phone:client:newMessage', function(incoming)
     if phoneOpen then
         SendNUIMessage({
             type = 'newMessage',
@@ -141,7 +141,7 @@ RegisterNetEvent('varde_phone:client:newMessage', function(incoming)
     end
 end)
 
-RegisterNetEvent('varde_phone:client:messagesRead', function(phoneNumber, readAt)
+RegisterNetEvent('nord_phone:client:messagesRead', function(phoneNumber, readAt)
     if phoneOpen then
         SendNUIMessage({
             type = 'messagesRead',
@@ -153,21 +153,21 @@ RegisterNetEvent('varde_phone:client:messagesRead', function(phoneNumber, readAt
     end
 end)
 
-RegisterNetEvent('varde_phone:client:contactsUpdated', function()
+RegisterNetEvent('nord_phone:client:contactsUpdated', function()
     if phoneOpen then
         local response = call('bootstrap', {})
         if response.ok then
             SendNUIMessage({
                 type = 'bootstrap',
                 payload = response.data,
-                localeName = exports.varde_core:GetLocale(),
-                locale = exports.varde_core:GetLocaleData('phone')
+                localeName = exports.nord_core:GetLocale(),
+                locale = exports.nord_core:GetLocaleData('phone')
             })
         end
     end
 end)
 
-RegisterNetEvent('varde:client:playerLoggedOut', function()
+RegisterNetEvent('Nord:client:playerLoggedOut', function()
     if phoneOpen then
         closePhone()
     end
@@ -204,7 +204,7 @@ AddEventHandler('onResourceStop', function(stoppedResource)
                 message = locale(
                     'errors.RESOURCE_STOPPED',
                     nil,
-                    'Varde Phone stopped.'
+                    'Nord Phone stopped.'
                 )
             }
         })

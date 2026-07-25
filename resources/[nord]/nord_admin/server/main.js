@@ -15,7 +15,7 @@ const runtime = {
     return IsPlayerAceAllowed(String(source), permission);
   },
   getPlayers() {
-    return globalThis.exports.varde_core
+    return globalThis.exports.nord_core
       .GetPlayers()
       .map((player) => Number(player.source));
   },
@@ -44,7 +44,7 @@ const runtime = {
     emitNet(eventName, source, ...args);
   },
   log(level, message) {
-    const output = `[varde_admin] [${level}] ${message}`;
+    const output = `[nord_admin] [${level}] ${message}`;
     if (level === 'error') {
       console.error(output);
     } else if (level === 'warn') {
@@ -67,10 +67,10 @@ function requireResource(name) {
 const integrations = {
   core: {
     getPlayerData(identifier) {
-      return globalThis.exports.varde_core.GetPlayerData(identifier);
+      return globalThis.exports.nord_core.GetPlayerData(identifier);
     },
     setMoney(identifier, currency, amount, reason, reference) {
-      return globalThis.exports.varde_core.SetMoney(
+      return globalThis.exports.nord_core.SetMoney(
         identifier,
         currency,
         amount,
@@ -81,8 +81,8 @@ const integrations = {
   },
   jobs: {
     assignJob(identifier, jobName, grade) {
-      requireResource('varde_jobs');
-      return globalThis.exports.varde_jobs.AssignJob(
+      requireResource('nord_jobs');
+      return globalThis.exports.nord_jobs.AssignJob(
         identifier,
         jobName,
         grade,
@@ -91,8 +91,8 @@ const integrations = {
   },
   inventory: {
     addItem(identifier, itemName, amount, metadata) {
-      requireResource('varde_inventory');
-      return globalThis.exports.varde_inventory.AddItem(
+      requireResource('nord_inventory');
+      return globalThis.exports.nord_inventory.AddItem(
         identifier,
         itemName,
         amount,
@@ -144,7 +144,7 @@ function response(work) {
   }
 }
 
-onNet('varde_admin:server:request', (requestId, method, payload) => {
+onNet('nord_admin:server:request', (requestId, method, payload) => {
   const source = Number(global.source);
   let result;
   if (!allowRequest(source)) {
@@ -172,7 +172,7 @@ onNet('varde_admin:server:request', (requestId, method, payload) => {
   }
   runtime.emitClient(
     source,
-    'varde_admin:client:response',
+    'nord_admin:client:response',
     String(requestId || '').slice(0, 96),
     result,
   );
@@ -185,7 +185,7 @@ on('playerDropped', () => {
 });
 
 globalThis.exports('HasPermission', (source, permission) =>
-  admin.hasPermission(Number(source), String(permission || 'varde.admin')),
+  admin.hasPermission(Number(source), String(permission || 'Nord.admin')),
 );
 
 on('onResourceStop', (stoppedResource) => {

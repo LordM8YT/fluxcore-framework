@@ -27,7 +27,7 @@ const runtime = {
     };
   },
   log(level, message) {
-    const output = `[varde_dispatch] [${level}] ${message}`;
+    const output = `[nord_dispatch] [${level}] ${message}`;
     if (level === 'error') console.error(output);
     else if (level === 'warn') console.warn(output);
     else console.log(output);
@@ -43,19 +43,19 @@ function requireResource(name) {
 const integrations = {
   core: {
     getPlayerData(identifier) {
-      return globalThis.exports.varde_core.GetPlayerData(identifier);
+      return globalThis.exports.nord_core.GetPlayerData(identifier);
     },
     getPlayerSource(characterId) {
-      return globalThis.exports.varde_core.GetPlayerSource(characterId);
+      return globalThis.exports.nord_core.GetPlayerSource(characterId);
     },
     getPlayers() {
-      return globalThis.exports.varde_core.GetPlayers();
+      return globalThis.exports.nord_core.GetPlayers();
     },
   },
   jobs: {
     hasPermission(identifier, permission, options) {
-      requireResource('varde_jobs');
-      return globalThis.exports.varde_jobs.HasPermission(
+      requireResource('nord_jobs');
+      return globalThis.exports.nord_jobs.HasPermission(
         identifier,
         permission,
         options,
@@ -64,8 +64,8 @@ const integrations = {
   },
   services: {
     getRoster() {
-      requireResource('varde_services');
-      return globalThis.exports.varde_services.GetRoster();
+      requireResource('nord_services');
+      return globalThis.exports.nord_services.GetRoster();
     },
   },
 };
@@ -106,7 +106,7 @@ function allow(source) {
   return true;
 }
 
-onNet('varde_dispatch:server:request', (requestId, method, payload) => {
+onNet('nord_dispatch:server:request', (requestId, method, payload) => {
   const source = Number(global.source);
   const input =
     payload && typeof payload === 'object' && !Array.isArray(payload)
@@ -141,19 +141,19 @@ onNet('varde_dispatch:server:request', (requestId, method, payload) => {
       };
   runtime.emitClient(
     source,
-    'varde_dispatch:client:response',
+    'nord_dispatch:client:response',
     String(requestId || '').slice(0, 96),
     response,
   );
 });
 
-on('varde:server:playerLoaded', (source) => {
+on('Nord:server:playerLoaded', (source) => {
   result(() => dispatch.publish(Number(source)));
 });
-on('varde:server:jobUpdated', (source) => {
+on('Nord:server:jobUpdated', (source) => {
   result(() => dispatch.publish(Number(source)));
 });
-on('varde:server:characterDeleted', (_source, characterId) => {
+on('Nord:server:characterDeleted', (_source, characterId) => {
   result(() => dispatch.deleteCharacter(characterId));
 });
 on('playerDropped', () => {

@@ -108,7 +108,7 @@ class MdtService {
       dispatch = null;
     }
     return {
-      contract: 'varde.mdt.bootstrap.v1',
+      contract: 'Nord.mdt.bootstrap.v1',
       warrants: this.database.activeWarrants(this.config.historyLimit),
       bolos: this.database.activeBolos(this.config.historyLimit),
       reports: this.database.recentReports(this.config.historyLimit),

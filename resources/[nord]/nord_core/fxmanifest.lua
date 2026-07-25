@@ -1,9 +1,9 @@
 fx_version 'cerulean'
 game 'gta5'
 
-name 'varde_core'
-author 'Varde Framework contributors'
-description 'Varde Framework core for FiveM Enhanced'
+name 'nord_core'
+author 'Nord Framework contributors'
+description 'Nord Framework core for FiveM Enhanced'
 version '0.1.0'
 license 'MIT'
 

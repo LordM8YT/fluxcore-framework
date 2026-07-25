@@ -10,7 +10,7 @@ const { StatusService } = require('../server/service');
 const { validateConfig } = require('../server/config');
 
 function createHarness(t) {
-  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'varde-status-'));
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'Nord-status-'));
   const config = validateConfig(
     {
       databaseFile: 'status.sqlite',
@@ -77,7 +77,7 @@ test('status mutations clamp, persist, and publish owner snapshots', (t) => {
     events.every(
       (event) =>
         event.source === 7 &&
-        event.eventName === 'varde_status:client:update',
+        event.eventName === 'nord_status:client:update',
     ),
   );
 });

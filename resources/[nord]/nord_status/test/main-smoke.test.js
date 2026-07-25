@@ -11,7 +11,7 @@ const { createRequire } = require('node:module');
 test('Cfx wiring boots and exposes private status operations', () => {
   const resourceRoot = path.resolve(__dirname, '..');
   const mainPath = path.join(resourceRoot, 'server', 'main.js');
-  const temporaryRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'varde-status-main-'));
+  const temporaryRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'Nord-status-main-'));
   const eventHandlers = new Map();
   const netHandlers = new Map();
   const registeredExports = new Map();
@@ -25,7 +25,7 @@ test('Cfx wiring boots and exposes private status operations', () => {
   function registerExport(name, handler) {
     registeredExports.set(name, handler);
   }
-  registerExport.varde_core = {
+  registerExport.nord_core = {
     GetPlayerData(identifier) {
       return Number(identifier) === 7 || identifier === player.characterId
         ? player
@@ -45,7 +45,7 @@ test('Cfx wiring boots and exposes private status operations', () => {
     console,
     Date,
     GetCurrentResourceName() {
-      return 'varde_status';
+      return 'nord_status';
     },
     GetResourcePath() {
       return temporaryRoot;
@@ -81,7 +81,7 @@ test('Cfx wiring boots and exposes private status operations', () => {
     vm.runInContext(fs.readFileSync(mainPath, 'utf8'), context, {
       filename: mainPath,
     });
-    assert.equal(netHandlers.has('varde_status:server:request'), true);
+    assert.equal(netHandlers.has('nord_status:server:request'), true);
     assert.equal(registeredExports.has('GetStatus'), true);
     assert.equal(registeredExports.has('RemoveStatus'), true);
     assert.equal(intervals.size, 1);
@@ -92,12 +92,12 @@ test('Cfx wiring boots and exposes private status operations', () => {
     assert.equal(response.data.hunger, 90);
     assert.equal(
       emitted.some(
-        (event) => event.eventName === 'varde_status:client:update',
+        (event) => event.eventName === 'nord_status:client:update',
       ),
       true,
     );
 
-    eventHandlers.get('onResourceStop')('varde_status');
+    eventHandlers.get('onResourceStop')('nord_status');
     assert.equal(intervals.size, 0);
   } finally {
     fs.rmSync(temporaryRoot, {

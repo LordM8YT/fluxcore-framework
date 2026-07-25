@@ -1,8 +1,8 @@
 fx_version 'cerulean'
 game 'gta5'
 
-name 'varde_dispatch'
-author 'Varde Framework contributors'
+name 'nord_dispatch'
+author 'Nord Framework contributors'
 description 'Server-authoritative emergency dispatch for Varde Framework'
 version '0.1.0'
 license 'MIT'
@@ -10,9 +10,9 @@ license 'MIT'
 node_version '26'
 
 dependencies {
-    'varde_core',
-    'varde_jobs',
-    'varde_services'
+    'nord_core',
+    'nord_jobs',
+    'nord_services'
 }
 
 files {

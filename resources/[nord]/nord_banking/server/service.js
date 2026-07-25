@@ -156,7 +156,7 @@ class BankingService {
       'core could not read bank transactions',
     );
     return {
-      contract: 'varde.banking.bootstrap.v1',
+      contract: 'Nord.banking.bootstrap.v1',
       account: clone(profile),
       balance: this.balance(online.characterId),
       currency: this.config.currency,
@@ -169,19 +169,19 @@ class BankingService {
     const snapshot = this.snapshot(online.source);
     this.runtime.setPlayerState(
       online.source,
-      'varde:bankAccount',
+      'Nord:bankAccount',
       snapshot.account.accountNumber,
       true,
     );
     this.runtime.setPlayerState(
       online.source,
-      'varde:bankBalance',
+      'Nord:bankBalance',
       snapshot.balance,
       false,
     );
     this.runtime.emitClient(
       online.source,
-      'varde_banking:client:update',
+      'nord_banking:client:update',
       clone(snapshot),
     );
     return snapshot;

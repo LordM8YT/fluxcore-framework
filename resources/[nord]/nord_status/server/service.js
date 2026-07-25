@@ -79,7 +79,7 @@ class StatusService {
 
   publish(source, values) {
     const snapshot = clone(values);
-    this.runtime.emitClient(source, 'varde_status:client:update', snapshot);
+    this.runtime.emitClient(source, 'nord_status:client:update', snapshot);
     return snapshot;
   }
 

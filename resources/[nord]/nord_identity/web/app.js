@@ -1,7 +1,7 @@
 'use strict';
 
 const isNui = typeof window.GetParentResourceName === 'function';
-const resourceName = isNui ? window.GetParentResourceName() : 'varde_identity';
+const resourceName = isNui ? window.GetParentResourceName() : 'nord_identity';
 
 const state = {
   open: false,
@@ -248,7 +248,7 @@ function renderCharacters() {
 }
 
 function render() {
-  elements.title.textContent = state.title || 'Varde';
+  elements.title.textContent = state.title || 'Nord';
   elements.subtitle.textContent = state.subtitle || 'Choose your path';
   elements.app.classList.toggle('is-hidden', !state.open);
   renderCharacters();
@@ -261,7 +261,7 @@ function applyBootstrap(data) {
     : state.locale;
   state.localeName = data.localeName || state.localeName;
   applyStaticLocale();
-  state.title = data.title || 'Varde';
+  state.title = data.title || 'Nord';
   state.subtitle = data.subtitle || 'Choose your path';
   state.allowDelete = data.allowDelete !== false;
   state.maxCharacters = Number(data.maxCharacters) || 4;
@@ -431,7 +431,7 @@ window.addEventListener('keydown', async (event) => {
 
 if (!isNui) {
   applyBootstrap({
-    title: 'Varde',
+    title: 'Nord',
     subtitle: 'Choose your path',
     allowDelete: true,
     maxCharacters: 4,

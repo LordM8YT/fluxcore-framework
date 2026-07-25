@@ -11,7 +11,7 @@ const { createRequire } = require('node:module');
 test('Cfx wiring boots and serves job events, commands, and exports', () => {
   const resourceRoot = path.resolve(__dirname, '..');
   const mainPath = path.join(resourceRoot, 'server', 'main.js');
-  const temporaryRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'varde-jobs-main-'));
+  const temporaryRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'Nord-jobs-main-'));
   const eventHandlers = new Map();
   const netHandlers = new Map();
   const commands = new Map();
@@ -23,7 +23,7 @@ test('Cfx wiring boots and serves job events, commands, and exports', () => {
   function registerExport(name, handler) {
     registeredExports.set(name, handler);
   }
-  registerExport.varde_core = {
+  registerExport.nord_core = {
     GetPlayerData(identifier) {
       return Number(identifier) === 7 || identifier === player.characterId
         ? player
@@ -45,7 +45,7 @@ test('Cfx wiring boots and serves job events, commands, and exports', () => {
     require: createRequire(mainPath),
     console,
     GetCurrentResourceName() {
-      return 'varde_jobs';
+      return 'nord_jobs';
     },
     GetResourcePath() {
       return temporaryRoot;
@@ -93,15 +93,15 @@ test('Cfx wiring boots and serves job events, commands, and exports', () => {
     const code = fs.readFileSync(mainPath, 'utf8');
     vm.runInContext(code, context, { filename: mainPath });
 
-    assert.equal(eventHandlers.has('varde:server:playerLoaded'), true);
-    assert.equal(netHandlers.has('varde_jobs:server:clock'), true);
+    assert.equal(eventHandlers.has('Nord:server:playerLoaded'), true);
+    assert.equal(netHandlers.has('nord_jobs:server:clock'), true);
     assert.equal(commands.has('assignjob'), true);
     assert.equal(registeredExports.has('HasPermission'), true);
 
-    eventHandlers.get('varde:server:playerLoaded')(7, player);
+    eventHandlers.get('Nord:server:playerLoaded')(7, player);
     assert.equal(currentJob.name, 'unemployed');
     assert.equal(
-      emitted.some((event) => event.eventName === 'varde_jobs:client:update'),
+      emitted.some((event) => event.eventName === 'nord_jobs:client:update'),
       true,
     );
 
@@ -110,14 +110,14 @@ test('Cfx wiring boots and serves job events, commands, and exports', () => {
     assert.equal(assignResult, true);
 
     context.source = 7;
-    netHandlers.get('varde_jobs:server:setActive')('police');
-    netHandlers.get('varde_jobs:server:clock')('police');
+    netHandlers.get('nord_jobs:server:setActive')('police');
+    netHandlers.get('nord_jobs:server:clock')('police');
     assert.equal(
       registeredExports.get('HasPermission')(7, 'police.evidence'),
       true,
     );
 
-    eventHandlers.get('onResourceStop')('varde_jobs');
+    eventHandlers.get('onResourceStop')('nord_jobs');
   } finally {
     fs.rmSync(temporaryRoot, { recursive: true, force: true });
   }

@@ -1,13 +1,13 @@
 local function reply(source, text, success)
     if source == 0 then
-        print(('[varde_example] %s'):format(text))
+        print(('[nord_example] %s'):format(text))
         return
     end
-    TriggerClientEvent('varde_example:client:message', source, text, success)
+    TriggerClientEvent('nord_example:client:message', source, text, success)
 end
 
 RegisterCommand('grantcash', function(source, args)
-    if source > 0 and not IsPlayerAceAllowed(source, 'varde.admin') then
+    if source > 0 and not IsPlayerAceAllowed(source, 'Nord.admin') then
         reply(source, locale(
             'example.adminRequired',
             nil,
@@ -27,7 +27,7 @@ RegisterCommand('grantcash', function(source, args)
         return
     end
 
-    local result = exports.varde_core:AddMoney(
+    local result = exports.nord_core:AddMoney(
         target,
         'cash',
         amount,
@@ -63,5 +63,5 @@ RegisterCommand('grantcash', function(source, args)
     ), true)
 end, false)
 local function locale(key, replacements, fallback)
-    return exports.varde_core:Locale(key, replacements, fallback)
+    return exports.nord_core:Locale(key, replacements, fallback)
 end

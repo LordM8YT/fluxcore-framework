@@ -22,7 +22,7 @@ local function call(method, payload)
         pending[requestId] = nil
         deferred:resolve(response)
     end
-    TriggerServerEvent('varde_mdt:server:request', requestId, method, payload or {})
+    TriggerServerEvent('nord_mdt:server:request', requestId, method, payload or {})
     SetTimeout(REQUEST_TIMEOUT_MS, function()
         local resolver = pending[requestId]
         if resolver then
@@ -35,12 +35,12 @@ local function call(method, payload)
     return Citizen.Await(deferred)
 end
 
-RegisterNetEvent('varde_mdt:client:response', function(requestId, response)
+RegisterNetEvent('nord_mdt:client:response', function(requestId, response)
     local resolver = pending[tostring(requestId)]
     if resolver then resolver(response) end
 end)
 
-RegisterNetEvent('varde:client:playerLoggedOut', function()
+RegisterNetEvent('Nord:client:playerLoggedOut', function()
     snapshot = nil
 end)
 
@@ -48,12 +48,12 @@ RegisterCommand('mdt', function()
     local response = call('bootstrap', {})
     if response.ok then
         snapshot = copy(response.data)
-        TriggerEvent('varde_mdt:client:open', copy(snapshot))
+        TriggerEvent('nord_mdt:client:open', copy(snapshot))
     else
         TriggerEvent('chat:addMessage', {
             color = { 220, 70, 70 },
             args = {
-                'Varde MDT',
+                'Nord MDT',
                 response.error and response.error.message or 'MDT unavailable.'
             }
         })

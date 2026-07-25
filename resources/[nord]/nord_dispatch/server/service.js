@@ -148,7 +148,7 @@ class DispatchService {
       }
     }
     return {
-      contract: 'varde.dispatch.bootstrap.v1',
+      contract: 'Nord.dispatch.bootstrap.v1',
       services,
       calls,
       roster: this.integrations.services.getRoster(),
@@ -160,7 +160,7 @@ class DispatchService {
     const snapshot = this.snapshot(online.source);
     this.runtime.emitClient(
       online.source,
-      'varde_dispatch:client:update',
+      'nord_dispatch:client:update',
       clone(snapshot),
     );
     return snapshot;

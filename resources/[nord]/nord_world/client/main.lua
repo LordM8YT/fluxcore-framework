@@ -23,7 +23,7 @@ local function call(method, payload)
         pending[requestId] = nil
         deferred:resolve(response)
     end
-    TriggerServerEvent('varde_world:server:request', requestId, method, payload or {})
+    TriggerServerEvent('nord_world:server:request', requestId, method, payload or {})
     SetTimeout(REQUEST_TIMEOUT_MS, function()
         local resolver = pending[requestId]
         if resolver then
@@ -39,7 +39,7 @@ end
 local function applyDoors()
     if not snapshot or not snapshot.doors then return end
     for _, door in ipairs(snapshot.doors) do
-        local systemId = joaat(('varde:%s'):format(door.id))
+        local systemId = joaat(('Nord:%s'):format(door.id))
         if not registeredDoors[door.id] then
             AddDoorToSystem(
                 systemId,
@@ -57,18 +57,18 @@ local function applyDoors()
     end
 end
 
-RegisterNetEvent('varde_world:client:response', function(requestId, response)
+RegisterNetEvent('nord_world:client:response', function(requestId, response)
     local resolver = pending[tostring(requestId)]
     if resolver then resolver(response) end
 end)
 
-RegisterNetEvent('varde_world:client:update', function(value)
+RegisterNetEvent('nord_world:client:update', function(value)
     snapshot = copy(value)
     applyDoors()
-    TriggerEvent('varde_world:client:updated', copy(snapshot))
+    TriggerEvent('nord_world:client:updated', copy(snapshot))
 end)
 
-RegisterNetEvent('varde:client:playerLoggedOut', function()
+RegisterNetEvent('Nord:client:playerLoggedOut', function()
     snapshot = nil
 end)
 
@@ -77,12 +77,12 @@ RegisterCommand('world', function()
     if response.ok then
         snapshot = copy(response.data)
         applyDoors()
-        TriggerEvent('varde_world:client:open', copy(snapshot))
+        TriggerEvent('nord_world:client:open', copy(snapshot))
     else
         TriggerEvent('chat:addMessage', {
             color = { 220, 70, 70 },
             args = {
-                'Varde World',
+                'Nord World',
                 response.error and response.error.message or 'World unavailable.'
             }
         })

@@ -95,7 +95,7 @@ class RpcServer {
     if (Number.isSafeInteger(source) && source > 0 && requestId) {
       this.runtime.emitClient(
         source,
-        'varde:client:rpcResponse',
+        'Nord:client:rpcResponse',
         requestId,
         response,
       );

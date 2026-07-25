@@ -8,7 +8,7 @@ const test = require('node:test');
 const { PropertiesDatabase } = require('../server/database');
 
 test('purchase reservations, ownership, keys, and locks persist', () => {
-  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'varde-properties-'));
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'Nord-properties-'));
   const database = new PropertiesDatabase(path.join(directory, 'properties.sqlite'));
   database.syncDefinitions({
     test_home: { id: 'test_home', label: 'Test Home' },

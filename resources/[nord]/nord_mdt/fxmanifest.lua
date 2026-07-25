@@ -1,8 +1,8 @@
 fx_version 'cerulean'
 game 'gta5'
 
-name 'varde_mdt'
-author 'Varde Framework contributors'
+name 'nord_mdt'
+author 'Nord Framework contributors'
 description 'Police records and mobile data terminal backend for Varde Framework'
 version '0.1.0'
 license 'MIT'
@@ -10,10 +10,10 @@ license 'MIT'
 node_version '26'
 
 dependencies {
-    'varde_core',
-    'varde_jobs',
-    'varde_vehicles',
-    'varde_dispatch'
+    'nord_core',
+    'nord_jobs',
+    'nord_vehicles',
+    'nord_dispatch'
 }
 
 files {

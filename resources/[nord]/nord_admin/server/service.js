@@ -3,17 +3,17 @@
 const { adminError } = require('./errors');
 
 const ACTIONS = Object.freeze({
-  bootstrap: 'varde.admin.open',
-  'players:list': 'varde.admin.players',
-  'player:kick': 'varde.admin.moderation',
-  'player:freeze': 'varde.admin.moderation',
-  'player:heal': 'varde.admin.moderation',
-  'player:goto': 'varde.admin.teleport',
-  'player:bring': 'varde.admin.teleport',
-  'economy:set': 'varde.admin.economy',
-  'job:assign': 'varde.admin.jobs',
-  'inventory:add': 'varde.admin.inventory',
-  'audit:list': 'varde.admin.audit',
+  bootstrap: 'Nord.admin.open',
+  'players:list': 'Nord.admin.players',
+  'player:kick': 'Nord.admin.moderation',
+  'player:freeze': 'Nord.admin.moderation',
+  'player:heal': 'Nord.admin.moderation',
+  'player:goto': 'Nord.admin.teleport',
+  'player:bring': 'Nord.admin.teleport',
+  'economy:set': 'Nord.admin.economy',
+  'job:assign': 'Nord.admin.jobs',
+  'inventory:add': 'Nord.admin.inventory',
+  'audit:list': 'Nord.admin.audit',
 });
 
 function integer(value, minimum, maximum, label) {
@@ -58,7 +58,7 @@ class AdminService {
 
   hasPermission(source, permission) {
     return (
-      this.runtime.isAceAllowed(source, 'varde.admin') ||
+      this.runtime.isAceAllowed(source, 'Nord.admin') ||
       this.runtime.isAceAllowed(source, permission)
     );
   }
@@ -136,7 +136,7 @@ class AdminService {
       return {
         source,
         permissions: this.permissionSnapshot(source),
-        players: this.hasPermission(source, 'varde.admin.players')
+        players: this.hasPermission(source, 'Nord.admin.players')
           ? this.listPlayers()
           : [],
       };
@@ -169,25 +169,25 @@ class AdminService {
         }
         this.runtime.emitClient(
           target.source,
-          'varde_admin:client:setFrozen',
+          'nord_admin:client:setFrozen',
           frozen,
         );
         return { frozen };
       }
       case 'player:heal':
-        this.runtime.emitClient(target.source, 'varde_admin:client:heal');
+        this.runtime.emitClient(target.source, 'nord_admin:client:heal');
         return true;
       case 'player:goto':
         this.runtime.emitClient(
           source,
-          'varde_admin:client:teleport',
+          'nord_admin:client:teleport',
           this.coordinates(target.source),
         );
         return true;
       case 'player:bring':
         this.runtime.emitClient(
           target.source,
-          'varde_admin:client:teleport',
+          'nord_admin:client:teleport',
           this.coordinates(source),
         );
         return true;

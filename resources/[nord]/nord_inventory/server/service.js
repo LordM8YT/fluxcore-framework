@@ -287,7 +287,7 @@ class InventoryService {
     if (Number.isSafeInteger(source) && source > 0) {
       this.runtime.emitClient(
         source,
-        'varde_inventory:client:update',
+        'nord_inventory:client:update',
         this.getInventory(containerId),
       );
     }
@@ -298,7 +298,7 @@ class InventoryService {
     const inventory = this.getInventory(online.containerId);
     this.runtime.emitClient(
       online.source,
-      'varde_inventory:client:update',
+      'nord_inventory:client:update',
       inventory,
     );
     return inventory;
@@ -767,7 +767,7 @@ class InventoryService {
         actor,
       );
       const drop = this.database.getDrop(dropId);
-      this.runtime.emitAll?.('varde_inventory:client:dropCreated', drop);
+      this.runtime.emitAll?.('nord_inventory:client:dropCreated', drop);
       return { drop, inventory: transfer.from };
     } catch (error) {
       this.database.deleteContainer(dropId);
@@ -809,7 +809,7 @@ class InventoryService {
     }
     const deleted = this.database.deleteContainer(containerId);
     if (deleted) {
-      this.runtime.emitAll?.('varde_inventory:client:dropRemoved', containerId);
+      this.runtime.emitAll?.('nord_inventory:client:dropRemoved', containerId);
     }
     return deleted;
   }

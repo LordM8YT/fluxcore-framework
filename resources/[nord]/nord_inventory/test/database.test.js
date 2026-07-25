@@ -9,7 +9,7 @@ const { DatabaseSync } = require('node:sqlite');
 const { InventoryDatabase } = require('../server/database');
 
 function createDatabase(t) {
-  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'varde-inventory-db-'));
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'Nord-inventory-db-'));
   const database = new InventoryDatabase(path.join(directory, 'inventory.sqlite'));
   t.after(() => {
     database.close();
@@ -78,7 +78,7 @@ test('world drop metadata cascades with its container', (t) => {
 
 test('schema 1 migrates to world drops without losing items', (t) => {
   const directory = fs.mkdtempSync(
-    path.join(os.tmpdir(), 'varde-inventory-v1-'),
+    path.join(os.tmpdir(), 'Nord-inventory-v1-'),
   );
   const filename = path.join(directory, 'inventory.sqlite');
   const legacy = new DatabaseSync(filename);

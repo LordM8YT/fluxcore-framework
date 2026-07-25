@@ -12,7 +12,7 @@ test('Cfx wiring boots and registers vehicle and trunk APIs', () => {
   const resourceRoot = path.resolve(__dirname, '..');
   const mainPath = path.join(resourceRoot, 'server', 'main.js');
   const temporaryRoot = fs.mkdtempSync(
-    path.join(os.tmpdir(), 'varde-vehicles-main-'),
+    path.join(os.tmpdir(), 'Nord-vehicles-main-'),
   );
   const eventHandlers = new Map();
   const netHandlers = new Map();
@@ -25,7 +25,7 @@ test('Cfx wiring boots and registers vehicle and trunk APIs', () => {
   function registerExport(name, handler) {
     registeredExports.set(name, handler);
   }
-  registerExport.varde_core = {
+  registerExport.nord_core = {
     GetPlayerData(identifier) {
       return Number(identifier) === 7 || identifier === player.characterId
         ? player
@@ -38,7 +38,7 @@ test('Cfx wiring boots and registers vehicle and trunk APIs', () => {
       return characterId === player.characterId ? 7 : 0;
     },
   };
-  registerExport.varde_inventory = {
+  registerExport.nord_inventory = {
     RegisterContainer() {
       return { ok: true, data: true };
     },
@@ -54,7 +54,7 @@ test('Cfx wiring boots and registers vehicle and trunk APIs', () => {
     require: createRequire(mainPath),
     console,
     GetCurrentResourceName() {
-      return 'varde_vehicles';
+      return 'nord_vehicles';
     },
     GetResourcePath() {
       return temporaryRoot;
@@ -127,8 +127,8 @@ test('Cfx wiring boots and registers vehicle and trunk APIs', () => {
     vm.runInContext(fs.readFileSync(mainPath, 'utf8'), context, {
       filename: mainPath,
     });
-    assert.equal(netHandlers.has('varde_vehicles:server:spawn'), true);
-    assert.equal(netHandlers.has('varde_vehicles:server:trunk'), true);
+    assert.equal(netHandlers.has('nord_vehicles:server:spawn'), true);
+    assert.equal(netHandlers.has('nord_vehicles:server:trunk'), true);
     assert.equal(commands.has('givevehicle'), true);
     assert.equal(registeredExports.has('RegisterOwnedVehicle'), true);
 
@@ -146,16 +146,16 @@ test('Cfx wiring boots and registers vehicle and trunk APIs', () => {
     );
     assert.equal(spawned.ok, true);
     assert.equal(spawned.data.networkId, 55);
-    assert.equal(entityState[0].key, 'varde:initVehicle');
+    assert.equal(entityState[0].key, 'Nord:initVehicle');
 
-    eventHandlers.get('varde:server:playerLoaded')(7, player);
+    eventHandlers.get('Nord:server:playerLoaded')(7, player);
     assert.equal(
       emitted.some(
-        (entry) => entry.eventName === 'varde_vehicles:client:update',
+        (entry) => entry.eventName === 'nord_vehicles:client:update',
       ),
       true,
     );
-    eventHandlers.get('onResourceStop')('varde_vehicles');
+    eventHandlers.get('onResourceStop')('nord_vehicles');
   } finally {
     fs.rmSync(temporaryRoot, { recursive: true, force: true });
   }

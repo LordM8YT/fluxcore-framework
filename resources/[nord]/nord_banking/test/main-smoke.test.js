@@ -7,7 +7,7 @@ const os = require('node:os');
 const path = require('node:path');
 
 test('Cfx wiring boots and registers banking APIs', (t) => {
-  const temporaryRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'varde-bank-main-'));
+  const temporaryRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'Nord-bank-main-'));
   const resourceRoot = path.resolve(__dirname, '..');
   fs.cpSync(path.join(resourceRoot, 'config'), path.join(temporaryRoot, 'config'), {
     recursive: true,
@@ -47,7 +47,7 @@ test('Cfx wiring boots and registers banking APIs', (t) => {
 
   Object.assign(global, {
     GetCurrentResourceName() {
-      return 'varde_banking';
+      return 'nord_banking';
     },
     GetResourcePath() {
       return temporaryRoot;
@@ -75,14 +75,14 @@ test('Cfx wiring boots and registers banking APIs', (t) => {
   globalThis.exports = function register(name, handler) {
     registeredExports.set(name, handler);
   };
-  Object.assign(globalThis.exports, { varde_core: coreExports });
+  Object.assign(globalThis.exports, { nord_core: coreExports });
 
   const mainPath = require.resolve('../server/main');
   delete require.cache[mainPath];
   require(mainPath);
 
   t.after(() => {
-    handlers.get('onResourceStop')?.('varde_banking');
+    handlers.get('onResourceStop')?.('nord_banking');
     fs.rmSync(temporaryRoot, { recursive: true, force: true });
     for (const key of [
       'GetCurrentResourceName',
@@ -100,8 +100,8 @@ test('Cfx wiring boots and registers banking APIs', (t) => {
     }
   });
 
-  assert.equal(netHandlers.has('varde_banking:server:request'), true);
-  assert.equal(handlers.has('varde:server:playerLoaded'), true);
+  assert.equal(netHandlers.has('nord_banking:server:request'), true);
+  assert.equal(handlers.has('Nord:server:playerLoaded'), true);
   assert.equal(registeredExports.has('GetAccount'), true);
   assert.equal(registeredExports.has('Transfer'), true);
 });

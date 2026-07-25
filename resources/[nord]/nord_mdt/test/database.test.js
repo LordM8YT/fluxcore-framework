@@ -8,7 +8,7 @@ const test = require('node:test');
 const { MdtDatabase } = require('../server/database');
 
 test('people, reports, warrants, and BOLOs persist', () => {
-  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'varde-mdt-'));
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'Nord-mdt-'));
   const database = new MdtDatabase(path.join(directory, 'mdt.sqlite'));
   const subject = {
     characterId: 'vrd_1111111111111111',

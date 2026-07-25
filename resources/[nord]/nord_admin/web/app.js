@@ -66,7 +66,7 @@ function applyStaticLocale() {
 function resourceName() {
   return typeof GetParentResourceName === 'function'
     ? GetParentResourceName()
-    : 'varde_admin';
+    : 'nord_admin';
 }
 
 async function nui(endpoint, payload = {}) {
@@ -106,7 +106,7 @@ function selectedPlayer() {
 }
 
 function hasPermission(permission) {
-  return state.permissions['varde.admin'] || state.permissions[permission];
+  return state.permissions['Nord.admin'] || state.permissions[permission];
 }
 
 function jobLabel(job) {
@@ -136,7 +136,7 @@ function applyPermissions() {
   });
   document.querySelector('#audit-button').classList.toggle(
     'is-hidden',
-    !hasPermission('varde.admin.audit'),
+    !hasPermission('Nord.admin.audit'),
   );
 }
 

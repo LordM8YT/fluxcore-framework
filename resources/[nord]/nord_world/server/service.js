@@ -65,7 +65,7 @@ class WorldService {
       this.database.getDoors().map((entry) => [entry.id, entry]),
     );
     return {
-      contract: 'varde.world.bootstrap.v1',
+      contract: 'Nord.world.bootstrap.v1',
       shops: Object.values(this.config.shops).map((entry) => clone(entry)),
       dealerships: Object.values(this.config.dealerships).map((entry) =>
         clone(entry),
@@ -94,7 +94,7 @@ class WorldService {
     const snapshot = this.snapshot(online.source);
     this.runtime.emitClient(
       online.source,
-      'varde_world:client:update',
+      'nord_world:client:update',
       clone(snapshot),
     );
     return snapshot;

@@ -12,7 +12,7 @@ test('Cfx wiring boots and exposes appearance APIs', () => {
   const resourceRoot = path.resolve(__dirname, '..');
   const mainPath = path.join(resourceRoot, 'server', 'main.js');
   const temporaryRoot = fs.mkdtempSync(
-    path.join(os.tmpdir(), 'varde-appearance-main-'),
+    path.join(os.tmpdir(), 'Nord-appearance-main-'),
   );
   const eventHandlers = new Map();
   const netHandlers = new Map();
@@ -26,7 +26,7 @@ test('Cfx wiring boots and exposes appearance APIs', () => {
   function registerExport(name, handler) {
     registeredExports.set(name, handler);
   }
-  registerExport.varde_core = {
+  registerExport.nord_core = {
     GetPlayerData(identifier) {
       return Number(identifier) === 7 || identifier === player.characterId
         ? player
@@ -44,7 +44,7 @@ test('Cfx wiring boots and exposes appearance APIs', () => {
     require: createRequire(mainPath),
     console,
     GetCurrentResourceName() {
-      return 'varde_appearance';
+      return 'nord_appearance';
     },
     GetResourcePath() {
       return temporaryRoot;
@@ -74,20 +74,20 @@ test('Cfx wiring boots and exposes appearance APIs', () => {
     vm.runInContext(fs.readFileSync(mainPath, 'utf8'), context, {
       filename: mainPath,
     });
-    assert.equal(netHandlers.has('varde_appearance:server:save'), true);
+    assert.equal(netHandlers.has('nord_appearance:server:save'), true);
     assert.equal(registeredExports.has('GetAppearance'), true);
     assert.equal(registeredExports.has('SaveAppearance'), true);
 
-    eventHandlers.get('varde:server:playerLoaded')(7, player);
+    eventHandlers.get('Nord:server:playerLoaded')(7, player);
     const current = registeredExports.get('GetAppearance')(7);
     assert.equal(current.model, 'mp_m_freemode_01');
     assert.equal(
       emitted.some(
-        (entry) => entry.eventName === 'varde_appearance:client:update',
+        (entry) => entry.eventName === 'nord_appearance:client:update',
       ),
       true,
     );
-    eventHandlers.get('onResourceStop')('varde_appearance');
+    eventHandlers.get('onResourceStop')('nord_appearance');
   } finally {
     fs.rmSync(temporaryRoot, { recursive: true, force: true });
   }

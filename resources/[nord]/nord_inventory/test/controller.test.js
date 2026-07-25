@@ -37,7 +37,7 @@ test('controller resolves only opaque player and secondary sides', () => {
   };
   const controller = new InventoryController(inventory);
   const opened = controller.open(7, 'stash:evidence');
-  assert.equal(opened.contract, 'varde.inventory.bootstrap.v1');
+  assert.equal(opened.contract, 'Nord.inventory.bootstrap.v1');
   assert.equal(opened.capabilities.transfer, true);
 
   controller.handle(7, 'move', {

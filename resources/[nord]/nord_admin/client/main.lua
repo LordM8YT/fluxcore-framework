@@ -6,7 +6,7 @@ local panelOpen = false
 local frozen = false
 
 local function locale(key, replacements, fallback)
-    return exports.varde_core:Locale(key, replacements, fallback)
+    return exports.nord_core:Locale(key, replacements, fallback)
 end
 
 local function localizeResponse(response)
@@ -26,8 +26,8 @@ local function localizeResponse(response)
 end
 
 local function uiLocale()
-    local data = exports.varde_core:GetLocaleData('admin')
-    data.labels = exports.varde_core:GetLocaleData('labels')
+    local data = exports.nord_core:GetLocaleData('admin')
+    data.labels = exports.nord_core:GetLocaleData('labels')
     return data
 end
 
@@ -35,9 +35,9 @@ local function message(text, kind)
     local color = kind == 'error' and { 220, 70, 70 } or { 90, 180, 255 }
     TriggerEvent('chat:addMessage', {
         color = color,
-        args = { 'Varde Admin', tostring(text) }
+        args = { 'Nord Admin', tostring(text) }
     })
-    print(('[varde_admin] %s'):format(tostring(text)))
+    print(('[nord_admin] %s'):format(tostring(text)))
 end
 
 local function nextRequestId()
@@ -64,7 +64,7 @@ local function call(method, payload)
     end
 
     TriggerServerEvent(
-        'varde_admin:server:request',
+        'nord_admin:server:request',
         requestId,
         method,
         payload or {}
@@ -96,14 +96,14 @@ local function closePanel()
     SendNUIMessage({ type = 'close' })
 end
 
-RegisterNetEvent('varde_admin:client:response', function(requestId, response)
+RegisterNetEvent('nord_admin:client:response', function(requestId, response)
     local resolver = pending[tostring(requestId)]
     if resolver then
         resolver(response)
     end
 end)
 
-RegisterNetEvent('varde_admin:client:teleport', function(position)
+RegisterNetEvent('nord_admin:client:teleport', function(position)
     local x = tonumber(position and position.x)
     local y = tonumber(position and position.y)
     local z = tonumber(position and position.z)
@@ -115,12 +115,12 @@ RegisterNetEvent('varde_admin:client:teleport', function(position)
     SetEntityCoordsNoOffset(ped, x, y, z + 0.25, false, false, false)
 end)
 
-RegisterNetEvent('varde_admin:client:setFrozen', function(value)
+RegisterNetEvent('nord_admin:client:setFrozen', function(value)
     frozen = value == true
     FreezeEntityPosition(PlayerPedId(), frozen)
 end)
 
-RegisterNetEvent('varde_admin:client:heal', function()
+RegisterNetEvent('nord_admin:client:heal', function()
     local ped = PlayerPedId()
     SetEntityHealth(ped, GetEntityMaxHealth(ped))
     ClearPedBloodDamage(ped)
@@ -146,7 +146,7 @@ RegisterCommand('vadmin', function()
     SendNUIMessage({
         type = 'open',
         payload = response.data,
-        localeName = exports.varde_core:GetLocale(),
+        localeName = exports.nord_core:GetLocale(),
         locale = uiLocale()
     })
 end, false)
@@ -186,7 +186,7 @@ AddEventHandler('onResourceStop', function(stoppedResource)
                 message = locale(
                     'errors.RESOURCE_STOPPED',
                     nil,
-                    'Varde Admin stopped.'
+                    'Nord Admin stopped.'
                 )
             }
         })

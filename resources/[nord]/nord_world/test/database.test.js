@@ -8,7 +8,7 @@ const test = require('node:test');
 const { WorldDatabase } = require('../server/database');
 
 test('door state and purchase audit persist', () => {
-  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'varde-world-'));
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'Nord-world-'));
   const database = new WorldDatabase(path.join(directory, 'world.sqlite'));
   database.syncDoors({
     police_door: {

@@ -8,8 +8,8 @@ const path = require('node:path');
 const { AdminDatabase } = require('../server/database');
 const { AdminService } = require('../server/service');
 
-function createHarness(t, granted = ['varde.admin']) {
-  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'varde-admin-'));
+function createHarness(t, granted = ['Nord.admin']) {
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'Nord-admin-'));
   const database = new AdminDatabase(path.join(directory, 'admin.sqlite'));
   const players = new Map([
     [
@@ -90,13 +90,13 @@ test('bootstrap exposes only selected Varde characters', (t) => {
 
   assert.equal(bootstrap.players.length, 2);
   assert.equal(bootstrap.players[1].name, 'Tara Target');
-  assert.equal(bootstrap.permissions['varde.admin.economy'], true);
+  assert.equal(bootstrap.permissions['Nord.admin.economy'], true);
 });
 
 test('granular ACE permissions deny unrelated actions and audit denial', (t) => {
   const { service, database } = createHarness(t, [
-    'varde.admin.open',
-    'varde.admin.players',
+    'Nord.admin.open',
+    'Nord.admin.players',
   ]);
   assert.equal(service.execute(7, 'bootstrap', {}).players.length, 2);
   assert.throws(
@@ -111,11 +111,11 @@ test('granular ACE permissions deny unrelated actions and audit denial', (t) => 
 });
 
 test('open permission alone does not disclose the player roster', (t) => {
-  const { service } = createHarness(t, ['varde.admin.open']);
+  const { service } = createHarness(t, ['Nord.admin.open']);
   const bootstrap = service.execute(7, 'bootstrap', {});
 
   assert.deepEqual(bootstrap.players, []);
-  assert.equal(bootstrap.permissions['varde.admin.players'], false);
+  assert.equal(bootstrap.permissions['Nord.admin.players'], false);
 });
 
 test('moderation, teleport, economy, jobs, and items use trusted adapters', (t) => {

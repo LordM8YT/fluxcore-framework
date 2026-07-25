@@ -28,7 +28,7 @@ const runtime = {
     return Number(GetHashKey(model));
   },
   log(level, message) {
-    const output = `[varde_world] [${level}] ${message}`;
+    const output = `[nord_world] [${level}] ${message}`;
     if (level === 'error') console.error(output);
     else if (level === 'warn') console.warn(output);
     else console.log(output);
@@ -44,16 +44,16 @@ function requireResource(name) {
 const integrations = {
   core: {
     getPlayerData(identifier) {
-      return globalThis.exports.varde_core.GetPlayerData(identifier);
+      return globalThis.exports.nord_core.GetPlayerData(identifier);
     },
     getPlayerSource(characterId) {
-      return globalThis.exports.varde_core.GetPlayerSource(characterId);
+      return globalThis.exports.nord_core.GetPlayerSource(characterId);
     },
     getPlayers() {
-      return globalThis.exports.varde_core.GetPlayers();
+      return globalThis.exports.nord_core.GetPlayers();
     },
     addMoney(identifier, currency, amount, reason, reference) {
-      return globalThis.exports.varde_core.AddMoney(
+      return globalThis.exports.nord_core.AddMoney(
         identifier,
         currency,
         amount,
@@ -62,7 +62,7 @@ const integrations = {
       );
     },
     removeMoney(identifier, currency, amount, reason, reference) {
-      return globalThis.exports.varde_core.RemoveMoney(
+      return globalThis.exports.nord_core.RemoveMoney(
         identifier,
         currency,
         amount,
@@ -73,8 +73,8 @@ const integrations = {
   },
   jobs: {
     hasPermission(identifier, permission, options) {
-      requireResource('varde_jobs');
-      return globalThis.exports.varde_jobs.HasPermission(
+      requireResource('nord_jobs');
+      return globalThis.exports.nord_jobs.HasPermission(
         identifier,
         permission,
         options,
@@ -83,16 +83,16 @@ const integrations = {
   },
   inventory: {
     canCarryItem(identifier, item, amount) {
-      requireResource('varde_inventory');
-      return globalThis.exports.varde_inventory.CanCarryItem(
+      requireResource('nord_inventory');
+      return globalThis.exports.nord_inventory.CanCarryItem(
         identifier,
         item,
         amount,
       );
     },
     addItem(identifier, item, amount, metadata) {
-      requireResource('varde_inventory');
-      return globalThis.exports.varde_inventory.AddItem(
+      requireResource('nord_inventory');
+      return globalThis.exports.nord_inventory.AddItem(
         identifier,
         item,
         amount,
@@ -102,8 +102,8 @@ const integrations = {
   },
   vehicles: {
     registerOwnedVehicle(identifier, details) {
-      requireResource('varde_vehicles');
-      return globalThis.exports.varde_vehicles.RegisterOwnedVehicle(identifier, {
+      requireResource('nord_vehicles');
+      return globalThis.exports.nord_vehicles.RegisterOwnedVehicle(identifier, {
         ...details,
         modelHash: runtime.modelHash(details.model),
       });
@@ -147,7 +147,7 @@ function allow(source) {
   return true;
 }
 
-onNet('varde_world:server:request', (requestId, method, payload) => {
+onNet('nord_world:server:request', (requestId, method, payload) => {
   const source = Number(global.source);
   const input =
     payload && typeof payload === 'object' && !Array.isArray(payload)
@@ -191,16 +191,16 @@ onNet('varde_world:server:request', (requestId, method, payload) => {
       };
   runtime.emitClient(
     source,
-    'varde_world:client:response',
+    'nord_world:client:response',
     String(requestId || '').slice(0, 96),
     response,
   );
 });
 
-on('varde:server:playerLoaded', (source) => {
+on('Nord:server:playerLoaded', (source) => {
   result(() => world.publish(Number(source)));
 });
-on('varde:server:jobUpdated', (source) => {
+on('Nord:server:jobUpdated', (source) => {
   result(() => world.publish(Number(source)));
 });
 on('playerDropped', () => {

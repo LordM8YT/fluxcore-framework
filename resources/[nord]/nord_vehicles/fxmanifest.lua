@@ -1,8 +1,8 @@
 fx_version 'cerulean'
 game 'gta5'
 
-name 'varde_vehicles'
-author 'Varde Framework contributors'
+name 'nord_vehicles'
+author 'Nord Framework contributors'
 description 'Persistent vehicle ownership, keys, garages, and trunks for Varde'
 version '0.1.0'
 license 'MIT'
@@ -10,8 +10,8 @@ license 'MIT'
 node_version '26'
 
 dependencies {
-    'varde_core',
-    'varde_inventory'
+    'nord_core',
+    'nord_inventory'
 }
 
 files {

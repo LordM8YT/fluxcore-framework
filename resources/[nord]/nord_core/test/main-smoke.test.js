@@ -11,7 +11,7 @@ const { createRequire } = require('node:module');
 test('Cfx wiring boots and completes connection, creation, and selection', () => {
   const resourceRoot = path.resolve(__dirname, '..');
   const mainPath = path.join(resourceRoot, 'server', 'main.js');
-  const temporaryRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'varde-main-'));
+  const temporaryRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'Nord-main-'));
   const eventHandlers = new Map();
   const netHandlers = new Map();
   const registeredExports = new Map();
@@ -35,7 +35,7 @@ test('Cfx wiring boots and completes connection, creation, and selection', () =>
       },
     },
     GetCurrentResourceName() {
-      return 'varde_core';
+      return 'nord_core';
     },
     GetResourcePath() {
       return temporaryRoot;
@@ -104,7 +104,7 @@ test('Cfx wiring boots and completes connection, creation, and selection', () =>
     const code = fs.readFileSync(mainPath, 'utf8');
     vm.runInContext(code, context, { filename: mainPath });
 
-    assert.equal(netHandlers.has('varde:server:rpc'), true);
+    assert.equal(netHandlers.has('Nord:server:rpc'), true);
     assert.equal(eventHandlers.has('playerConnecting'), true);
     assert.equal(registeredExports.has('AddMoney'), true);
     assert.equal(registeredExports.has('GetPlayer'), true);
@@ -124,7 +124,7 @@ test('Cfx wiring boots and completes connection, creation, and selection', () =>
     );
     assert.equal(deferralResult, undefined);
 
-    const rpc = netHandlers.get('varde:server:rpc');
+    const rpc = netHandlers.get('Nord:server:rpc');
     rpc('smoke:create', 'characters:create', {
       slot: 1,
       firstName: 'Smoke',
@@ -142,7 +142,7 @@ test('Cfx wiring boots and completes connection, creation, and selection', () =>
     assert.equal(selectResponse.ok, true);
     assert.equal(selectResponse.data.characterId, characterId);
     assert.equal(
-      states.some((state) => state.key === 'varde:loaded' && state.value === true),
+      states.some((state) => state.key === 'Nord:loaded' && state.value === true),
       true,
     );
 
@@ -157,7 +157,7 @@ test('Cfx wiring boots and completes connection, creation, and selection', () =>
     assert.equal(moneyResult.ok, true);
     assert.equal(moneyResult.data, 550);
 
-    eventHandlers.get('onResourceStop')('varde_core');
+    eventHandlers.get('onResourceStop')('nord_core');
   } finally {
     fs.rmSync(temporaryRoot, { recursive: true, force: true });
   }

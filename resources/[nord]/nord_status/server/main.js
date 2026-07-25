@@ -15,7 +15,7 @@ const runtime = {
     emitNet(eventName, source, ...args);
   },
   log(level, message) {
-    const output = `[varde_status] [${level}] ${message}`;
+    const output = `[nord_status] [${level}] ${message}`;
     if (level === 'error') {
       console.error(output);
     } else if (level === 'warn') {
@@ -28,13 +28,13 @@ const runtime = {
 
 const core = {
   getPlayerData(identifier) {
-    return globalThis.exports.varde_core.GetPlayerData(identifier);
+    return globalThis.exports.nord_core.GetPlayerData(identifier);
   },
   getPlayers() {
-    return globalThis.exports.varde_core.GetPlayers();
+    return globalThis.exports.nord_core.GetPlayers();
   },
   getPlayerSource(characterId) {
-    return globalThis.exports.varde_core.GetPlayerSource(characterId);
+    return globalThis.exports.nord_core.GetPlayerSource(characterId);
   },
 };
 
@@ -72,23 +72,23 @@ function sync(source) {
   return response;
 }
 
-on('varde:server:playerLoaded', (source) => {
+on('Nord:server:playerLoaded', (source) => {
   sync(source);
 });
 
-on('varde:server:playerLoggedOut', (source, characterId) => {
+on('Nord:server:playerLoggedOut', (source, characterId) => {
   status.drop(source, characterId);
 });
 
-on('varde:server:playerDropped', (source, characterId) => {
+on('Nord:server:playerDropped', (source, characterId) => {
   status.drop(source, characterId);
 });
 
-on('varde:server:characterDeleted', (_source, characterId) => {
+on('Nord:server:characterDeleted', (_source, characterId) => {
   status.deleteCharacter(characterId);
 });
 
-onNet('varde_status:server:request', () => {
+onNet('nord_status:server:request', () => {
   const source = Number(global.source);
   const now = Date.now();
   const previous = requestTimes.get(source) || 0;

@@ -153,7 +153,7 @@ class JobsService {
 
     this.runtime.emitClient(
       player.source,
-      'varde_jobs:client:update',
+      'nord_jobs:client:update',
       clone(snapshot),
     );
     return snapshot;

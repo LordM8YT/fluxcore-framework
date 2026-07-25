@@ -1,8 +1,8 @@
 fx_version 'cerulean'
 game 'gta5'
 
-name 'varde_businesses'
-author 'Varde Framework contributors'
+name 'nord_businesses'
+author 'Nord Framework contributors'
 description 'Player-owned businesses, staff roles, and treasuries for Varde Framework'
 version '0.1.0'
 license 'MIT'
@@ -10,9 +10,9 @@ license 'MIT'
 node_version '26'
 
 dependencies {
-    'varde_core',
-    'varde_jobs',
-    'varde_banking'
+    'nord_core',
+    'nord_jobs',
+    'nord_banking'
 }
 
 files {

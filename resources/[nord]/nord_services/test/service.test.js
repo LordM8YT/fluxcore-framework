@@ -10,7 +10,7 @@ const { ServicesService } = require('../server/service');
 const { validateConfig } = require('../server/config');
 
 function harness(t) {
-  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'varde-services-'));
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'Nord-services-'));
   const database = new ServicesDatabase(path.join(directory, 'services.sqlite'));
   const players = new Map([
     [

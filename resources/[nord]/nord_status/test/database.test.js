@@ -8,7 +8,7 @@ const test = require('node:test');
 const { StatusDatabase } = require('../server/database');
 
 function createDatabase(t) {
-  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'varde-status-db-'));
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'Nord-status-db-'));
   const database = new StatusDatabase(path.join(directory, 'status.sqlite'));
   t.after(() => {
     database.close();

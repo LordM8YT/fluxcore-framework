@@ -1,4 +1,4 @@
-VardeIdentityConfig = {
+NordIdentityConfig = {
     titleKey = 'identity.title',
     subtitleKey = 'identity.subtitle',
     allowDelete = true,

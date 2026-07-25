@@ -12,7 +12,7 @@ test('Cfx wiring boots and exposes safe inventory operations', () => {
   const resourceRoot = path.resolve(__dirname, '..');
   const mainPath = path.join(resourceRoot, 'server', 'main.js');
   const temporaryRoot = fs.mkdtempSync(
-    path.join(os.tmpdir(), 'varde-inventory-main-'),
+    path.join(os.tmpdir(), 'Nord-inventory-main-'),
   );
   const eventHandlers = new Map();
   const netHandlers = new Map();
@@ -23,7 +23,7 @@ test('Cfx wiring boots and exposes safe inventory operations', () => {
   function registerExport(name, handler) {
     registeredExports.set(name, handler);
   }
-  registerExport.varde_core = {
+  registerExport.nord_core = {
     GetPlayerData(identifier) {
       return Number(identifier) === 7 || identifier === player.characterId
         ? player
@@ -41,7 +41,7 @@ test('Cfx wiring boots and exposes safe inventory operations', () => {
     require: createRequire(mainPath),
     console,
     GetCurrentResourceName() {
-      return 'varde_inventory';
+      return 'nord_inventory';
     },
     GetResourcePath() {
       return temporaryRoot;
@@ -88,15 +88,15 @@ test('Cfx wiring boots and exposes safe inventory operations', () => {
       filename: mainPath,
     });
 
-    assert.equal(eventHandlers.has('varde:server:playerLoaded'), true);
-    assert.equal(eventHandlers.has('varde:server:characterDeleted'), true);
-    assert.equal(netHandlers.has('varde_inventory:server:move'), true);
-    assert.equal(netHandlers.has('varde_inventory:server:nui'), true);
+    assert.equal(eventHandlers.has('Nord:server:playerLoaded'), true);
+    assert.equal(eventHandlers.has('Nord:server:characterDeleted'), true);
+    assert.equal(netHandlers.has('nord_inventory:server:move'), true);
+    assert.equal(netHandlers.has('nord_inventory:server:nui'), true);
     assert.equal(registeredExports.has('AddItem'), true);
     assert.equal(registeredExports.has('OpenInventory'), true);
     assert.equal(registeredExports.has('RegisterContainer'), true);
 
-    eventHandlers.get('varde:server:playerLoaded')(7, player);
+    eventHandlers.get('Nord:server:playerLoaded')(7, player);
     const added = registeredExports.get('AddItem')(7, 'water', 2, {
       quality: 100,
     });
@@ -104,19 +104,19 @@ test('Cfx wiring boots and exposes safe inventory operations', () => {
     assert.equal(registeredExports.get('GetItemCount')(7, 'water'), 2);
 
     context.source = 7;
-    netHandlers.get('varde_inventory:server:move')(1, 2, 1);
+    netHandlers.get('nord_inventory:server:move')(1, 2, 1);
     assert.equal(
       emitted.some(
-        (event) => event.eventName === 'varde_inventory:client:update',
+        (event) => event.eventName === 'nord_inventory:client:update',
       ),
       true,
     );
 
     const opened = registeredExports.get('OpenInventory')(7);
     assert.equal(opened.ok, true);
-    assert.equal(opened.data.contract, 'varde.inventory.bootstrap.v1');
+    assert.equal(opened.data.contract, 'Nord.inventory.bootstrap.v1');
 
-    eventHandlers.get('onResourceStop')('varde_inventory');
+    eventHandlers.get('onResourceStop')('nord_inventory');
   } finally {
     fs.rmSync(temporaryRoot, { recursive: true, force: true });
   }

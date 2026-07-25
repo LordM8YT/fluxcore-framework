@@ -3,7 +3,7 @@ local rawConfig = LoadResourceFile(GetCurrentResourceName(), 'config/vehicles.js
 local config = rawConfig and json.decode(rawConfig) or { garages = {} }
 
 local function locale(key, replacements, fallback)
-    return exports.varde_core:Locale(key, replacements, fallback)
+    return exports.nord_core:Locale(key, replacements, fallback)
 end
 
 local function nativeTrue(value)
@@ -21,9 +21,9 @@ local function message(text, kind)
     local color = kind == 'error' and { 220, 70, 70 } or { 90, 180, 255 }
     TriggerEvent('chat:addMessage', {
         color = color,
-        args = { 'Varde', tostring(text) }
+        args = { 'Nord', tostring(text) }
     })
-    print(('[varde_vehicles] %s'):format(tostring(text)))
+    print(('[nord_vehicles] %s'):format(tostring(text)))
 end
 
 local function distance(left, right)
@@ -168,18 +168,18 @@ local function printGarage()
     end
 end
 
-RegisterNetEvent('varde_vehicles:client:update', function(snapshot)
+RegisterNetEvent('nord_vehicles:client:update', function(snapshot)
     vehicles = snapshot and snapshot.vehicles or {}
-    TriggerEvent('varde_vehicles:client:updated', copy(snapshot))
+    TriggerEvent('nord_vehicles:client:updated', copy(snapshot))
 end)
 
-RegisterNetEvent('varde_vehicles:client:message', function(text, kind, code)
+RegisterNetEvent('nord_vehicles:client:message', function(text, kind, code)
     local key = code and ('errors.%s'):format(tostring(code)) or nil
     local translated = key and locale(key) or nil
     message(translated and translated ~= key and translated or text, kind)
 end)
 
-RegisterNetEvent('varde_vehicles:client:spawned', function(id, vehicle)
+RegisterNetEvent('nord_vehicles:client:spawned', function(id, vehicle)
     CreateThread(function()
         local deadline = GetGameTimer() + 10000
         while GetGameTimer() < deadline
@@ -205,7 +205,7 @@ RegisterNetEvent('varde_vehicles:client:spawned', function(id, vehicle)
     end)
 end)
 
-AddStateBagChangeHandler('varde:initVehicle', nil, function(bagName, key, value)
+AddStateBagChangeHandler('Nord:initVehicle', nil, function(bagName, key, value)
     if type(value) ~= 'table' then
         return
     end
@@ -224,7 +224,7 @@ AddStateBagChangeHandler('varde:initVehicle', nil, function(bagName, key, value)
                 applyProperties(entity, current.properties)
                 SetVehicleOnGroundProperly(entity)
                 TriggerServerEvent(
-                    'varde_vehicles:server:initialized',
+                    'nord_vehicles:server:initialized',
                     NetworkGetNetworkIdFromEntity(entity)
                 )
                 return
@@ -234,7 +234,7 @@ AddStateBagChangeHandler('varde:initVehicle', nil, function(bagName, key, value)
     end)
 end)
 
-RegisterNetEvent('varde_vehicles:client:lockChanged', function(id, locked)
+RegisterNetEvent('nord_vehicles:client:lockChanged', function(id, locked)
     if not nativeTrue(NetworkDoesEntityExistWithNetworkId(id)) then
         return
     end
@@ -252,11 +252,11 @@ RegisterNetEvent('varde_vehicles:client:lockChanged', function(id, locked)
     end)
 end)
 
-RegisterNetEvent('varde:client:playerLoaded', function()
-    TriggerServerEvent('varde_vehicles:server:request')
+RegisterNetEvent('Nord:client:playerLoaded', function()
+    TriggerServerEvent('nord_vehicles:server:request')
 end)
 
-RegisterNetEvent('varde:client:playerLoggedOut', function()
+RegisterNetEvent('Nord:client:playerLoggedOut', function()
     vehicles = {}
 end)
 
@@ -284,7 +284,7 @@ RegisterCommand('garage', function(_, args)
             ), 'error')
             return
         end
-        TriggerServerEvent('varde_vehicles:server:spawn', args[2], garageId)
+        TriggerServerEvent('nord_vehicles:server:spawn', args[2], garageId)
         return
     end
     if action == 'store' then
@@ -300,7 +300,7 @@ RegisterCommand('garage', function(_, args)
             return
         end
         TriggerServerEvent(
-            'varde_vehicles:server:store',
+            'nord_vehicles:server:store',
             id,
             garageId,
             captureRuntimeProperties(vehicle)
@@ -324,7 +324,7 @@ RegisterCommand('trunk', function()
         ), 'error')
         return
     end
-    TriggerServerEvent('varde_vehicles:server:trunk', id)
+    TriggerServerEvent('nord_vehicles:server:trunk', id)
 end, false)
 
 RegisterCommand('vlock', function()
@@ -337,7 +337,7 @@ RegisterCommand('vlock', function()
         ), 'error')
         return
     end
-    TriggerServerEvent('varde_vehicles:server:toggleLock', id)
+    TriggerServerEvent('nord_vehicles:server:toggleLock', id)
 end, false)
 RegisterKeyMapping(
     'vlock',
@@ -363,9 +363,9 @@ CreateThread(function()
     while not nativeTrue(NetworkIsPlayerActive(PlayerId())) do
         Wait(250)
     end
-    if GetResourceState('varde_core') == 'started'
-        and exports.varde_core:IsLoggedIn() then
-        TriggerServerEvent('varde_vehicles:server:request')
+    if GetResourceState('nord_core') == 'started'
+        and exports.nord_core:IsLoggedIn() then
+        TriggerServerEvent('nord_vehicles:server:request')
     end
 end)
 

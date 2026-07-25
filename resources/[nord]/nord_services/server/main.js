@@ -15,7 +15,7 @@ const runtime = {
     emitNet(eventName, source, ...args);
   },
   log(level, message) {
-    const output = `[varde_services] [${level}] ${message}`;
+    const output = `[nord_services] [${level}] ${message}`;
     if (level === 'error') {
       console.error(output);
     } else if (level === 'warn') {
@@ -38,16 +38,16 @@ function requireResource(name) {
 const integrations = {
   core: {
     getPlayerData(identifier) {
-      return globalThis.exports.varde_core.GetPlayerData(identifier);
+      return globalThis.exports.nord_core.GetPlayerData(identifier);
     },
     getPlayerSource(characterId) {
-      return globalThis.exports.varde_core.GetPlayerSource(characterId);
+      return globalThis.exports.nord_core.GetPlayerSource(characterId);
     },
     getPlayers() {
-      return globalThis.exports.varde_core.GetPlayers();
+      return globalThis.exports.nord_core.GetPlayers();
     },
     addMoney(identifier, currency, amount, reason, reference) {
-      return globalThis.exports.varde_core.AddMoney(
+      return globalThis.exports.nord_core.AddMoney(
         identifier,
         currency,
         amount,
@@ -56,7 +56,7 @@ const integrations = {
       );
     },
     removeMoney(identifier, currency, amount, reason, reference) {
-      return globalThis.exports.varde_core.RemoveMoney(
+      return globalThis.exports.nord_core.RemoveMoney(
         identifier,
         currency,
         amount,
@@ -65,7 +65,7 @@ const integrations = {
       );
     },
     transferMoney(from, to, currency, amount, reason, reference) {
-      return globalThis.exports.varde_core.TransferMoney(
+      return globalThis.exports.nord_core.TransferMoney(
         from,
         to,
         currency,
@@ -77,8 +77,8 @@ const integrations = {
   },
   jobs: {
     hasPermission(identifier, permission, options) {
-      requireResource('varde_jobs');
-      return globalThis.exports.varde_jobs.HasPermission(
+      requireResource('nord_jobs');
+      return globalThis.exports.nord_jobs.HasPermission(
         identifier,
         permission,
         options,
@@ -87,16 +87,16 @@ const integrations = {
   },
   businesses: {
     hasPermission(identifier, businessId, permission) {
-      requireResource('varde_businesses');
-      return globalThis.exports.varde_businesses.HasPermission(
+      requireResource('nord_businesses');
+      return globalThis.exports.nord_businesses.HasPermission(
         identifier,
         businessId,
         permission,
       );
     },
     creditTreasury(businessId, amount, reason, reference) {
-      requireResource('varde_businesses');
-      return globalThis.exports.varde_businesses.CreditTreasury(
+      requireResource('nord_businesses');
+      return globalThis.exports.nord_businesses.CreditTreasury(
         businessId,
         amount,
         reason,
@@ -152,7 +152,7 @@ function allow(source) {
   return true;
 }
 
-onNet('varde_services:server:request', (requestId, method, payload) => {
+onNet('nord_services:server:request', (requestId, method, payload) => {
   const source = Number(global.source);
   const input =
     payload && typeof payload === 'object' && !Array.isArray(payload)
@@ -189,19 +189,19 @@ onNet('varde_services:server:request', (requestId, method, payload) => {
       };
   runtime.emitClient(
     source,
-    'varde_services:client:response',
+    'nord_services:client:response',
     String(requestId || '').slice(0, 96),
     response,
   );
 });
 
-on('varde:server:playerLoaded', (source) => {
+on('Nord:server:playerLoaded', (source) => {
   result(() => services.publish(Number(source)));
 });
-on('varde:server:jobUpdated', (source) => {
+on('Nord:server:jobUpdated', (source) => {
   result(() => services.publish(Number(source)));
 });
-on('varde:server:characterDeleted', (_source, characterId) => {
+on('Nord:server:characterDeleted', (_source, characterId) => {
   result(() => services.deleteCharacter(characterId));
 });
 on('playerDropped', () => {

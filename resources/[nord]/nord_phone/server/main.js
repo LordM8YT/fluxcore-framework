@@ -15,7 +15,7 @@ const runtime = {
     emitNet(eventName, source, ...args);
   },
   log(level, message) {
-    const output = `[varde_phone] [${level}] ${message}`;
+    const output = `[nord_phone] [${level}] ${message}`;
     if (level === 'error') {
       console.error(output);
     } else if (level === 'warn') {
@@ -40,16 +40,16 @@ function requireResource(name) {
 const integrations = {
   core: {
     getPlayerData(identifier) {
-      return globalThis.exports.varde_core.GetPlayerData(identifier);
+      return globalThis.exports.nord_core.GetPlayerData(identifier);
     },
     getPlayerSource(characterId) {
-      return globalThis.exports.varde_core.GetPlayerSource(characterId);
+      return globalThis.exports.nord_core.GetPlayerSource(characterId);
     },
   },
   inventory: {
     hasItem(identifier, itemName, amount) {
-      requireResource('varde_inventory');
-      return globalThis.exports.varde_inventory.HasItem(
+      requireResource('nord_inventory');
+      return globalThis.exports.nord_inventory.HasItem(
         identifier,
         itemName,
         amount,
@@ -128,7 +128,7 @@ function handle(source, method, payload) {
   }
 }
 
-onNet('varde_phone:server:request', (requestId, method, payload) => {
+onNet('nord_phone:server:request', (requestId, method, payload) => {
   const source = Number(global.source);
   const name = String(method || '');
   let response;
@@ -157,13 +157,13 @@ onNet('varde_phone:server:request', (requestId, method, payload) => {
   }
   runtime.emitClient(
     source,
-    'varde_phone:client:response',
+    'nord_phone:client:response',
     String(requestId || '').slice(0, 96),
     response,
   );
 });
 
-on('varde:server:playerLoaded', (source, snapshot) => {
+on('Nord:server:playerLoaded', (source, snapshot) => {
   try {
     phone.ensureAccount(snapshot.characterId);
   } catch (error) {
@@ -171,7 +171,7 @@ on('varde:server:playerLoaded', (source, snapshot) => {
   }
 });
 
-on('varde:server:characterDeleted', (_source, characterId) => {
+on('Nord:server:characterDeleted', (_source, characterId) => {
   try {
     phone.deleteCharacter(characterId);
   } catch (error) {

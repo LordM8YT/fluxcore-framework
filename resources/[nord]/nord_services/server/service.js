@@ -170,7 +170,7 @@ class ServicesService {
       this.config.historyLimit,
     );
     return {
-      contract: 'varde.services.bootstrap.v1',
+      contract: 'Nord.services.bootstrap.v1',
       invoices: {
         issued: clone(issued),
         received: clone(received),
@@ -184,7 +184,7 @@ class ServicesService {
     const snapshot = this.snapshot(online.source);
     this.runtime.emitClient(
       online.source,
-      'varde_services:client:update',
+      'nord_services:client:update',
       clone(snapshot),
     );
     return snapshot;

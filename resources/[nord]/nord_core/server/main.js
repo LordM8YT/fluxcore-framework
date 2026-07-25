@@ -30,7 +30,7 @@ const runtime = {
     Player(String(source)).state.set(key, value, replicated);
   },
   log(level, message) {
-    const output = `[varde_core] [${level}] ${message}`;
+    const output = `[nord_core] [${level}] ${message}`;
     if (level === 'error') {
       console.error(output);
     } else if (level === 'warn') {
@@ -157,11 +157,11 @@ rpc.register('session:logout', (source) => core.logout(source), {
   windowMs: 10_000,
 });
 
-onNet('varde:server:rpc', (requestId, method, payload) => {
+onNet('Nord:server:rpc', (requestId, method, payload) => {
   rpc.handle(Number(global.source), requestId, method, payload);
 });
 
-onNet('varde:server:updatePosition', (position) => {
+onNet('Nord:server:updatePosition', (position) => {
   const playerSource = Number(global.source);
   try {
     if (!rpc.rateLimiter.allow(`${playerSource}:position`, 8, 60_000)) {
@@ -175,7 +175,7 @@ onNet('varde:server:updatePosition', (position) => {
   }
 });
 
-onNet('varde:server:spawnDiagnostics', (diagnostics) => {
+onNet('Nord:server:spawnDiagnostics', (diagnostics) => {
   const playerSource = Number(global.source);
   if (!rpc.rateLimiter.allow(`${playerSource}:spawn-diagnostics`, 4, 60_000)) {
     return;

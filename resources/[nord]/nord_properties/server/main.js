@@ -25,7 +25,7 @@ const runtime = {
     };
   },
   log(level, message) {
-    const output = `[varde_properties] [${level}] ${message}`;
+    const output = `[nord_properties] [${level}] ${message}`;
     if (level === 'error') console.error(output);
     else if (level === 'warn') console.warn(output);
     else console.log(output);
@@ -41,16 +41,16 @@ function requireResource(name) {
 const integrations = {
   core: {
     getPlayerData(identifier) {
-      return globalThis.exports.varde_core.GetPlayerData(identifier);
+      return globalThis.exports.nord_core.GetPlayerData(identifier);
     },
     getPlayerSource(characterId) {
-      return globalThis.exports.varde_core.GetPlayerSource(characterId);
+      return globalThis.exports.nord_core.GetPlayerSource(characterId);
     },
     getCharacterData(identifier) {
-      return globalThis.exports.varde_core.GetCharacterData(identifier);
+      return globalThis.exports.nord_core.GetCharacterData(identifier);
     },
     addMoney(identifier, currency, amount, reason, reference) {
-      return globalThis.exports.varde_core.AddMoney(
+      return globalThis.exports.nord_core.AddMoney(
         identifier,
         currency,
         amount,
@@ -59,7 +59,7 @@ const integrations = {
       );
     },
     removeMoney(identifier, currency, amount, reason, reference) {
-      return globalThis.exports.varde_core.RemoveMoney(
+      return globalThis.exports.nord_core.RemoveMoney(
         identifier,
         currency,
         amount,
@@ -70,8 +70,8 @@ const integrations = {
   },
   inventory: {
     registerStash(id, label, slots, maxWeight) {
-      requireResource('varde_inventory');
-      return globalThis.exports.varde_inventory.RegisterStash(
+      requireResource('nord_inventory');
+      return globalThis.exports.nord_inventory.RegisterStash(
         id,
         label,
         slots,
@@ -79,8 +79,8 @@ const integrations = {
       );
     },
     openInventory(source, id) {
-      requireResource('varde_inventory');
-      return globalThis.exports.varde_inventory.OpenInventory(source, id);
+      requireResource('nord_inventory');
+      return globalThis.exports.nord_inventory.OpenInventory(source, id);
     },
   },
 };
@@ -126,7 +126,7 @@ function allow(source) {
   return true;
 }
 
-onNet('varde_properties:server:request', (requestId, method, payload) => {
+onNet('nord_properties:server:request', (requestId, method, payload) => {
   const source = Number(global.source);
   const input =
     payload && typeof payload === 'object' && !Array.isArray(payload)
@@ -180,16 +180,16 @@ onNet('varde_properties:server:request', (requestId, method, payload) => {
       };
   runtime.emitClient(
     source,
-    'varde_properties:client:response',
+    'nord_properties:client:response',
     String(requestId || '').slice(0, 96),
     response,
   );
 });
 
-on('varde:server:playerLoaded', (source) => {
+on('Nord:server:playerLoaded', (source) => {
   result(() => properties.publish(Number(source)));
 });
-on('varde:server:characterDeleted', (_source, characterId) => {
+on('Nord:server:characterDeleted', (_source, characterId) => {
   result(() => properties.deleteCharacter(characterId));
 });
 on('playerDropped', () => {

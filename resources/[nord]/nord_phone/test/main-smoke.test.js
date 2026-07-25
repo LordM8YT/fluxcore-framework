@@ -11,7 +11,7 @@ const { createRequire } = require('node:module');
 test('Cfx wiring boots and serves the phone request channel', () => {
   const resourceRoot = path.resolve(__dirname, '..');
   const mainPath = path.join(resourceRoot, 'server', 'main.js');
-  const temporaryRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'varde-phone-main-'));
+  const temporaryRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'Nord-phone-main-'));
   const eventHandlers = new Map();
   const netHandlers = new Map();
   const registeredExports = new Map();
@@ -24,7 +24,7 @@ test('Cfx wiring boots and serves the phone request channel', () => {
   function registerExport(name, handler) {
     registeredExports.set(name, handler);
   }
-  registerExport.varde_core = {
+  registerExport.nord_core = {
     GetPlayerData(identifier) {
       return Number(identifier) === 7 || identifier === player.characterId
         ? player
@@ -34,7 +34,7 @@ test('Cfx wiring boots and serves the phone request channel', () => {
       return characterId === player.characterId ? 7 : 0;
     },
   };
-  registerExport.varde_inventory = {
+  registerExport.nord_inventory = {
     HasItem() {
       return true;
     },
@@ -45,7 +45,7 @@ test('Cfx wiring boots and serves the phone request channel', () => {
     Buffer,
     console,
     GetCurrentResourceName() {
-      return 'varde_phone';
+      return 'nord_phone';
     },
     GetResourcePath() {
       return temporaryRoot;
@@ -74,22 +74,22 @@ test('Cfx wiring boots and serves the phone request channel', () => {
     vm.runInContext(fs.readFileSync(mainPath, 'utf8'), context, {
       filename: mainPath,
     });
-    assert.equal(netHandlers.has('varde_phone:server:request'), true);
-    assert.equal(eventHandlers.has('varde:server:characterDeleted'), true);
+    assert.equal(netHandlers.has('nord_phone:server:request'), true);
+    assert.equal(eventHandlers.has('Nord:server:characterDeleted'), true);
     assert.equal(registeredExports.has('GetPhoneNumber'), true);
 
     context.source = 7;
-    netHandlers.get('varde_phone:server:request')(
+    netHandlers.get('nord_phone:server:request')(
       'smoke:1',
       'bootstrap',
       {},
     );
     const response = emitted.at(-1);
-    assert.equal(response.eventName, 'varde_phone:client:response');
+    assert.equal(response.eventName, 'nord_phone:client:response');
     assert.equal(response.args[1].ok, true);
     assert.match(response.args[1].data.account.phoneNumber, /^5\d{7}$/);
 
-    eventHandlers.get('onResourceStop')('varde_phone');
+    eventHandlers.get('onResourceStop')('nord_phone');
   } finally {
     fs.rmSync(temporaryRoot, {
       recursive: true,

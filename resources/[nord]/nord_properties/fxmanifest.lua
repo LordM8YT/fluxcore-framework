@@ -1,8 +1,8 @@
 fx_version 'cerulean'
 game 'gta5'
 
-name 'varde_properties'
-author 'Varde Framework contributors'
+name 'nord_properties'
+author 'Nord Framework contributors'
 description 'Property ownership, access, locks, and storage for Varde Framework'
 version '0.1.0'
 license 'MIT'
@@ -10,10 +10,10 @@ license 'MIT'
 node_version '26'
 
 dependencies {
-    'varde_core',
-    'varde_inventory',
-    'varde_banking',
-    'varde_vehicles'
+    'nord_core',
+    'nord_inventory',
+    'nord_banking',
+    'nord_vehicles'
 }
 
 files {

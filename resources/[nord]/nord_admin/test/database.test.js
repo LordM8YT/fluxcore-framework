@@ -8,7 +8,7 @@ const path = require('node:path');
 const { AdminDatabase } = require('../server/database');
 
 test('audit records persist bounded action details', (t) => {
-  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'varde-admin-db-'));
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'Nord-admin-db-'));
   const database = new AdminDatabase(path.join(directory, 'admin.sqlite'));
   t.after(() => {
     database.close();

@@ -1,15 +1,15 @@
 fx_version 'cerulean'
 game 'gta5'
 
-name 'varde_status'
-author 'Varde Framework contributors'
+name 'nord_status'
+author 'Nord Framework contributors'
 description 'Persistent needs and HUD data provider for Varde Framework'
 version '0.1.0'
 license 'MIT'
 
 node_version '26'
 
-dependency 'varde_core'
+dependency 'nord_core'
 
 files {
     'config/status.json'
