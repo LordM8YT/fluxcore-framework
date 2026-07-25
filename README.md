@@ -3,9 +3,9 @@
 Nord is an independent, Enhanced-first roleplay framework for FiveM. It is built from
 scratch and does not require Qbox, QBCore, ESX, ox_lib, or oxmysql.
 
-[Documentation](https://Nord-framework.gitbook.io/Nord-framework-docs/) ·
-[Installation](https://Nord-framework.gitbook.io/Nord-framework-docs/installation) ·
-[Developer guide](https://Nord-framework.gitbook.io/Nord-framework-docs/developer-guide)
+[Documentation](https://nord-framework.gitbook.io/nord-framework-docs/) ·
+[Installation](https://nord-framework.gitbook.io/nord-framework-docs/installation) ·
+[Developer guide](https://nord-framework.gitbook.io/nord-framework-docs/developer-guide)
 
 The current pre-alpha foundation includes:
 
@@ -75,13 +75,13 @@ an alpha tag.
 Choose **Remote URL Template** during txAdmin setup and paste:
 
 ```text
-https://raw.githubusercontent.com/LordM8YT/Nord-framework/main/recipe.yaml
+https://raw.githubusercontent.com/LordM8YT/nord-framework/main/recipe.yaml
 ```
 
 The recipe creates a complete server-data directory with the standard CFX
 resources, Nord, a generated `server.cfg`, and no external framework or
 database dependency. See the
-[Installation guide](https://Nord-framework.gitbook.io/Nord-framework-docs/installation)
+[Installation guide](https://nord-framework.gitbook.io/nord-framework-docs/installation)
 for the full setup flow and Enhanced notes.
 
 ## Development
@@ -95,7 +95,7 @@ npm test
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for design and review rules,
 [SECURITY.md](SECURITY.md) for private reporting, and
-[Database and Backups](https://Nord-framework.gitbook.io/Nord-framework-docs/database-and-backups)
+[Database and Backups](https://nord-framework.gitbook.io/nord-framework-docs/database-and-backups)
 for backup and migration
 procedures.
 
@@ -106,11 +106,11 @@ QBCore, Qbox, or ESX compatibility patterns.
 
 Language is selected once in `server.cfg` with `setr nord_locale "en"` or
 `setr nord_locale "no"`. See
-[Localization](https://Nord-framework.gitbook.io/Nord-framework-docs/localization)
+[Localization](https://nord-framework.gitbook.io/nord-framework-docs/localization)
 for the runtime API and instructions for adding another language.
 
 The first public artifact should be validated with the
-[Enhanced test plan](https://Nord-framework.gitbook.io/Nord-framework-docs/enhanced-test-plan)
+[Enhanced test plan](https://nord-framework.gitbook.io/nord-framework-docs/enhanced-test-plan)
 before an
 alpha release is tagged.
 
@@ -160,7 +160,7 @@ The text-only communication MVP is documented in
 [nord_phone](<resources/[nord]/nord_phone/README.md>).
 
 Frontend contributors should use the versioned
-[Nord UI contracts](https://Nord-framework.gitbook.io/Nord-framework-docs/ui-contracts)
+[Nord UI contracts](https://nord-framework.gitbook.io/nord-framework-docs/ui-contracts)
 and bundled mock payloads under `contracts/ui/v1`.
 NUI code never accesses a framework export or database directly.
 
