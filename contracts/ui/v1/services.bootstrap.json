@@ -1,5 +1,5 @@
 {
-  "contract": "nord.services.bootstrap.v1",
+  "contract": "fluxcore.services.bootstrap.v1",
   "invoices": {
     "issued": [],
     "received": [

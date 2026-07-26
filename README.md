@@ -1,11 +1,11 @@
-# Nord Framework
+# Fluxcore Framework
 
-Nord is an independent, Enhanced-first roleplay framework for FiveM. It is built from
+Fluxcore is an independent, Enhanced-first roleplay framework for FiveM. It is built from
 scratch and does not require Qbox, QBCore, ESX, ox_lib, or oxmysql.
 
-[Documentation](https://nord-framework.gitbook.io/nord-framework-docs/) ·
-[Installation](https://nord-framework.gitbook.io/nord-framework-docs/installation) ·
-[Developer guide](https://nord-framework.gitbook.io/nord-framework-docs/developer-guide)
+[Documentation](https://fluxcore-framework.gitbook.io/fluxcore-framework-docs/) ·
+[Installation](https://fluxcore-framework.gitbook.io/fluxcore-framework-docs/installation) ·
+[Developer guide](https://fluxcore-framework.gitbook.io/fluxcore-framework-docs/developer-guide)
 
 The current pre-alpha foundation includes:
 
@@ -38,26 +38,26 @@ Server. Client gameplay code uses Lua 5.4.
 
 ```text
 resources/
-  [nord]/
-    nord_core/       Framework core
-    nord_identity/   Character and spawn UI
-    nord_jobs/       Jobs, grades, duty, and permissions
-    nord_inventory/  Server-authoritative items and containers
-    nord_banking/    Accounts, wallet movement, and transfers
-    nord_status/     Persistent needs and HUD telemetry
-    nord_vehicles/   Ownership, keys, garages, and trunks
-    nord_appearance/ Persistent freemode character appearance
-    nord_businesses/ Companies, roles, and treasuries
-    nord_services/   Rosters and invoices
-    nord_dispatch/   Emergency calls and unit assignment
-    nord_mdt/        Police reports, warrants, and BOLOs
-    nord_properties/ Ownership, access, locks, and storage
-    nord_world/      Shops, dealerships, and persistent doors
-    nord_admin/      ACE-secured operations and audit panel
-    nord_phone/      Contacts and offline text messaging
-    nord_example/    Commands showing the public API
+  [fluxcore]/
+    fluxcore_core/       Framework core
+    fluxcore_identity/   Character and spawn UI
+    fluxcore_jobs/       Jobs, grades, duty, and permissions
+    fluxcore_inventory/  Server-authoritative items and containers
+    fluxcore_banking/    Accounts, wallet movement, and transfers
+    fluxcore_status/     Persistent needs and HUD telemetry
+    fluxcore_vehicles/   Ownership, keys, garages, and trunks
+    fluxcore_appearance/ Persistent freemode character appearance
+    fluxcore_businesses/ Companies, roles, and treasuries
+    fluxcore_services/   Rosters and invoices
+    fluxcore_dispatch/   Emergency calls and unit assignment
+    fluxcore_mdt/        Police reports, warrants, and BOLOs
+    fluxcore_properties/ Ownership, access, locks, and storage
+    fluxcore_world/      Shops, dealerships, and persistent doors
+    fluxcore_admin/      ACE-secured operations and audit panel
+    fluxcore_phone/      Contacts and offline text messaging
+    fluxcore_example/    Commands showing the public API
 templates/
-  nord_resource/     Copyable starter for new Nord resources
+  fluxcore_resource/     Copyable starter for new Fluxcore resources
 contracts/
   ui/v1/              Versioned UI mock payloads
 server.cfg.example       Minimal development configuration
@@ -75,13 +75,13 @@ an alpha tag.
 Choose **Remote URL Template** during txAdmin setup and paste:
 
 ```text
-https://raw.githubusercontent.com/LordM8YT/nord-framework/main/recipe.yaml
+https://raw.githubusercontent.com/LordM8YT/fluxcore-framework/main/recipe.yaml
 ```
 
 The recipe creates a complete server-data directory with the standard CFX
-resources, Nord, a generated `server.cfg`, and no external framework or
+resources, Fluxcore, a generated `server.cfg`, and no external framework or
 database dependency. See the
-[Installation guide](https://nord-framework.gitbook.io/nord-framework-docs/installation)
+[Installation guide](https://fluxcore-framework.gitbook.io/fluxcore-framework-docs/installation)
 for the full setup flow and Enhanced notes.
 
 ## Development
@@ -95,75 +95,75 @@ npm test
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for design and review rules,
 [SECURITY.md](SECURITY.md) for private reporting, and
-[Database and Backups](https://nord-framework.gitbook.io/nord-framework-docs/database-and-backups)
+[Database and Backups](https://fluxcore-framework.gitbook.io/fluxcore-framework-docs/database-and-backups)
 for backup and migration
 procedures.
 
 External resources should begin with the
-[Nord resource starter](templates/nord_resource). It demonstrates direct
+[Fluxcore resource starter](templates/fluxcore_resource). It demonstrates direct
 exports, replicated State Bags, and native ACE-protected commands without
 QBCore, Qbox, or ESX compatibility patterns.
 
-Language is selected once in `server.cfg` with `setr nord_locale "en"` or
-`setr nord_locale "no"`. See
-[Localization](https://nord-framework.gitbook.io/nord-framework-docs/localization)
+Language is selected once in `server.cfg` with `setr fluxcore_locale "en"` or
+`setr fluxcore_locale "no"`. See
+[Localization](https://fluxcore-framework.gitbook.io/fluxcore-framework-docs/localization)
 for the runtime API and instructions for adding another language.
 
 The first public artifact should be validated with the
-[Enhanced test plan](https://nord-framework.gitbook.io/nord-framework-docs/enhanced-test-plan)
+[Enhanced test plan](https://fluxcore-framework.gitbook.io/fluxcore-framework-docs/enhanced-test-plan)
 before an
 alpha release is tagged.
 
-See [the core documentation](<resources/[nord]/nord_core/README.md>) for
+See [the core documentation](<resources/[fluxcore]/fluxcore_core/README.md>) for
 installation, exports, events, and the security model.
 
 Job definitions and the permission API are documented in
-[nord_jobs](<resources/[nord]/nord_jobs/README.md>).
+[fluxcore_jobs](<resources/[fluxcore]/fluxcore_jobs/README.md>).
 
 Item, container, and transfer APIs are documented in
-[nord_inventory](<resources/[nord]/nord_inventory/README.md>).
+[fluxcore_inventory](<resources/[fluxcore]/fluxcore_inventory/README.md>).
 
 Accounts, deposits, withdrawals, and transfers are documented in
-[nord_banking](<resources/[nord]/nord_banking/README.md>).
+[fluxcore_banking](<resources/[fluxcore]/fluxcore_banking/README.md>).
 
 Needs and HUD telemetry are documented in
-[nord_status](<resources/[nord]/nord_status/README.md>).
+[fluxcore_status](<resources/[fluxcore]/fluxcore_status/README.md>).
 
 Vehicle ownership, keys, garages, and trunks are documented in
-[nord_vehicles](<resources/[nord]/nord_vehicles/README.md>).
+[fluxcore_vehicles](<resources/[fluxcore]/fluxcore_vehicles/README.md>).
 
 Persistent character customization is documented in
-[nord_appearance](<resources/[nord]/nord_appearance/README.md>).
+[fluxcore_appearance](<resources/[fluxcore]/fluxcore_appearance/README.md>).
 
 Companies, employee roles, and treasury access are documented in
-[nord_businesses](<resources/[nord]/nord_businesses/README.md>).
+[fluxcore_businesses](<resources/[fluxcore]/fluxcore_businesses/README.md>).
 
 On-duty rosters and secure invoices are documented in
-[nord_services](<resources/[nord]/nord_services/README.md>).
+[fluxcore_services](<resources/[fluxcore]/fluxcore_services/README.md>).
 
 Emergency calls and unit assignment are documented in
-[nord_dispatch](<resources/[nord]/nord_dispatch/README.md>).
+[fluxcore_dispatch](<resources/[fluxcore]/fluxcore_dispatch/README.md>).
 
 Police records, warrants, reports, and BOLOs are documented in
-[nord_mdt](<resources/[nord]/nord_mdt/README.md>).
+[fluxcore_mdt](<resources/[fluxcore]/fluxcore_mdt/README.md>).
 
 Property ownership, keys, storage, and integration points are documented in
-[nord_properties](<resources/[nord]/nord_properties/README.md>).
+[fluxcore_properties](<resources/[fluxcore]/fluxcore_properties/README.md>).
 
 Shops, dealerships, and persistent doors are documented in
-[nord_world](<resources/[nord]/nord_world/README.md>).
+[fluxcore_world](<resources/[fluxcore]/fluxcore_world/README.md>).
 
 Administration permissions and actions are documented in
-[nord_admin](<resources/[nord]/nord_admin/README.md>).
+[fluxcore_admin](<resources/[fluxcore]/fluxcore_admin/README.md>).
 
 The text-only communication MVP is documented in
-[nord_phone](<resources/[nord]/nord_phone/README.md>).
+[fluxcore_phone](<resources/[fluxcore]/fluxcore_phone/README.md>).
 
 Frontend contributors should use the versioned
-[Nord UI contracts](https://nord-framework.gitbook.io/nord-framework-docs/ui-contracts)
+[Fluxcore UI contracts](https://fluxcore-framework.gitbook.io/fluxcore-framework-docs/ui-contracts)
 and bundled mock payloads under `contracts/ui/v1`.
 NUI code never accesses a framework export or database directly.
 
 ## License
 
-Nord Framework is available under the [MIT License](LICENSE).
+Fluxcore Framework is available under the [MIT License](LICENSE).

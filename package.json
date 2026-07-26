@@ -1,13 +1,13 @@
 {
-  "name": "nord-framework",
+  "name": "fluxcore-framework",
   "version": "0.1.0",
   "private": true,
-  "description": "Development commands for Nord Framework",
+  "description": "Development commands for Fluxcore Framework",
   "license": "MIT",
   "scripts": {
     "test": "node tools/test-all.js",
-    "data:backup": "node tools/nord-data.js backup",
-    "data:inspect": "node tools/nord-data.js inspect"
+    "data:backup": "node tools/fluxcore-data.js backup",
+    "data:inspect": "node tools/fluxcore-data.js inspect"
   },
   "engines": {
     "node": ">=24"

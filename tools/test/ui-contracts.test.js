@@ -25,7 +25,7 @@ test('UI v1 mock payloads are parseable and versioned', () => {
     .map(fixture);
 
   for (const mock of mocks) {
-    assert.match(mock.contract, /^varde\.[a-z]+\.bootstrap\.v1$/u);
+    assert.match(mock.contract, /^fluxcore\.[a-z]+\.bootstrap\.v1$/u);
   }
   assert.ok(mocks.length >= 10);
 });

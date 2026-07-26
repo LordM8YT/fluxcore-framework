@@ -34,7 +34,7 @@ jobs:
       - name: Run resource and repository tests
         run: npm test
         env:
-          VARDE_REQUIRE_LUAC: "1"
+          FLUXCORE_REQUIRE_LUAC: "1"
 
       - name: Check patch whitespace
         run: git diff --check

@@ -1,28 +1,28 @@
 $engine: 3
 $onesync: on
-name: Varde Framework
+name: Fluxcore Framework
 version: 0.1.0
 author: LordM8YT and contributors
 description: An independent Enhanced-first roleplay framework built from scratch.
 
 tasks:
-  # Download Varde and install only the runtime files required by Cfx Server.
+  # Download Fluxcore and install only the runtime files required by Cfx Server.
   - action: download_github
-    src: https://github.com/LordM8YT/varde-framework
+    src: https://github.com/LordM8YT/fluxcore-framework
     ref: main
-    dest: ./tmp/varde
+    dest: ./tmp/fluxcore
 
   - action: move_path
-    src: ./tmp/varde/txadmin/server.cfg
+    src: ./tmp/fluxcore/txadmin/server.cfg
     dest: ./server.cfg
 
   - action: move_path
-    src: ./tmp/varde/resources/[varde]
-    dest: ./resources/[varde]
+    src: ./tmp/fluxcore/resources/[fluxcore]
+    dest: ./resources/[fluxcore]
 
   - action: move_path
-    src: ./tmp/varde/LICENSE
-    dest: ./resources/[varde]/LICENSE
+    src: ./tmp/fluxcore/LICENSE
+    dest: ./resources/[fluxcore]/LICENSE
 
   # Install the standard CFX resources at a known-good revision.
   - action: download_github

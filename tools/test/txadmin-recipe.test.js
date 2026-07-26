@@ -16,16 +16,16 @@ function indexOfLine(value, line) {
   return value.split(/\r?\n/u).findIndex((candidate) => candidate.trim() === line);
 }
 
-test('txAdmin recipe installs a complete dependency-free Varde server', () => {
+test('txAdmin recipe installs a complete dependency-free Fluxcore server', () => {
   assert.match(recipe, /^\$engine: 3$/mu);
   assert.match(recipe, /^\$onesync: on$/mu);
-  assert.match(recipe, /^name: Varde Framework$/mu);
-  assert.match(recipe, /src: https:\/\/github\.com\/LordM8YT\/varde-framework/u);
+  assert.match(recipe, /^name: Fluxcore Framework$/mu);
+  assert.match(recipe, /src: https:\/\/github\.com\/LordM8YT\/fluxcore-framework/u);
   assert.match(recipe, /ref: main/u);
-  assert.match(recipe, /src: \.\/tmp\/varde\/resources\/\[varde\]/u);
-  assert.match(recipe, /dest: \.\/resources\/\[varde\]/u);
-  assert.match(recipe, /src: \.\/tmp\/varde\/LICENSE/u);
-  assert.match(recipe, /dest: \.\/resources\/\[varde\]\/LICENSE/u);
+  assert.match(recipe, /src: \.\/tmp\/fluxcore\/resources\/\[fluxcore\]/u);
+  assert.match(recipe, /dest: \.\/resources\/\[fluxcore\]/u);
+  assert.match(recipe, /src: \.\/tmp\/fluxcore\/LICENSE/u);
+  assert.match(recipe, /dest: \.\/resources\/\[fluxcore\]\/LICENSE/u);
   assert.match(recipe, /src: https:\/\/github\.com\/citizenfx\/cfx-server-data/u);
   assert.match(recipe, /ref: e265cb251c88260533c847d4a1a2838c7d828a66/u);
   assert.match(recipe, /subpath: resources/u);
@@ -48,44 +48,44 @@ test('generated server config exposes every txAdmin placeholder', () => {
   assert.match(serverConfig, /^set sv_devMode true$/mu);
   assert.doesNotMatch(serverConfig, /^set sv_devmode true$/mu);
   assert.doesNotMatch(serverConfig, /^sv_enforceGameBuild\s+/mu);
-  assert.match(serverConfig, /^add_ace group\.admin varde\.admin allow$/mu);
+  assert.match(serverConfig, /^add_ace group\.admin fluxcore\.admin allow$/mu);
   assert.match(
     serverConfig,
-    /^add_ace group\.admin varde\.jobs\.manage allow$/mu,
+    /^add_ace group\.admin fluxcore\.jobs\.manage allow$/mu,
   );
   assert.match(
     serverConfig,
-    /^add_ace group\.admin varde\.vehicles\.manage allow$/mu,
+    /^add_ace group\.admin fluxcore\.vehicles\.manage allow$/mu,
   );
   assert.match(
     serverConfig,
-    /^add_ace group\.admin varde\.businesses\.manage allow$/mu,
+    /^add_ace group\.admin fluxcore\.businesses\.manage allow$/mu,
   );
 });
 
-test('Varde resources start after core in dependency order', () => {
+test('Fluxcore resources start after core in dependency order', () => {
   const expected = [
-    'ensure varde_core',
-    'ensure varde_status',
-    'ensure varde_jobs',
-    'ensure varde_inventory',
-    'ensure varde_banking',
-    'ensure varde_vehicles',
-    'ensure varde_appearance',
-    'ensure varde_businesses',
-    'ensure varde_services',
-    'ensure varde_dispatch',
-    'ensure varde_mdt',
-    'ensure varde_properties',
-    'ensure varde_world',
-    'ensure varde_admin',
-    'ensure varde_phone',
-    'ensure varde_identity',
-    'ensure varde_example',
+    'ensure fluxcore_core',
+    'ensure fluxcore_status',
+    'ensure fluxcore_jobs',
+    'ensure fluxcore_inventory',
+    'ensure fluxcore_banking',
+    'ensure fluxcore_vehicles',
+    'ensure fluxcore_appearance',
+    'ensure fluxcore_businesses',
+    'ensure fluxcore_services',
+    'ensure fluxcore_dispatch',
+    'ensure fluxcore_mdt',
+    'ensure fluxcore_properties',
+    'ensure fluxcore_world',
+    'ensure fluxcore_admin',
+    'ensure fluxcore_phone',
+    'ensure fluxcore_identity',
+    'ensure fluxcore_example',
   ];
 
   const indexes = expected.map((line) => indexOfLine(serverConfig, line));
-  assert.ok(indexes.every((index) => index >= 0), 'a Varde resource is missing');
+  assert.ok(indexes.every((index) => index >= 0), 'a Fluxcore resource is missing');
   assert.deepEqual(indexes, [...indexes].sort((a, b) => a - b));
   assert.equal(indexOfLine(serverConfig, 'ensure basic-gamemode'), -1);
   assert.equal(indexOfLine(serverConfig, 'stop basic-gamemode'), -1);

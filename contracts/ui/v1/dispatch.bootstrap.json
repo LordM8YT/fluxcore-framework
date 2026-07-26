@@ -1,5 +1,5 @@
 {
-  "contract": "nord.dispatch.bootstrap.v1",
+  "contract": "fluxcore.dispatch.bootstrap.v1",
   "services": ["police"],
   "calls": [
     {

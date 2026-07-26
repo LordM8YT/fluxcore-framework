@@ -1,5 +1,5 @@
 {
-  "contract": "nord.world.bootstrap.v1",
+  "contract": "fluxcore.world.bootstrap.v1",
   "shops": [
     {
       "id": "strawberry_247",

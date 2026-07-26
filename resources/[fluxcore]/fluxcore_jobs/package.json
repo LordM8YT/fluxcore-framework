@@ -1,0 +1,13 @@
+{
+  "name": "Fluxcore-jobs",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Jobs, grades, duty, and permissions for Fluxcore Framework",
+  "license": "MIT",
+  "scripts": {
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=24"
+  }
+}

@@ -4,9 +4,9 @@
 endpoint_add_tcp "0.0.0.0:30120"
 endpoint_add_udp "0.0.0.0:30120"
 
-sv_hostname "Varde Framework Development"
-sets sv_projectName "Varde Framework"
-sets sv_projectDesc "Varde — an independent Enhanced-first framework"
+sv_hostname "Fluxcore Framework Development"
+sets sv_projectName "Fluxcore Framework"
+sets sv_projectDesc "Fluxcore — an independent Enhanced-first framework"
 sv_maxclients 8
 
 # OneSync is always enabled by Cfx Server for Enhanced and its convar is
@@ -18,35 +18,35 @@ set sv_stateBagStrictMode true
 set sv_devMode true
 
 # Core settings can override config/defaults.json without editing the resource.
-# Use "no" for Norwegian. Keep this above every Varde ensure.
-setr varde_locale "en"
-set varde_maxCharacters 4
-set varde_saveIntervalMs 60000
+# Use "no" for Norwegian. Keep this above every Fluxcore ensure.
+setr fluxcore_locale "en"
+set fluxcore_maxCharacters 4
+set fluxcore_saveIntervalMs 60000
 
-ensure varde_core
-ensure varde_status
-ensure varde_jobs
-ensure varde_inventory
-ensure varde_banking
-ensure varde_vehicles
-ensure varde_appearance
-ensure varde_businesses
-ensure varde_services
-ensure varde_dispatch
-ensure varde_mdt
-ensure varde_properties
-ensure varde_world
-ensure varde_admin
-ensure varde_phone
-ensure varde_identity
-ensure varde_example
+ensure fluxcore_core
+ensure fluxcore_status
+ensure fluxcore_jobs
+ensure fluxcore_inventory
+ensure fluxcore_banking
+ensure fluxcore_vehicles
+ensure fluxcore_appearance
+ensure fluxcore_businesses
+ensure fluxcore_services
+ensure fluxcore_dispatch
+ensure fluxcore_mdt
+ensure fluxcore_properties
+ensure fluxcore_world
+ensure fluxcore_admin
+ensure fluxcore_phone
+ensure fluxcore_identity
+ensure fluxcore_example
 
 # Job-management commands are denied to players unless their principal inherits
 # this ACE. Example:
-# add_ace group.admin varde.jobs.manage allow
-# add_ace group.admin varde.vehicles.manage allow
-# add_ace group.admin varde.businesses.manage allow
-# add_ace group.admin varde.admin allow
+# add_ace group.admin fluxcore.jobs.manage allow
+# add_ace group.admin fluxcore.vehicles.manage allow
+# add_ace group.admin fluxcore.businesses.manage allow
+# add_ace group.admin fluxcore.admin allow
 
 # Add this locally. Never commit a real key.
 # sv_licenseKey "..."

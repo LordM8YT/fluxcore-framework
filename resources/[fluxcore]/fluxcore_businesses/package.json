@@ -1,0 +1,13 @@
+{
+  "name": "Fluxcore-businesses",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Player-owned businesses, staff roles, and treasuries for Fluxcore Framework",
+  "license": "MIT",
+  "scripts": {
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=24"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "name": "Fluxcore-status",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Persistent player needs and HUD data provider for Fluxcore Framework",
+  "license": "MIT",
+  "scripts": {
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=24"
+  }
+}

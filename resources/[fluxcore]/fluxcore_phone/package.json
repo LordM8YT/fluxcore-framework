@@ -1,0 +1,13 @@
+{
+  "name": "Fluxcore-phone",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Text-first phone for Fluxcore Framework",
+  "license": "MIT",
+  "scripts": {
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=24"
+  }
+}

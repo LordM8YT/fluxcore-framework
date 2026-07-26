@@ -41,7 +41,7 @@ function walk(directory, predicate, output = []) {
   return output;
 }
 
-const resourceRoot = path.join(root, 'resources', '[nord]');
+const resourceRoot = path.join(root, 'resources', '[fluxcore]');
 const packages = fs
   .readdirSync(resourceRoot, { withFileTypes: true })
   .filter((entry) => entry.isDirectory())
@@ -93,7 +93,7 @@ if (luac) {
     run(luac, ['-p', filename]);
   }
   console.log(`[test-all] Lua syntax: ${luaFiles.length} file(s)`);
-} else if (process.env.VARDE_REQUIRE_LUAC === '1') {
+} else if (process.env.FLUXCORE_REQUIRE_LUAC === '1') {
   failures += 1;
   console.error('[test-all] Lua 5.4 compiler is required but was not found.');
 } else {

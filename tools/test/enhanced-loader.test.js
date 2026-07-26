@@ -6,7 +6,7 @@ const path = require('node:path');
 const test = require('node:test');
 
 const root = path.resolve(__dirname, '..', '..');
-const resourceRoot = path.join(root, 'resources', '[nord]');
+const resourceRoot = path.join(root, 'resources', '[fluxcore]');
 
 const nodeResources = fs
   .readdirSync(resourceRoot, { withFileTypes: true })
@@ -57,7 +57,7 @@ test('CommonJS modules call the Cfx export registrar explicitly', () => {
   }
 });
 
-test('Enhanced Node resources use the stable Varde player-list API', () => {
+test('Enhanced Node resources use the stable Fluxcore player-list API', () => {
   for (const resourceName of nodeResources) {
     const main = fs.readFileSync(
       path.join(resourceRoot, resourceName, 'server', 'main.js'),
@@ -70,7 +70,7 @@ test('Enhanced Node resources use the stable Varde player-list API', () => {
 
 test('client RPC accepts serialized Cfx callback references', () => {
   const client = fs.readFileSync(
-    path.join(resourceRoot, 'nord_core', 'client', 'main.lua'),
+    path.join(resourceRoot, 'fluxcore_core', 'client', 'main.lua'),
     'utf8',
   );
 
@@ -85,7 +85,7 @@ test('client RPC accepts serialized Cfx callback references', () => {
 
 test('client spawning delegates player creation to the Cfx spawnmanager', () => {
   const client = fs.readFileSync(
-    path.join(resourceRoot, 'nord_core', 'client', 'main.lua'),
+    path.join(resourceRoot, 'fluxcore_core', 'client', 'main.lua'),
     'utf8',
   );
 
@@ -98,7 +98,7 @@ test('client spawning delegates player creation to the Cfx spawnmanager', () => 
   assert.doesNotMatch(client, /NetworkResurrectLocalPlayer\(/u);
   assert.match(client, /SetPlayerControl\(PlayerId\(\), true, false\)/u);
   assert.match(client, /RenderScriptCams\(false, false, 0, true, true\)/u);
-  assert.match(client, /TriggerServerEvent\('nord:server:spawnDiagnostics'/u);
+  assert.match(client, /TriggerServerEvent\('fluxcore:server:spawnDiagnostics'/u);
   assert.match(client, /DoScreenFadeIn\(500\)/u);
   assert.match(client, /ShutdownLoadingScreen\(\)/u);
   assert.match(client, /ShutdownLoadingScreenNui\(\)/u);
@@ -109,8 +109,8 @@ test('client spawning delegates player creation to the Cfx spawnmanager', () => 
   );
 });
 
-test('fullscreen Varde NUI pages keep the Enhanced CEF canvas transparent', () => {
-  for (const resourceName of ['nord_identity', 'nord_admin', 'nord_phone']) {
+test('fullscreen Fluxcore NUI pages keep the Enhanced CEF canvas transparent', () => {
+  for (const resourceName of ['fluxcore_identity', 'fluxcore_admin', 'fluxcore_phone']) {
     const page = fs.readFileSync(
       path.join(resourceRoot, resourceName, 'web', 'index.html'),
       'utf8',
@@ -131,7 +131,7 @@ test('fullscreen Varde NUI pages keep the Enhanced CEF canvas transparent', () =
 
 test('identity closes its NUI before handling the spawn request', () => {
   const client = fs.readFileSync(
-    path.join(resourceRoot, 'nord_identity', 'client.lua'),
+    path.join(resourceRoot, 'fluxcore_identity', 'client.lua'),
     'utf8',
   );
 
@@ -139,13 +139,13 @@ test('identity closes its NUI before handling the spawn request', () => {
   assert.match(client, /SetNuiFocusKeepInput\(false\)/u);
   assert.match(
     client,
-    /AddEventHandler\('nord_identity:client:spawnRequested',[\s\S]*?closeMenu\(\)[\s\S]*?exports\.nord_core:SpawnAt/u,
+    /AddEventHandler\('fluxcore_identity:client:spawnRequested',[\s\S]*?closeMenu\(\)[\s\S]*?exports\.fluxcore_core:SpawnAt/u,
   );
 });
 
 test('cross-resource client lifecycle handlers are network-safe', () => {
   const consumers = {
-    nord_identity: ['nord:client:playerLoggedOut'],
+    fluxcore_identity: ['fluxcore:client:playerLoggedOut'],
   };
 
   for (const [resourceName, eventNames] of Object.entries(consumers)) {

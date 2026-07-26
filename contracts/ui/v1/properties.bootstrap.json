@@ -1,5 +1,5 @@
 {
-  "contract": "nord.properties.bootstrap.v1",
+  "contract": "fluxcore.properties.bootstrap.v1",
   "properties": [
     {
       "id": "pinkcage_1",

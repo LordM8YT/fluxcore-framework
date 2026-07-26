@@ -1,5 +1,5 @@
 name: Bug report
-description: Report a reproducible problem in Varde Framework.
+description: Report a reproducible problem in Fluxcore Framework.
 title: "[Bug]: "
 labels:
   - bug
@@ -7,7 +7,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thanks for helping test Varde. Remove passwords, license keys, tokens,
+        Thanks for helping test Fluxcore. Remove passwords, license keys, tokens,
         player identifiers, and other private data from logs before attaching them.
 
   - type: checkboxes
@@ -27,12 +27,12 @@ body:
     attributes:
       label: Resource
       options:
-        - varde_core
-        - varde_identity
-        - varde_jobs
-        - varde_inventory
-        - varde_admin
-        - varde_phone
+        - fluxcore_core
+        - fluxcore_identity
+        - fluxcore_jobs
+        - fluxcore_inventory
+        - fluxcore_admin
+        - fluxcore_phone
         - Repository tools / documentation
         - Multiple resources
     validations:

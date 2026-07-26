@@ -1,5 +1,5 @@
 {
-  "contract": "nord.banking.bootstrap.v1",
+  "contract": "fluxcore.banking.bootstrap.v1",
   "account": {
     "characterId": "vrd_0123456789abcdef",
     "accountNumber": "VRD0123456789",
@@ -14,7 +14,7 @@
       "balanceAfter": 28750,
       "reason": "Rent",
       "reference": "bank:5ac68da3-534d-45ef-9db1-503d55f2d0ff",
-      "actor": "varde_banking",
+      "actor": "fluxcore_banking",
       "createdAt": "2026-07-25T00:00:00.000Z"
     }
   ]

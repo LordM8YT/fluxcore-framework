@@ -1,5 +1,5 @@
 {
-  "contract": "nord.businesses.bootstrap.v1",
+  "contract": "fluxcore.businesses.bootstrap.v1",
   "businesses": [
     {
       "id": "biz_0123456789abcdef",

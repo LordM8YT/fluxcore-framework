@@ -1,5 +1,5 @@
 {
-  "contract": "nord.mdt.bootstrap.v1",
+  "contract": "fluxcore.mdt.bootstrap.v1",
   "warrants": [
     {
       "id": "war_0123456789abcdef",
@@ -34,7 +34,7 @@
     }
   ],
   "dispatch": {
-    "contract": "nord.dispatch.bootstrap.v1",
+    "contract": "fluxcore.dispatch.bootstrap.v1",
     "services": ["police"],
     "calls": [],
     "roster": { "police": [] }

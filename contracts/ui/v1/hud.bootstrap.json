@@ -1,8 +1,8 @@
 {
-  "contract": "nord.hud.bootstrap.v1",
+  "contract": "fluxcore.hud.bootstrap.v1",
   "player": {
     "characterId": "vrd_0123456789abcdef",
-    "name": "Nora Varde",
+    "name": "Nora Fluxcore",
     "job": {
       "name": "police",
       "label": "Los Santos Police",
