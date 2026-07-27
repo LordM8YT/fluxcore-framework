@@ -175,7 +175,7 @@ local function callAsync(method, payload, callback, timeoutMs)
         callback(response)
     end
 
-    TriggerServerEvent('fluxcore:server:rpc', requestId, method, payload or {})
+    TriggerServerEvent('Fluxcore:server:rpc', requestId, method, payload or {})
 
     SetTimeout(timeoutMs or DEFAULT_TIMEOUT_MS, function()
         local resolver = pending[requestId]

@@ -1,6 +1,7 @@
 # Table of contents
 
 * [Fluxcore Framework](README.md)
+* [Interactions and Shared UI](interactions-and-shared-ui.md)
 * [Contributing](contributing.md)
 * [Architecture](architecture.md)
 * [Configuration](configuration.md)

@@ -13,6 +13,7 @@ Fluxcore is an independent, Enhanced-first roleplay framework for FiveM. It is b
 | install a complete server           | [Installation](installation.md)                   |
 | configure resources and permissions | [Configuration](configuration.md)                 |
 | build a Fluxcore resource           | [Developer Guide](developer-guide.md)             |
+| build interactions                  | [Interactions and Shared UI](interactions-and-shared-ui.md) |
 | copy a clean resource starter       | [Resource Template](resource-template.md)         |
 | use core exports and events         | [Core API](core-api.md)                           |
 | understand State Bags               | [State Bags and Events](state-bags-and-events.md) |
@@ -26,6 +27,7 @@ Fluxcore is an independent, Enhanced-first roleplay framework for FiveM. It is b
 | Resource              | Responsibility                                                           |
 | --------------------- | ------------------------------------------------------------------------ |
 | `fluxcore_core`       | accounts, characters, sessions, money, metadata, active job and position |
+| `fluxcore_interact`   | shared zones, entity interactions, menus, dialogs, notifications, and progress actions |
 | `fluxcore_identity`   | character selection, creation, deletion and spawning                     |
 | `fluxcore_jobs`       | persistent job assignments, grades, duty and permissions                 |
 | `fluxcore_inventory`  | server-authoritative items, containers and world drops                   |
@@ -43,7 +45,7 @@ Fluxcore is an independent, Enhanced-first roleplay framework for FiveM. It is b
 | `fluxcore_phone`      | phone numbers, contacts and offline text messaging                       |
 | `fluxcore_example`    | temporary examples for the public API                                    |
 
-Read the domain references for [Banking](banking.md), [Businesses](businesses.md), [Services and Invoicing](services-and-invoicing.md), [Dispatch](dispatch.md), [MDT](mdt.md), [Properties](properties.md), and [World](world.md).
+Read the domain references for [Interactions and Shared UI](interactions-and-shared-ui.md), [Banking](banking.md), [Businesses](businesses.md), [Services and Invoicing](services-and-invoicing.md), [Dispatch](dispatch.md), [MDT](mdt.md), [Properties](properties.md), and [World](world.md).
 
 ## Design principles
 

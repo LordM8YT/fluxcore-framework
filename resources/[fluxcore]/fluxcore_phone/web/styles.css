@@ -61,7 +61,7 @@ button {
     justify-items: end;
     min-height: 100vh;
     padding: 28px 42px;
-    background: linear-gradient(90deg, transparent 40%, rgba(3, 5, 4, 0.22));
+    background: transparent;
 }
 
 .phone-shell {
