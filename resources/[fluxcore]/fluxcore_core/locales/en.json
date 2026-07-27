@@ -4,6 +4,19 @@
     "unemployed": "Unemployed",
     "garage": "Garage"
   },
+  "interact": {
+    "menuTitle": "Menu",
+    "inputTitle": "Input",
+    "inputLabel": "Value",
+    "progressLabel": "Working",
+    "interactionsTitle": "Interactions",
+    "close": "Close",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "options": "options",
+    "escapeToCancel": "ESC to cancel",
+    "valueRequired": "A value is required"
+  },
   "labels": {
     "jobs": {
       "unemployed": {

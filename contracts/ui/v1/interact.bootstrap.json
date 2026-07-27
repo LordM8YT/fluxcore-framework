@@ -1,0 +1,69 @@
+{
+  "contract": "fluxcore.interact.bootstrap.v1",
+  "translations": {
+    "close": "Close",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "options": "options",
+    "escapeToCancel": "ESC to cancel",
+    "required": "A value is required"
+  },
+  "interaction": {
+    "focused": false,
+    "options": [
+      {
+        "id": "open",
+        "label": "Open front desk",
+        "description": "Talk to the receptionist",
+        "icon": null
+      },
+      {
+        "id": "inspect",
+        "label": "Inspect desk",
+        "description": null,
+        "icon": null
+      }
+    ]
+  },
+  "menu": {
+    "title": "Vehicle actions",
+    "description": "Choose an action",
+    "options": [
+      {
+        "id": "lock",
+        "label": "Lock vehicle",
+        "description": null,
+        "icon": "lock",
+        "disabled": false
+      },
+      {
+        "id": "keys",
+        "label": "Share keys",
+        "description": "Give temporary access",
+        "icon": "key",
+        "disabled": false
+      }
+    ]
+  },
+  "dialog": {
+    "title": "Invoice",
+    "description": null,
+    "label": "Amount",
+    "placeholder": "1000",
+    "value": "",
+    "required": true,
+    "maxLength": 10
+  },
+  "notification": {
+    "id": "notification:1000:1",
+    "title": "Garage",
+    "description": "Vehicle stored",
+    "type": "success",
+    "duration": 4000
+  },
+  "progress": {
+    "label": "Repairing vehicle",
+    "duration": 5000,
+    "canCancel": true
+  }
+}

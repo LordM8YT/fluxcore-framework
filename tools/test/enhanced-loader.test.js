@@ -109,8 +109,13 @@ test('client spawning delegates player creation to the Cfx spawnmanager', () => 
   );
 });
 
-test('fullscreen Fluxcore NUI pages keep the Enhanced CEF canvas transparent', () => {
-  for (const resourceName of ['fluxcore_identity', 'fluxcore_admin', 'fluxcore_phone']) {
+test('Fluxcore NUI pages keep the Enhanced CEF canvas transparent before CSS loads', () => {
+  for (const resourceName of [
+    'fluxcore_identity',
+    'fluxcore_admin',
+    'fluxcore_phone',
+    'fluxcore_interact',
+  ]) {
     const page = fs.readFileSync(
       path.join(resourceRoot, resourceName, 'web', 'index.html'),
       'utf8',
@@ -122,11 +127,55 @@ test('fullscreen Fluxcore NUI pages keep the Enhanced CEF canvas transparent', (
 
     assert.match(
       styles,
-      /html,\s*body\s*\{\s*background-color:\s*transparent\s*!important;/u,
+      /html,\s*body(?:,\s*#app)?\s*\{[^}]*(?:background:\s*none|background-color:\s*(?:transparent|rgba\(0,\s*0,\s*0,\s*0\)))\s*!important;/u,
       resourceName,
+    );
+    assert.match(
+      page,
+      /<style>html,body(?:,#app)?\{background:(?:transparent|none)!important/u,
+      `${resourceName} must make the initial CEF document transparent`,
     );
     assert.doesNotMatch(page, /<meta\s+name="color-scheme"/u, resourceName);
   }
+});
+
+test('interactive NUI shells never paint an opaque fullscreen layer', () => {
+  const identity = fs.readFileSync(
+    path.join(resourceRoot, 'fluxcore_identity', 'web', 'styles.css'),
+    'utf8',
+  );
+  const phone = fs.readFileSync(
+    path.join(resourceRoot, 'fluxcore_phone', 'web', 'styles.css'),
+    'utf8',
+  );
+  const interact = fs.readFileSync(
+    path.join(resourceRoot, 'fluxcore_interact', 'web', 'styles.css'),
+    'utf8',
+  );
+
+  assert.match(identity, /\.app\s*\{[\s\S]*?position:\s*fixed;/u);
+  assert.match(identity, /\.app\s*\{[\s\S]*?width:\s*min\(1040px,/u);
+  assert.match(identity, /\.app\s*\{[\s\S]*?height:\s*min\(640px,/u);
+  assert.doesNotMatch(
+    identity,
+    /\.app\s*\{[^}]*min-height:\s*100vh/u,
+    'identity may be opaque only inside a bounded window',
+  );
+  assert.match(
+    phone,
+    /\.app\s*\{[\s\S]*?background:\s*transparent;/u,
+    'phone root must not shade the game viewport',
+  );
+  assert.doesNotMatch(
+    interact,
+    /color-scheme:\s*dark/u,
+    'interaction NUI may not ask CEF to paint a dark document canvas',
+  );
+  assert.match(
+    interact,
+    /html,\s*[\r\n]+body,\s*[\r\n]+#app\s*\{[\s\S]*?background:\s*none\s*!important;/u,
+    'interaction viewport must remain fully transparent',
+  );
 });
 
 test('identity closes its NUI before handling the spawn request', () => {

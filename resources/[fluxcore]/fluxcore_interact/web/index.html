@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fluxcore Interact</title>
+    <style>html,body,#app{background:none!important;background-color:rgba(0,0,0,0)!important}.hidden{display:none!important}</style>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main id="app" aria-label="Fluxcore interaction overlays">
+      <div id="target-reticle" class="target-reticle hidden" aria-hidden="true">
+        <svg viewBox="0 0 32 32" focusable="false">
+          <path d="M2.5 16s4.8-8 13.5-8 13.5 8 13.5 8-4.8 8-13.5 8S2.5 16 2.5 16Z"></path>
+          <circle cx="16" cy="16" r="3.5"></circle>
+        </svg>
+      </div>
+
+      <section id="interaction" class="interaction hidden" aria-live="polite">
+        <p id="interaction-hint">Click an option</p>
+        <div id="target-options" class="target-options"></div>
+        <small id="interaction-count"></small>
+      </section>
+
+      <section id="menu" class="modal hidden" role="dialog" aria-modal="true">
+        <header>
+          <h1 id="menu-title">Menu</h1>
+          <p id="menu-description"></p>
+        </header>
+        <div id="menu-options" class="options"></div>
+        <button class="secondary" data-close-menu type="button">Close</button>
+      </section>
+
+      <section id="dialog" class="modal hidden" role="dialog" aria-modal="true">
+        <form id="dialog-form">
+          <header>
+            <h1 id="dialog-title">Input</h1>
+            <p id="dialog-description"></p>
+          </header>
+          <label id="dialog-label" for="dialog-input">Value</label>
+          <input id="dialog-input" autocomplete="off">
+          <p id="dialog-error" class="error" aria-live="polite"></p>
+          <div class="actions">
+            <button class="secondary" data-close-dialog type="button">Cancel</button>
+            <button data-confirm-dialog type="submit">Confirm</button>
+          </div>
+        </form>
+      </section>
+
+      <aside id="notifications" class="notifications" aria-live="polite"></aside>
+
+      <section id="progress" class="progress hidden" aria-live="polite">
+        <div class="progress-copy">
+          <span id="progress-label">Working</span>
+          <small id="progress-cancel"></small>
+        </div>
+        <div class="progress-track">
+          <div id="progress-bar" class="progress-bar"></div>
+        </div>
+      </section>
+    </main>
+    <script src="app.js"></script>
+  </body>
+</html>

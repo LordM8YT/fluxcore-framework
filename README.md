@@ -30,6 +30,7 @@ The current pre-alpha foundation includes:
 - a rate-limited client/server RPC layer
 - explicit, minimal state bag replication
 - a public export API for resources built on top of the framework
+- shared zones, entity interactions, menus, dialogs, notifications, and progress actions
 
 The server core uses the `node:sqlite` module bundled with Node 26 in Cfx
 Server. Client gameplay code uses Lua 5.4.
@@ -40,6 +41,7 @@ Server. Client gameplay code uses Lua 5.4.
 resources/
   [fluxcore]/
     fluxcore_core/       Framework core
+    fluxcore_interact/   Shared interactions and basic UI primitives
     fluxcore_identity/   Character and spawn UI
     fluxcore_jobs/       Jobs, grades, duty, and permissions
     fluxcore_inventory/  Server-authoritative items and containers
@@ -114,8 +116,18 @@ The first public artifact should be validated with the
 before an
 alpha release is tagged.
 
+Repository-specific Enhanced runtime findings and live Cfx source links are
+kept in
+[`docs/fivem-enhanced-compatibility.md`](docs/fivem-enhanced-compatibility.md).
+Contributors and coding agents must read it before changing NUI, natives,
+input mappings, or resource lifecycle behavior.
+
 See [the core documentation](<resources/[fluxcore]/fluxcore_core/README.md>) for
 installation, exports, events, and the security model.
+
+Shared interactions, menus, dialogs, notifications, progress actions, and the
+replaceable UI contract are documented in
+[fluxcore_interact](<resources/[fluxcore]/fluxcore_interact/README.md>).
 
 Job definitions and the permission API are documented in
 [fluxcore_jobs](<resources/[fluxcore]/fluxcore_jobs/README.md>).

@@ -4,6 +4,19 @@
     "unemployed": "Arbeidsledig",
     "garage": "Garasje"
   },
+  "interact": {
+    "menuTitle": "Meny",
+    "inputTitle": "Inndata",
+    "inputLabel": "Verdi",
+    "progressLabel": "Arbeider",
+    "interactionsTitle": "Handlinger",
+    "close": "Lukk",
+    "cancel": "Avbryt",
+    "confirm": "Bekreft",
+    "options": "valg",
+    "escapeToCancel": "ESC for å avbryte",
+    "valueRequired": "Du må skrive inn en verdi"
+  },
   "labels": {
     "jobs": {
       "unemployed": {

@@ -24,6 +24,7 @@ set fluxcore_maxCharacters 4
 set fluxcore_saveIntervalMs 60000
 
 ensure fluxcore_core
+ensure fluxcore_interact
 ensure fluxcore_status
 ensure fluxcore_jobs
 ensure fluxcore_inventory
