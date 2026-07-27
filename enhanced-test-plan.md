@@ -224,6 +224,31 @@ Voice calls are outside the current milestone.
 {% endstep %}
 
 {% step %}
+## Enhanced Hotfix 5 regression gate
+
+Run these checks after updating both the Enhanced client and Cfx Server:
+
+* Start every Fluxcore resource from a stopped state and confirm its own
+  bootstrap succeeds without depending on an `onResourceStart` self-event.
+* Restart `fluxcore_interact` while `fluxcore_example` remains running and
+  verify its ATM and other test registrations return.
+* Open and close identity, inventory, phone, admin, and target choices. Confirm
+  mouse and keyboard focus return immediately every time.
+* Complete character selection with a custom spawn and confirm
+  `ShutdownLoadingScreenNui` does not relocate the ped.
+* Inspect a server-owned entity and confirm owner natives return `-1`; no
+  player-owned path may accept a negative owner.
+* Spawn and store/delete a server-created test vehicle, unless protected mode
+  intentionally blocks deletion.
+* Re-test proxied endpoints, resource downloads, semicolons and indented
+  comments in a disposable server configuration when those features are used.
+
+See the
+[FiveM Enhanced compatibility notes](https://github.com/LordM8YT/fluxcore-framework/blob/main/docs/fivem-enhanced-compatibility.md)
+for the upstream reports and implementation rules.
+{% endstep %}
+
+{% step %}
 ## Restart and data gate
 
 * Create an online backup.

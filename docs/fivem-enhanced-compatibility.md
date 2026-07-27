@@ -3,6 +3,7 @@
 Last reviewed: 2026-07-29
 Validated locally against: FiveM for GTAV Enhanced early access and Cfx Server
 build `103` (Early Access Hotfix 6, Windows).
+Latest release notes reviewed: FiveM for GTAV Enhanced Early Access Hotfix 6.
 
 This file is Fluxcore's project memory for Enhanced runtime behavior. It
 combines official Cfx documentation with observations reproduced in the local
@@ -20,6 +21,7 @@ These pages can change independently of this repository:
 - [Enhanced client console commands](https://docs.fivem.net/docs/client-manual/console-commands/)
 - [Cfx Server downloads](https://docs.fivem.net/docs/server-download/)
 - [Cfx announcements](https://forum.cfx.re/c/cfxre-announcements/66)
+- [Enhanced Early Access reports](https://github.com/citizenfx/rfc/discussions)
 - [Cfx service status](https://status.cfx.re/)
 
 When the local note does not cover a feature, search the official developer
@@ -56,6 +58,44 @@ documents, among other changes:
 
 Do not copy Legacy configuration into Fluxcore without comparing it to the
 live [Enhanced change log](https://docs.fivem.net/docs/developers/legacy-vs-enhanced/).
+
+### Early Access Hotfix 5
+
+Hotfix 5 resolves several Enhanced regressions that overlap Fluxcore's
+lifecycle, NUI, spawn, networking, and vehicle code. Do not keep compatibility
+workarounds for these bugs after both client and server have been updated.
+
+Fluxcore impact:
+
+- Hotfix 5 temporarily stopped a resource's own `onResourceStart` notification.
+  Hotfix 6 restored it. Fluxcore still initializes directly and uses
+  cross-resource events to restore registrations after provider restarts.
+- `SetNuiFocus(false, false)` releases focus immediately again. Keep explicit
+  close and resource-stop cleanup, but do not add release delays or polling.
+- `ShutdownLoadingScreenNui` no longer moves the local ped to a default spawn.
+  Custom spawn code remains responsible for the final coordinates.
+- `NetworkGetEntityOwner` and `NetworkGetFirstEntityOwner` return `-1` for
+  server-owned entities again. Treat any negative owner as no player owner.
+- Server-created vehicles can be deleted again unless protected mode forbids
+  it. Fluxcore must still validate ownership and authorization server-side.
+- Custom endpoints, proxied listings, resource file serving, semicolons in
+  configuration values, indented configuration comments, and resource-category
+  shutdown were fixed upstream. Avoid local parsers or lifecycle workarounds
+  for those regressions.
+- The `GetGamePool('CObject')` crash near map objects and MLOs was fixed.
+  Fluxcore currently does not depend on `GetGamePool` for targeting.
+
+Relevant upstream reports:
+
+- [`onResourceStart` self-start behavior](https://github.com/citizenfx/rfc/discussions/113)
+- [`SetNuiFocus` delayed release](https://github.com/citizenfx/rfc/discussions/235)
+- [`ShutdownLoadingScreenNui` spawn relocation](https://github.com/citizenfx/rfc/discussions/224)
+- [Resource file server regression](https://github.com/citizenfx/rfc/discussions/146)
+- [Server-created vehicle deletion](https://github.com/citizenfx/rfc/discussions/254)
+
+The local validation line at the top records the last artifact tested in-game.
+Update it only after Hotfix 5 has been installed and the checklist has been
+re-run; reviewing release notes alone is not runtime validation.
 
 ### Early Access Hotfix 6
 
@@ -133,8 +173,11 @@ Live reference:
 
 ## Resource lifecycle and dependencies
 
-- `onClientResourceStart` is queued after a client resource starts, but it does
-  not preserve another resource's in-memory Lua state.
+- Initialize a resource's own state directly at module load. Never make
+  bootstrap depend on receiving its own `onResourceStart` or
+  `onClientResourceStart` event.
+- Hotfix 5 no longer emits `onResourceStart` for a resource's own start.
+- Start events do not preserve another resource's in-memory Lua state.
 - Restarting a provider such as `fluxcore_interact` clears registrations.
 - Consumers must perform an initial registration, listen for provider starts,
   and use a bounded retry while `GetResourceState(provider) == 'started'`.
@@ -145,6 +188,7 @@ Live reference:
 
 Live references:
 
+- [onResourceStart](https://docs.fivem.net/docs/scripting-reference/events/list/onResourceStart/)
 - [onClientResourceStart](https://docs.fivem.net/docs/scripting-reference/events/list/onClientResourceStart/)
 - [Client events](https://docs.fivem.net/docs/scripting-reference/events/client-events/)
 - [Server events](https://docs.fivem.net/docs/scripting-reference/events/server-events/)

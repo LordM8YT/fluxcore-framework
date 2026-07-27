@@ -127,3 +127,35 @@ test('interaction UI remains a replaceable message and callback boundary', () =>
   assert.match(styles, /\.target-options[\s\S]*overflow-y:\s*auto/u);
   assert.match(app, /options\.length > 4/u);
 });
+
+test('example interactions bootstrap directly and recover after provider restart', () => {
+  const exampleClient = fs.readFileSync(
+    path.join(
+      root,
+      'resources',
+      '[fluxcore]',
+      'fluxcore_example',
+      'client.lua',
+    ),
+    'utf8',
+  );
+
+  const directBootstrap = exampleClient.indexOf(
+    'scheduleTestInteractionRegistration()\n\nAddEventHandler',
+  );
+  assert.notEqual(
+    directBootstrap,
+    -1,
+    'own bootstrap must run directly instead of relying on a self-start event',
+  );
+  assert.match(
+    exampleClient,
+    /AddEventHandler\('onClientResourceStart', function\(resource\)[\s\S]*if resource == 'fluxcore_interact' then[\s\S]*scheduleTestInteractionRegistration\(\)/u,
+    'provider restart must restore cross-resource registrations',
+  );
+  assert.doesNotMatch(
+    exampleClient,
+    /resource == GetCurrentResourceName\(\)[\s\S]*scheduleTestInteractionRegistration\(\)/u,
+    'Hotfix 5 no longer guarantees a resource receives its own start event',
+  );
+});
