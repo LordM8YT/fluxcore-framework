@@ -8,6 +8,7 @@ Place core settings before every `ensure fluxcore_*` line:
 
 ```cfg
 set sv_stateBagStrictMode true
+voice_internal
 
 setr fluxcore_locale "en"
 set fluxcore_maxCharacters 4
@@ -33,10 +34,11 @@ setr sv_showBusySpinnerOnLoadingScreen false
 ensure fluxcore_loading
 ensure fluxcore_core
 ensure fluxcore_chat
+ensure fluxcore_voice
 ensure fluxcore_interact
-ensure fluxcore_status
 ensure fluxcore_jobs
 ensure fluxcore_inventory
+ensure fluxcore_status
 ensure fluxcore_banking
 ensure fluxcore_vehicles
 ensure fluxcore_fuel
@@ -60,6 +62,7 @@ The manifests also declare dependencies, but explicit order keeps boot output pr
 | --------------------- | -------------------------------------------- |
 | `fluxcore_identity`   | `config.lua`                                 |
 | `fluxcore_loading`    | bundled `web/` files                         |
+| `fluxcore_voice`      | `config/voice.json`                          |
 | `fluxcore_jobs`       | `config/jobs.json`                           |
 | `fluxcore_inventory`  | `config/items.json`, `config/ui.json`        |
 | `fluxcore_status`     | `config/status.json`                         |
@@ -117,6 +120,10 @@ Jobs and grades live in `fluxcore_jobs/config/jobs.json`. Every grade has:
 * explicit permission list
 * optional duty points and map blips
 
+`payIntervalMs` controls payday frequency (15 minutes by default) and
+`payCurrency` selects the wallet. Only an active paid job that is currently
+on duty receives a server-issued payment.
+
 {% hint style="warning" %}
 Internal names must remain language-independent. Changing them is a data migration, not a cosmetic rename.
 {% endhint %}
@@ -124,10 +131,13 @@ Internal names must remain language-independent. Changing them is a data migrati
 ## Inventory
 
 Items live in `fluxcore_inventory/config/items.json`. Weight is measured in integer grams. Stack limits, labels and usable behavior are server-owned.
+The optional `starterItems` list is granted atomically when a character's
+inventory container is created for the first time. Removing every item later
+does not grant the package again.
 
-{% hint style="info" %}
-The visual inventory is disabled until an implementation that follows `fluxcore.inventory.bootstrap.v1` is installed.
-{% endhint %}
+The bundled temporary inventory UI follows `fluxcore.inventory.bootstrap.v1`.
+TAB opens it and suppresses the GTA weapon wheel. `water`, `sandwich`, and
+`bandage` effects are configured under `fluxcore_status/config/status.json`.
 
 ## Vehicles and garages
 
@@ -135,7 +145,7 @@ Garages live in `fluxcore_vehicles/config/vehicles.json`. Each garage declares c
 
 ## Fuel
 
-Fuel stations, station radii, price, currency and consumption multiplier live in `fluxcore_fuel/config/fuel.json`. Prices are whole currency units per liter. The server validates the driver, network entity, station distance, quantity and wallet before approving a purchase.
+Fuel stations, station radii, price, currency and consumption multiplier live in `fluxcore_fuel/config/fuel.json`. Prices are whole currency units per liter. `defaultTankLiters` is used when a vehicle model does not expose a valid `fPetrolTankVolume`, so a partly filled tank is not mistaken for a full one. The server validates the driver, network entity, station distance, quantity and wallet before approving a purchase.
 
 ## Phone
 

@@ -57,6 +57,21 @@ local function usableVehicle(vehicle)
     return vehicle
 end
 
+local function tankVolume(vehicle)
+    local handlingVolume = tonumber(GetVehicleHandlingFloat(
+        vehicle,
+        'CHandlingData',
+        'fPetrolTankVolume'
+    )) or 0.0
+    if handlingVolume >= 1.0 and handlingVolume <= 500.0 then
+        return handlingVolume
+    end
+    return math.max(
+        1.0,
+        math.min(500.0, tonumber(config.defaultTankLiters) or 65.0)
+    )
+end
+
 local function loadModel(model)
     local hash = type(model) == 'number' and model or joaat(tostring(model))
     if not IsModelInCdimage(hash) then return nil end
@@ -219,16 +234,11 @@ local function requestRefuel(stationId, requested, targetVehicle)
         end
     end
 
-    local tank = GetVehicleHandlingFloat(
-        vehicle,
-        'CHandlingData',
-        'fPetrolTankVolume'
-    )
-    local currentPercent = math.max(
+    local tank = tankVolume(vehicle)
+    local currentLiters = math.max(
         0.0,
-        math.min(100.0, GetVehicleFuelLevel(vehicle))
+        math.min(tank, tonumber(GetVehicleFuelLevel(vehicle)) or 0.0)
     )
-    local currentLiters = tank * (currentPercent / 100.0)
     local needed = math.max(0.0, tank - currentLiters)
     if needed < (tonumber(config.minimumLiters) or 1.0) then
         notify('The tank is already full.', 'inform')
@@ -246,7 +256,7 @@ local function requestRefuel(stationId, requested, targetVehicle)
                 description = ('%.1f / %.1f liters (%d%%) | $%s per liter'):format(
                     currentLiters,
                     tank,
-                    math.floor(currentPercent + 0.5),
+                    math.floor((currentLiters / tank) * 100.0 + 0.5),
                     tostring(config.pricePerLiter or 3)
                 ),
                 label = 'Liters',
@@ -308,21 +318,14 @@ RegisterNetEvent('fluxcore_fuel:client:purchaseResult', function(response)
         return
     end
     local vehicle = NetToVeh(purchase.networkId)
-    local currentPercent = math.max(
+    local tank = tankVolume(vehicle)
+    local currentLiters = math.max(
         0.0,
-        math.min(100.0, GetVehicleFuelLevel(vehicle))
+        math.min(tank, tonumber(GetVehicleFuelLevel(vehicle)) or 0.0)
     )
-    local tank = GetVehicleHandlingFloat(
-        vehicle,
-        'CHandlingData',
-        'fPetrolTankVolume'
-    )
-    local addedPercent = tank > 0.0
-        and (tonumber(purchase.liters or 0) / tank) * 100.0
-        or 0.0
     SetVehicleFuelLevel(
         vehicle,
-        math.min(100.0, currentPercent + addedPercent)
+        math.min(tank, currentLiters + (tonumber(purchase.liters) or 0.0))
     )
     if purchase.usedCan then
         clearHeldFuel(true)

@@ -185,7 +185,7 @@ on('playerDropped', () => {
 });
 
 globalThis.exports('HasPermission', (source, permission) =>
-  admin.hasPermission(Number(source), String(permission || 'Fluxcore.admin')),
+  admin.hasPermission(Number(source), String(permission || 'fluxcore.admin')),
 );
 
 on('onResourceStop', (stoppedResource) => {

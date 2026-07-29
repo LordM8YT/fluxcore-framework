@@ -5,6 +5,19 @@
   "disableVanillaPolice": true,
   "disableVanillaRadio": true,
   "minimapVehicleOnly": true,
+  "consumables": {
+    "water": {
+      "status": "thirst",
+      "amount": 25
+    },
+    "sandwich": {
+      "status": "hunger",
+      "amount": 25
+    },
+    "bandage": {
+      "heal": 25
+    }
+  },
   "needs": {
     "hunger": {
       "default": 100,

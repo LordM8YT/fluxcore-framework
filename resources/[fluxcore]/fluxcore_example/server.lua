@@ -7,7 +7,7 @@ local function reply(source, text, success)
 end
 
 RegisterCommand('grantcash', function(source, args)
-    if source > 0 and not IsPlayerAceAllowed(source, 'Fluxcore.admin') then
+    if source > 0 and not IsPlayerAceAllowed(source, 'fluxcore.admin') then
         reply(source, locale(
             'example.adminRequired',
             nil,

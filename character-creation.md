@@ -1,5 +1,8 @@
 # Character Creation
 
+Use `/logout` to save the active character and return to character selection.
+`/characters` opens the selector whenever no character is active.
+
 Fluxcore provides a temporary, database-backed character creator through
 `fluxcore_identity`. It is intentionally simple so the final custom interface
 can replace the visual layer without changing the character lifecycle.

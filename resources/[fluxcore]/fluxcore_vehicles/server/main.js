@@ -45,6 +45,9 @@ const config = loadConfig(runtime);
 const database = new VehiclesDatabase(config.databaseFile);
 const vehicles = new VehiclesService(database, config, core, runtime);
 const requestTimes = new Map();
+const engineStates = new Map();
+const genericVehicleAccess = new Map();
+const genericLockStates = new Map();
 
 function result(work) {
   try {
@@ -174,6 +177,23 @@ function registerTrunk(vehicle) {
   }
 }
 
+function registerAllTrunks() {
+  let registered = 0;
+  for (const vehicle of database.listAll()) {
+    try {
+      registerTrunk(vehicle);
+      registered += 1;
+    } catch (error) {
+      runtime.log(
+        'warn',
+        `could not recover trunk ${vehicle.id}: ${error.message}`,
+      );
+    }
+  }
+  runtime.log('info', `registered ${registered} vehicle trunks`);
+  return registered;
+}
+
 function registerOwned(identifier, input) {
   const vehicle = vehicles.registerVehicle(identifier, input);
   try {
@@ -235,6 +255,8 @@ function spawnFor(source, vehicleId, garageId) {
       true,
     );
     const networkId = Number(NetworkGetNetworkIdFromEntity(entity));
+    engineStates.set(networkId, false);
+    Entity(entity).state.set('Fluxcore:engineOn', false, true);
     const vehicle = vehicles.markSpawned(
       prepared.vehicle.id,
       prepared.garage.id,
@@ -255,9 +277,13 @@ function spawnFor(source, vehicleId, garageId) {
 }
 
 const recovered = database.recoverOut();
-for (const vehicle of database.listAll()) {
-  registerTrunk(vehicle);
-}
+registerAllTrunks();
+
+on('onResourceStart', (startedResource) => {
+  if (startedResource === 'fluxcore_inventory') {
+    setTimeout(registerAllTrunks, 0);
+  }
+});
 if (recovered > 0) {
   runtime.log('info', `recovered ${recovered} active vehicle(s) into storage`);
 }
@@ -320,6 +346,7 @@ onNet('fluxcore_vehicles:server:store', (networkId, garageId, properties) => {
       garageId,
       coordinates(ped),
     );
+    engineStates.delete(Number(networkId));
     DeleteEntity(entity);
     const vehicle = vehicles.markStored(
       prepared.vehicle.id,
@@ -367,25 +394,78 @@ onNet('fluxcore_vehicles:server:toggleLock', (networkId) => {
   handle(source, () => {
     const ped = playerPed(source);
     const entity = entityFromNetwork(networkId);
-    const vehicle = vehicles.toggleLock(
-      source,
-      networkId,
-      coordinates(ped),
-      coordinates(entity),
-    );
-    SetVehicleDoorsLocked(entity, vehicle.locked ? 2 : 1);
+    const managed = database.getByNetwork(Number(networkId));
+    let locked;
+    if (managed?.state === 'out') {
+      locked = vehicles.toggleLock(
+        source,
+        networkId,
+        coordinates(ped),
+        coordinates(entity),
+      ).locked;
+    } else {
+      const playerPosition = coordinates(ped);
+      const vehiclePosition = coordinates(entity);
+      const dx = playerPosition.x - vehiclePosition.x;
+      const dy = playerPosition.y - vehiclePosition.y;
+      const dz = playerPosition.z - vehiclePosition.z;
+      const distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
+      const id = Number(networkId);
+      const access = genericVehicleAccess.get(id);
+      const isDriver = Number(GetPedInVehicleSeat(entity, -1)) === ped;
+      if (
+        distance > config.entityDistance ||
+        (!isDriver &&
+          (!access || access.source !== source || access.entity !== entity))
+      ) {
+        throw new VehiclesError(
+          'VEHICLE_ACCESS_DENIED',
+          'you need a key or must first use the vehicle as its driver',
+        );
+      }
+      if (isDriver) {
+        genericVehicleAccess.set(id, { source, entity });
+      }
+      locked = !(genericLockStates.get(id) ?? false);
+      genericLockStates.set(id, locked);
+    }
+    SetVehicleDoorsLocked(entity, locked ? 2 : 1);
     runtime.emitAll(
       'fluxcore_vehicles:client:lockChanged',
       Number(networkId),
-      vehicle.locked,
+      locked,
     );
     notify(
       source,
-      vehicle.locked
+      locked
         ? translate('vehicles.locked', null, 'Vehicle locked.')
         : translate('vehicles.unlocked', null, 'Vehicle unlocked.'),
     );
-    return vehicle;
+    return { locked };
+  });
+});
+
+onNet('fluxcore_vehicles:server:toggleEngine', (networkId, requestedState) => {
+  const source = Number(global.source);
+  if (!rateLimit(source, 'engine', 500)) {
+    return;
+  }
+  handle(source, () => {
+    const ped = playerPed(source);
+    const entity = entityFromNetwork(networkId);
+    if (Number(GetPedInVehicleSeat(entity, -1)) !== ped) {
+      throw new VehiclesError(
+        'DRIVER_REQUIRED',
+        'you must be the driver to control the engine',
+      );
+    }
+    const id = Number(networkId);
+    const enabled = requestedState === true;
+    engineStates.set(id, enabled);
+    Entity(entity).state.set('Fluxcore:engineOn', enabled, true);
+    runtime.emitAll('fluxcore_vehicles:client:engineChanged', id, enabled);
+    notify(source, enabled ? 'Engine started.' : 'Engine stopped.');
+    return enabled;
   });
 });
 
@@ -411,7 +491,7 @@ RegisterCommand(
   (source, args) => {
     if (
       Number(source) !== 0 &&
-      !IsPlayerAceAllowed(String(source), 'Fluxcore.vehicles.manage')
+      !IsPlayerAceAllowed(String(source), 'fluxcore.vehicles.manage')
     ) {
       notify(
         source,

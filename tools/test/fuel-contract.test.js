@@ -29,8 +29,16 @@ test('fuel resource follows the Enhanced native and lifecycle contract', () => {
   assert.match(client, /SetFuelConsumptionRateMultiplier/u);
   assert.match(client, /DoesVehicleUseFuel/u);
   assert.match(client, /GetVehicleFuelLevel/u);
-  assert.match(client, /currentLiters = tank \* \(currentPercent \/ 100\.0\)/u);
-  assert.match(client, /purchase\.liters or 0\) \/ tank\) \* 100\.0/u);
+  assert.match(client, /function tankVolume\(vehicle\)/u);
+  assert.match(client, /config\.defaultTankLiters\) or 65\.0/u);
+  assert.match(
+    client,
+    /math\.min\(tank,\s*tonumber\(GetVehicleFuelLevel\(vehicle\)\) or 0\.0\)/u,
+  );
+  assert.match(
+    client,
+    /math\.min\(tank,\s*currentLiters \+ \(tonumber\(purchase\.liters\) or 0\.0\)\)/u,
+  );
   assert.match(client, /SetVehicleFuelLevel/u);
 
   const directRegistration = client.indexOf('scheduleRegistration()');
@@ -58,4 +66,13 @@ test('fuel purchases are validated and charged on the server', () => {
   assert.match(server, /fluxcore_fuel:server:useCan/u);
   assert.match(server, /RegisterUsableItem\(\s*'fuel_can'/u);
   assert.match(server, /RATE_LIMITED/u);
+});
+
+test('fuel can registration recovers after inventory restarts', () => {
+  const main = read('server', 'main.js');
+  assert.match(main, /function registerFuelCan\(\)/u);
+  assert.match(
+    main,
+    /onResourceStart[\s\S]*startedResource === 'fluxcore_inventory'[\s\S]*registerFuelCan/u,
+  );
 });

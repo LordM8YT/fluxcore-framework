@@ -1,5 +1,29 @@
 # Player Experience
 
+The replacement chat supports local speech, `/me`, `/do`, server-resolved
+`/try`, global `/ooc`, 3-meter `/whisper`, 40-meter `/shout`, and `/e` emotes.
+Nearby `/me`, `/do`, and `/try` actions also appear briefly above the relevant
+streamed player ped.
+Type `/` to filter available commands and press Tab to complete the first
+suggestion. Arrow Up/Down recalls recent commands and messages.
+Press `X` (rebindable in FiveM key mappings) or use `/e cancel` to stop an
+emote. Active emotes are also cleared on death or when entering a vehicle.
+
+TAB opens the temporary inventory. Water restores thirst, sandwiches restore
+hunger, and bandages restore health after the server validates and consumes
+the item.
+Number keys 1-5 use the matching inventory slots. A pistol must exist in the
+inventory before pistol ammunition can be consumed and loaded.
+
+While driving a Fluxcore vehicle, press `G` to start or stop the engine. The
+mapping is rebindable and the server verifies both the driver seat and vehicle
+key before replicating the engine state.
+Press `B` to fasten the seatbelt. While fastened, normal vehicle-exit controls
+are blocked and the HUD shows `BELT ON`; leaving the vehicle or dying clears it.
+
+Use `/hud` to hide or show the complete Fluxcore HUD and RP minimap for the
+current session. Vanilla HUD suppression remains active either way.
+
 Fluxcore includes temporary, replaceable interfaces for the first connection,
 character flow, inventory and in-game HUD. They are intentionally lightweight
 so a custom frontend can replace them without changing domain logic.
@@ -79,6 +103,7 @@ vehicle panel. By default:
 
 * the vanilla GTA HUD, ammunition display and weapon wheel are hidden;
 * the vanilla vehicle radio and its selection controls are disabled;
+* an optional microphone indicator turns green while Enhanced voice transmits;
 * the minimap appears only while inside a vehicle;
 * the minimap's built-in health and armour bars are removed;
 * health, armour, hunger, thirst, native sprint stamina and stress use compact

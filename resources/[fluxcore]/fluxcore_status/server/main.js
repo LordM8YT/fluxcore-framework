@@ -43,6 +43,52 @@ const database = new StatusDatabase(config.databaseFile);
 const status = new StatusService(database, config, core, runtime);
 const requestTimes = new Map();
 
+function registerConsumables() {
+  if (GetResourceState('fluxcore_inventory') !== 'started') {
+    return false;
+  }
+  let registered = 0;
+  for (const [itemName, effect] of Object.entries(config.consumables)) {
+    const response = globalThis.exports.fluxcore_inventory.RegisterUsableItem(
+      itemName,
+      (source) => {
+        const playerSource = Number(source);
+        if (effect.status) {
+          const current = status.get(playerSource);
+          const definition = config.needs[effect.status];
+          if (current[effect.status] >= definition.maximum) {
+            return false;
+          }
+        }
+        return {
+          consume: 1,
+          afterUse() {
+            if (effect.status) {
+              status.add(playerSource, effect.status, effect.amount);
+            } else if (effect.heal) {
+              runtime.emitClient(
+                playerSource,
+                'fluxcore_status:client:heal',
+                effect.heal,
+              );
+            }
+          },
+        };
+      },
+    );
+    if (response?.ok) {
+      registered += 1;
+    } else {
+      runtime.log(
+        'warn',
+        response?.error?.message || `could not register usable item ${itemName}`,
+      );
+    }
+  }
+  runtime.log('info', `registered ${registered} status consumables`);
+  return registered === Object.keys(config.consumables).length;
+}
+
 function result(work) {
   try {
     return { ok: true, data: work() };
@@ -127,10 +173,17 @@ const tickTimer = setInterval(() => {
 }, config.tickIntervalMs);
 
 setTimeout(() => {
+  registerConsumables();
   for (const player of core.getPlayers()) {
     sync(player.source);
   }
 }, 0);
+
+on('onResourceStart', (startedResource) => {
+  if (startedResource === 'fluxcore_inventory') {
+    setTimeout(registerConsumables, 0);
+  }
+});
 
 on('playerDropped', () => {
   const source = Number(global.source);

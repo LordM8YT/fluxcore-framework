@@ -3,17 +3,17 @@
 const { adminError } = require('./errors');
 
 const ACTIONS = Object.freeze({
-  bootstrap: 'Fluxcore.admin.open',
-  'players:list': 'Fluxcore.admin.players',
-  'player:kick': 'Fluxcore.admin.moderation',
-  'player:freeze': 'Fluxcore.admin.moderation',
-  'player:heal': 'Fluxcore.admin.moderation',
-  'player:goto': 'Fluxcore.admin.teleport',
-  'player:bring': 'Fluxcore.admin.teleport',
-  'economy:set': 'Fluxcore.admin.economy',
-  'job:assign': 'Fluxcore.admin.jobs',
-  'inventory:add': 'Fluxcore.admin.inventory',
-  'audit:list': 'Fluxcore.admin.audit',
+  bootstrap: 'fluxcore.admin.open',
+  'players:list': 'fluxcore.admin.players',
+  'player:kick': 'fluxcore.admin.moderation',
+  'player:freeze': 'fluxcore.admin.moderation',
+  'player:heal': 'fluxcore.admin.moderation',
+  'player:goto': 'fluxcore.admin.teleport',
+  'player:bring': 'fluxcore.admin.teleport',
+  'economy:set': 'fluxcore.admin.economy',
+  'job:assign': 'fluxcore.admin.jobs',
+  'inventory:add': 'fluxcore.admin.inventory',
+  'audit:list': 'fluxcore.admin.audit',
 });
 
 function integer(value, minimum, maximum, label) {
@@ -58,7 +58,7 @@ class AdminService {
 
   hasPermission(source, permission) {
     return (
-      this.runtime.isAceAllowed(source, 'Fluxcore.admin') ||
+      this.runtime.isAceAllowed(source, 'fluxcore.admin') ||
       this.runtime.isAceAllowed(source, permission)
     );
   }
@@ -136,7 +136,7 @@ class AdminService {
       return {
         source,
         permissions: this.permissionSnapshot(source),
-        players: this.hasPermission(source, 'Fluxcore.admin.players')
+        players: this.hasPermission(source, 'fluxcore.admin.players')
           ? this.listPlayers()
           : [],
       };

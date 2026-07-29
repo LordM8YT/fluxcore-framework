@@ -39,6 +39,42 @@ function validateNeed(name, input) {
   };
 }
 
+function validateConsumables(input, needs) {
+  if (input == null) {
+    return {};
+  }
+  if (typeof input !== 'object' || Array.isArray(input)) {
+    throw statusError('CONFIG_INVALID', 'consumables must be an object');
+  }
+  const consumables = {};
+  for (const [itemName, definition] of Object.entries(input)) {
+    if (!NEED_NAME_PATTERN.test(itemName)) {
+      throw statusError('CONFIG_INVALID', `consumable ${itemName} is invalid`);
+    }
+    if (!definition || typeof definition !== 'object' || Array.isArray(definition)) {
+      throw statusError('CONFIG_INVALID', `consumable ${itemName} must be an object`);
+    }
+    if (definition.status != null) {
+      const status = String(definition.status).trim().toLowerCase();
+      if (!needs[status]) {
+        throw statusError(
+          'CONFIG_INVALID',
+          `consumable ${itemName} references unknown status ${status}`,
+        );
+      }
+      consumables[itemName] = {
+        status,
+        amount: integer(definition.amount, 1, 100, `${itemName}.amount`),
+      };
+    } else {
+      consumables[itemName] = {
+        heal: integer(definition.heal, 1, 100, `${itemName}.heal`),
+      };
+    }
+  }
+  return consumables;
+}
+
 function validateConfig(input, resourcePath = process.cwd()) {
   if (!input || typeof input !== 'object' || Array.isArray(input)) {
     throw statusError('CONFIG_INVALID', 'status config must be an object');
@@ -67,6 +103,7 @@ function validateConfig(input, resourcePath = process.cwd()) {
       'tickIntervalMs',
     ),
     needs,
+    consumables: validateConsumables(input.consumables, needs),
   };
 }
 

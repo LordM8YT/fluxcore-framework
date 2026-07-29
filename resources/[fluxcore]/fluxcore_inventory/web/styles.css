@@ -203,6 +203,15 @@ footer {
 .actions-panel input:focus { border-color: var(--accent); }
 .actions-panel button { background: var(--accent); color: white; cursor: pointer; font-weight: 650; }
 .actions-panel button:disabled { cursor: not-allowed; opacity: 0.35; }
+
+.slot.hotbar {
+  border-color: rgba(139, 92, 246, 0.52);
+}
+
+.slot.hotbar .slot-number {
+  color: #c4b5fd;
+  font-weight: 800;
+}
 .actions-panel button.danger { background: rgba(239, 68, 68, 0.16); color: #fca5a5; }
 #feedback { min-height: 1rem; margin: 0; color: var(--muted); font-size: 0.65rem; text-align: center; }
 #feedback.error { color: #fca5a5; }

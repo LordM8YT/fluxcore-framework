@@ -174,19 +174,37 @@ onNet('fluxcore_fuel:server:useCan', (networkId) => {
   runtime.emitClient(source, 'fluxcore_fuel:client:purchaseResult', response);
 });
 
-const canRegistration = globalThis.exports.fluxcore_inventory.RegisterUsableItem(
-  'fuel_can',
-  (source) => {
-    runtime.emitClient(Number(source), 'fluxcore_fuel:client:equipCan');
-    return { consume: 0 };
-  },
-);
-if (!canRegistration?.ok) {
-  runtime.log(
-    'warn',
-    canRegistration?.error?.message || 'fuel can could not be registered',
+function registerFuelCan() {
+  if (GetResourceState('fluxcore_inventory') !== 'started') {
+    return false;
+  }
+  const response = globalThis.exports.fluxcore_inventory.RegisterUsableItem(
+    'fuel_can',
+    (source) => {
+      return {
+        consume: 0,
+        afterUse() {
+          runtime.emitClient(Number(source), 'fluxcore_fuel:client:equipCan');
+        },
+      };
+    },
   );
+  if (!response?.ok) {
+    runtime.log(
+      'warn',
+      response?.error?.message || 'fuel can could not be registered',
+    );
+    return false;
+  }
+  return true;
 }
+registerFuelCan();
+
+on('onResourceStart', (startedResource) => {
+  if (startedResource === 'fluxcore_inventory') {
+    setTimeout(registerFuelCan, 0);
+  }
+});
 
 globalThis.exports('PurchaseFuel', (source, networkId, stationId, liters) =>
   result(() => fuel.purchase(Number(source), networkId, stationId, liters)),

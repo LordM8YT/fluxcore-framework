@@ -45,6 +45,11 @@ test('generated server config exposes every txAdmin placeholder', () => {
 
   assert.doesNotMatch(serverConfig, /^set onesync on$/mu);
   assert.match(serverConfig, /^set sv_stateBagStrictMode true$/mu);
+  assert.match(serverConfig, /^voice_internal$/mu);
+  assert.match(serverConfig, /^set resources_useSystemChat false$/mu);
+  assert.match(serverConfig, /^stop chat$/mu);
+  assert.doesNotMatch(serverConfig, /^set resources_useSystemChat true$/mu);
+  assert.doesNotMatch(serverConfig, /^setr? sv_mumble\b/mu);
   assert.match(serverConfig, /^set sv_devMode true$/mu);
   assert.doesNotMatch(serverConfig, /^set sv_devmode true$/mu);
   assert.doesNotMatch(serverConfig, /^sv_enforceGameBuild\s+/mu);
@@ -68,10 +73,11 @@ test('Fluxcore resources start after core in dependency order', () => {
     'ensure fluxcore_loading',
     'ensure fluxcore_core',
     'ensure fluxcore_chat',
+    'ensure fluxcore_voice',
     'ensure fluxcore_interact',
-    'ensure fluxcore_status',
     'ensure fluxcore_jobs',
     'ensure fluxcore_inventory',
+    'ensure fluxcore_status',
     'ensure fluxcore_banking',
     'ensure fluxcore_vehicles',
     'ensure fluxcore_fuel',
@@ -82,6 +88,7 @@ test('Fluxcore resources start after core in dependency order', () => {
     'ensure fluxcore_mdt',
     'ensure fluxcore_properties',
     'ensure fluxcore_world',
+    'ensure fluxcore_ui',
     'ensure fluxcore_admin',
     'ensure fluxcore_phone',
     'ensure fluxcore_identity',
@@ -92,4 +99,23 @@ test('Fluxcore resources start after core in dependency order', () => {
   assert.deepEqual(indexes, [...indexes].sort((a, b) => a - b));
   assert.equal(indexOfLine(serverConfig, 'ensure basic-gamemode'), -1);
   assert.equal(indexOfLine(serverConfig, 'stop basic-gamemode'), -1);
+  assert.equal(indexOfLine(serverConfig, 'ensure fluxcore_example'), -1);
+});
+
+test('example config disables the stock Cfx chat', () => {
+  const exampleConfig = fs.readFileSync(
+    path.join(root, 'server.cfg.example'),
+    'utf8',
+  );
+  assert.match(exampleConfig, /^set resources_useSystemChat false$/mu);
+  assert.match(exampleConfig, /^stop chat$/mu);
+});
+
+test('example config does not enable development-only target registrations', () => {
+  const exampleConfig = fs.readFileSync(
+    path.join(root, 'server.cfg.example'),
+    'utf8',
+  );
+  assert.equal(indexOfLine(exampleConfig, 'ensure fluxcore_example'), -1);
+  assert.match(exampleConfig, /^# ensure fluxcore_example$/mu);
 });

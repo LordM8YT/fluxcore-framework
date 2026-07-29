@@ -17,6 +17,7 @@ Fluxcore is an independent, Enhanced-first roleplay framework for FiveM. It is b
 | copy a clean resource starter       | [Resource Template](resource-template.md)         |
 | use core exports and events         | [Core API](core-api.md)                           |
 | understand State Bags               | [State Bags and Events](state-bags-and-events.md) |
+| see RP commands and default controls | [Chat and Player Controls](chat-and-player-controls.md) |
 | integrate a frontend                | [UI Contracts](ui-contracts.md)                   |
 | back up or migrate data             | [Database and Backups](database-and-backups.md)   |
 | test on FiveM Enhanced              | [Enhanced Test Plan](enhanced-test-plan.md)       |
@@ -35,6 +36,7 @@ Fluxcore is an independent, Enhanced-first roleplay framework for FiveM. It is b
 | `fluxcore_inventory`  | server-authoritative items, containers and world drops                   |
 | `fluxcore_status`     | persistent needs, Fluxcord HUD, RP minimap and vanilla police suppression |
 | `fluxcore_chat`       | replacement RP chat, slash commands and basic emotes                     |
+| `fluxcore_voice`      | guarded Enhanced proximity-voice channel and talking-state export        |
 | `fluxcore_vehicles`   | ownership, keys, public garages, locks and trunks                        |
 | `fluxcore_fuel`       | native consumption and server-validated fuel purchases                  |
 | `fluxcore_appearance` | persistent freemode appearance and temporary live-preview editor          |
@@ -47,7 +49,7 @@ Fluxcore is an independent, Enhanced-first roleplay framework for FiveM. It is b
 | `fluxcore_world`      | server-validated shops, dealerships and persistent job doors             |
 | `fluxcore_admin`      | ACE-secured administration and audit records                             |
 | `fluxcore_phone`      | phone numbers, contacts and offline text messaging                       |
-| `fluxcore_example`    | temporary examples for the public API                                    |
+| `fluxcore_example`    | opt-in development examples for the public API                            |
 
 Read [Player Experience](player-experience.md) and
 [Character Creation](character-creation.md) for loading, characters,

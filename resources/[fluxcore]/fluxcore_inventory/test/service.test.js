@@ -200,14 +200,55 @@ test('usable item handlers explicitly choose consumption', (t) => {
   const { service } = createHarness(t);
   service.addItem(7, 'bandage', 2, {}, 'test');
   let usedBy = 0;
+  let countAtEffect = 0;
   service.registerUsableItem('bandage', (source) => {
     usedBy = source;
-    return { consume: 1 };
+    return {
+      consume: 1,
+      afterUse() {
+        countAtEffect = service.getItemCount(7, 'bandage');
+      },
+    };
   });
 
   service.useItem(7, 1);
   assert.equal(usedBy, 7);
   assert.equal(service.getItemCount(7, 'bandage'), 1);
+  assert.equal(countAtEffect, 1);
+});
+
+test('failed post-commit effects cannot duplicate a consumed item', (t) => {
+  const { service, events } = createHarness(t);
+  service.addItem(7, 'bandage', 1, {}, 'test');
+  service.registerUsableItem('bandage', () => ({
+    consume: 1,
+    afterUse() {
+      throw new Error('effect unavailable');
+    },
+  }));
+
+  assert.throws(() => service.useItem(7, 1), { code: 'USE_EFFECT_FAILED' });
+  assert.equal(service.getItemCount(7, 'bandage'), 0);
+  assert.equal(
+    events.some(
+      (event) => event.eventName === 'fluxcore_inventory:client:update',
+    ),
+    true,
+  );
+});
+
+test('usable item registrations are removed with their owner resource', (t) => {
+  const { service } = createHarness(t);
+  service.addItem(7, 'bandage', 1, {}, 'test');
+  service.registerUsableItem(
+    'bandage',
+    () => ({ consume: 1 }),
+    'fluxcore_status',
+  );
+
+  assert.equal(service.unregisterUsableItems('unrelated_resource'), 0);
+  assert.equal(service.unregisterUsableItems('fluxcore_status'), 1);
+  assert.throws(() => service.useItem(7, 1), { code: 'ITEM_NOT_USABLE' });
 });
 
 test('character cleanup deletes the private container', (t) => {

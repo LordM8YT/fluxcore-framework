@@ -39,6 +39,15 @@ const core = {
   setJob(identifier, job) {
     return globalThis.exports.fluxcore_core.SetJob(identifier, job);
   },
+  addMoney(identifier, currency, amount, reason, reference) {
+    return globalThis.exports.fluxcore_core.AddMoney(
+      identifier,
+      currency,
+      amount,
+      reason,
+      reference,
+    );
+  },
 };
 
 const config = loadConfig(runtime);
@@ -117,7 +126,7 @@ function actorForCommand(source) {
 }
 
 function mayManage(source) {
-  return Number(source) === 0 || IsPlayerAceAllowed(String(source), 'Fluxcore.jobs.manage');
+  return Number(source) === 0 || IsPlayerAceAllowed(String(source), 'fluxcore.jobs.manage');
 }
 
 on('Fluxcore:server:playerLoaded', (source) => {
@@ -281,6 +290,68 @@ globalThis.exports('SetDuty', (identifier, onDuty) =>
   ),
 );
 
+let nextPaydayAt = Date.now() + config.payIntervalMs;
+
+function runPayday() {
+  const reference = `jobs:payday:${Date.now()}`;
+  let paid = 0;
+  for (const player of core.getPlayers()) {
+    const source = Number(player.source);
+    try {
+      const active = jobs.snapshot(source).activeJob;
+      if (!active || !active.onDuty || active.payment <= 0) {
+        continue;
+      }
+      const response = core.addMoney(
+        source,
+        config.payCurrency,
+        active.payment,
+        'job_payday',
+        `${reference}:${player.characterId}:${active.name}:${active.grade}`,
+      );
+      if (response?.ok === false) {
+        throw new Error(response.error?.message || 'core rejected payday');
+      }
+      paid += 1;
+      notify(
+        source,
+        `Payday: ${active.payment} added to ${config.payCurrency}.`,
+      );
+    } catch (error) {
+      runtime.log(
+        'warn',
+        `payday skipped source ${source}: ${error?.message || String(error)}`,
+      );
+    }
+  }
+  runtime.log('info', `payday completed for ${paid} on-duty players`);
+  nextPaydayAt = Date.now() + config.payIntervalMs;
+  return paid;
+}
+
+const paydayTimer = setInterval(runPayday, config.payIntervalMs);
+
+RegisterCommand('paycheck', (source) => {
+  const playerSource = Number(source);
+  if (playerSource <= 0) {
+    runtime.log('info', `next payday in ${Math.max(0, nextPaydayAt - Date.now())} ms`);
+    return;
+  }
+  handle(playerSource, () => {
+    const active = jobs.snapshot(playerSource).activeJob;
+    const seconds = Math.ceil(
+      Math.max(0, nextPaydayAt - Date.now()) / 1000,
+    );
+    notify(
+      playerSource,
+      active && active.onDuty && active.payment > 0
+        ? `Next payday: ${active.payment} ${config.payCurrency} in ${seconds}s.`
+        : `No paid on-duty job. Next payday check in ${seconds}s.`,
+    );
+    return true;
+  });
+}, false);
+
 setTimeout(() => {
   for (const player of core.getPlayers()) {
     const numericSource = Number(player.source);
@@ -301,6 +372,7 @@ on('playerDropped', () => {
 
 on('onResourceStop', (stoppedResource) => {
   if (stoppedResource === resourceName) {
+    clearInterval(paydayTimer);
     database.close();
   }
 });

@@ -151,12 +151,23 @@ function validateConfig(input, resourcePath = process.cwd()) {
     resourcePath,
     String(input.databaseFile || 'data/jobs.sqlite'),
   );
+  const payCurrency = String(input.payCurrency || 'bank').trim().toLowerCase();
+  if (!NAME_PATTERN.test(payCurrency)) {
+    throw jobsError('CONFIG_INVALID', 'payCurrency is invalid');
+  }
 
   return {
     databaseFile,
     defaultJob,
     maxJobs: boundedInteger(input.maxJobs ?? 5, 1, 25, 'maxJobs'),
     permissionRequiresDuty: input.permissionRequiresDuty !== false,
+    payIntervalMs: boundedInteger(
+      input.payIntervalMs ?? 900_000,
+      60_000,
+      86_400_000,
+      'payIntervalMs',
+    ),
+    payCurrency,
     jobs,
   };
 }

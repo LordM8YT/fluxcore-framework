@@ -1,0 +1,5 @@
+{
+  "proximityDistances": [3, 8, 15],
+  "defaultProximityIndex": 2,
+  "talkingPollMs": 100
+}

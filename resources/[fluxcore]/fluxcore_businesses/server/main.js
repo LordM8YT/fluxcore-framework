@@ -158,7 +158,7 @@ RegisterCommand(
   (source, args) => {
     if (
       Number(source) !== 0 &&
-      !IsPlayerAceAllowed(String(source), 'Fluxcore.businesses.manage')
+      !IsPlayerAceAllowed(String(source), 'fluxcore.businesses.manage')
     ) {
       runtime.emitClient(
         Number(source),

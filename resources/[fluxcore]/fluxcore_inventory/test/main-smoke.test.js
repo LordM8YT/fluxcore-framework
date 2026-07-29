@@ -97,11 +97,16 @@ test('Cfx wiring boots and exposes safe inventory operations', () => {
     assert.equal(registeredExports.has('RegisterContainer'), true);
 
     eventHandlers.get('Fluxcore:server:playerLoaded')(7, player);
+    assert.equal(registeredExports.get('GetItemCount')(7, 'water'), 2);
+    assert.equal(registeredExports.get('GetItemCount')(7, 'weapon_pistol'), 1);
+    assert.equal(registeredExports.get('GetItemCount')(7, 'pistol_ammo'), 24);
     const added = registeredExports.get('AddItem')(7, 'water', 2, {
       quality: 100,
     });
     assert.equal(added.ok, true);
-    assert.equal(registeredExports.get('GetItemCount')(7, 'water'), 2);
+    assert.equal(registeredExports.get('GetItemCount')(7, 'water'), 4);
+    eventHandlers.get('Fluxcore:server:playerLoaded')(7, player);
+    assert.equal(registeredExports.get('GetItemCount')(7, 'water'), 4);
 
     context.source = 7;
     netHandlers.get('fluxcore_inventory:server:move')(1, 2, 1);
@@ -115,6 +120,22 @@ test('Cfx wiring boots and exposes safe inventory operations', () => {
     const opened = registeredExports.get('OpenInventory')(7);
     assert.equal(opened.ok, true);
     assert.equal(opened.data.contract, 'Fluxcore.inventory.bootstrap.v1');
+
+    const usable = registeredExports.get('RegisterUsableItem')(
+      'water',
+      () => ({ consume: 1 }),
+    );
+    assert.equal(usable.ok, true);
+    eventHandlers.get('onResourceStop')('smoke_test');
+    netHandlers.get('fluxcore_inventory:server:use')(1);
+    assert.equal(
+      emitted.some(
+        (event) =>
+          event.eventName === 'fluxcore_inventory:client:error'
+          && event.args[1] === 'ITEM_NOT_USABLE',
+      ),
+      true,
+    );
 
     eventHandlers.get('onResourceStop')('fluxcore_inventory');
   } finally {

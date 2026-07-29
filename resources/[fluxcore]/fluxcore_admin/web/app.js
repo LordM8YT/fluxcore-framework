@@ -106,7 +106,7 @@ function selectedPlayer() {
 }
 
 function hasPermission(permission) {
-  return state.permissions['Fluxcore.admin'] || state.permissions[permission];
+  return state.permissions['fluxcore.admin'] || state.permissions[permission];
 }
 
 function jobLabel(job) {
@@ -136,7 +136,7 @@ function applyPermissions() {
   });
   document.querySelector('#audit-button').classList.toggle(
     'is-hidden',
-    !hasPermission('Fluxcore.admin.audit'),
+    !hasPermission('fluxcore.admin.audit'),
   );
 }
 

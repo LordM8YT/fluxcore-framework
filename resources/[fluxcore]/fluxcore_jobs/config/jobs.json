@@ -3,6 +3,8 @@
   "defaultJob": "unemployed",
   "maxJobs": 5,
   "permissionRequiresDuty": true,
+  "payIntervalMs": 900000,
+  "payCurrency": "bank",
   "jobs": {
     "unemployed": {
       "label": "Unemployed",

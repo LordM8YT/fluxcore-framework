@@ -1,5 +1,10 @@
 local chatOpen = false
 local currentEmote = nil
+local roleplayBubbles = {}
+
+local function nativeTrue(value)
+    return value == true or value == 1
+end
 
 local emotes = {
     sit = { dict = 'anim@heists@fleeca_bank@ig_7_jetski_owner', anim = 'owner_idle', flag = 1 },
@@ -13,13 +18,67 @@ local emotes = {
 
 local function setChatOpen(open)
     chatOpen = open == true
-    SetNuiFocus(chatOpen, chatOpen)
+    SetNuiFocus(chatOpen, false)
     SetNuiFocusKeepInput(false)
     SendNUIMessage({ action = chatOpen and 'open' or 'close' })
 end
 
 local function addMessage(message)
     SendNUIMessage({ action = 'message', message = message })
+end
+
+local function boundedBubbleText(value)
+    local text = tostring(value or '')
+    local ok, cutoff = pcall(utf8.offset, text, 121)
+    if not ok then
+        return ''
+    end
+    return cutoff and text:sub(1, cutoff - 1) or text
+end
+
+local function addRoleplayBubble(message)
+    if type(message) ~= 'table'
+        or (message.type ~= 'me'
+            and message.type ~= 'do'
+            and message.type ~= 'try') then
+        return
+    end
+    local serverId = tonumber(message.source)
+    if not serverId then
+        return
+    end
+    local text = boundedBubbleText(message.text)
+    if text == '' then
+        return
+    end
+    roleplayBubbles[#roleplayBubbles + 1] = {
+        serverId = serverId,
+        text = text,
+        expiresAt = GetGameTimer() + 7000
+    }
+    while #roleplayBubbles > 8 do
+        table.remove(roleplayBubbles, 1)
+    end
+end
+
+local function drawWorldText(coords, text, offset)
+    local visible, screenX, screenY = World3dToScreen2d(
+        coords.x,
+        coords.y,
+        coords.z + 1.05 + offset
+    )
+    if not nativeTrue(visible) then
+        return
+    end
+    SetTextScale(0.0, 0.28)
+    SetTextFont(0)
+    SetTextProportional(true)
+    SetTextCentre(true)
+    SetTextColour(244, 240, 255, 230)
+    SetTextDropshadow(1, 0, 0, 0, 180)
+    BeginTextCommandDisplayText('STRING')
+    AddTextComponentSubstringPlayerName(text)
+    EndTextCommandDisplayText(screenX, screenY)
 end
 
 local function stopEmote()
@@ -66,6 +125,11 @@ end, false)
 
 RegisterKeyMapping('fluxcore_chat_open', 'Open Fluxcore chat', 'keyboard', 'T')
 
+CreateThread(function()
+    Wait(0)
+    SetTextChatEnabled(false)
+end)
+
 RegisterCommand('me', function(_, args)
     TriggerServerEvent('fluxcore_chat:server:roleplay', 'me', table.concat(args, ' '))
 end, false)
@@ -77,6 +141,16 @@ end, false)
 RegisterCommand('ooc', function(_, args)
     TriggerServerEvent('fluxcore_chat:server:roleplay', 'ooc', table.concat(args, ' '))
 end, false)
+
+for _, command in ipairs({ 'try', 'whisper', 'shout' }) do
+    RegisterCommand(command, function(_, args)
+        TriggerServerEvent(
+            'fluxcore_chat:server:roleplay',
+            command,
+            table.concat(args, ' ')
+        )
+    end, false)
+end
 
 RegisterCommand('e', function(_, args)
     local name = string.lower(tostring(args[1] or ''))
@@ -93,17 +167,57 @@ RegisterCommand('clear', function()
     SendNUIMessage({ action = 'clear' })
 end, false)
 
+RegisterCommand('controls', function()
+    for _, text in ipairs({
+        'T chat | TAB inventory | 1-5 hotbar | X cancel emote',
+        'LEFT ALT target and interact',
+        'L vehicle lock | G engine | B seatbelt',
+        'GRAVE voice range | /voice status | /hud HUD | /logout characters'
+    }) do
+        addMessage({ type = 'system', author = 'Controls', text = text })
+    end
+end, false)
+
+RegisterCommand('+fluxcore_cancel_emote', function()
+    if currentEmote then
+        stopEmote()
+    end
+end, false)
+
+RegisterCommand('-fluxcore_cancel_emote', function()
+end, false)
+
+RegisterKeyMapping(
+    '+fluxcore_cancel_emote',
+    'Cancel active Fluxcore emote',
+    'keyboard',
+    'X'
+)
+
 RegisterNetEvent('fluxcore_chat:client:message', function(message)
     addMessage(message)
+    addRoleplayBubble(message)
+end)
+
+RegisterNetEvent('Fluxcore:client:playerLoggedOut', function()
+    setChatOpen(false)
+    stopEmote()
+    roleplayBubbles = {}
+    SendNUIMessage({ action = 'clear' })
 end)
 
 AddEventHandler('chat:addMessage', function(message)
     if type(message) ~= 'table' then return end
     local args = type(message.args) == 'table' and message.args or {}
+    local hasAuthor = args[2] ~= nil
     addMessage({
         type = message.type or 'system',
-        author = tostring(args[1] or message.author or 'System'),
-        text = tostring(args[2] or message.text or args[1] or '')
+        author = tostring(
+            message.author or (hasAuthor and args[1]) or 'System'
+        ),
+        text = tostring(
+            message.text or (hasAuthor and args[2]) or args[1] or ''
+        )
     })
 end)
 
@@ -112,6 +226,34 @@ AddEventHandler('chat:addSuggestion', function(command, help)
         action = 'suggestion',
         suggestion = { command = tostring(command or ''), help = tostring(help or '') }
     })
+end)
+
+AddEventHandler('chat:addSuggestions', function(entries)
+    if type(entries) ~= 'table' then
+        return
+    end
+    for _, entry in ipairs(entries) do
+        if type(entry) == 'table' then
+            SendNUIMessage({
+                action = 'suggestion',
+                suggestion = {
+                    command = tostring(entry.name or entry.command or ''),
+                    help = tostring(entry.help or '')
+                }
+            })
+        end
+    end
+end)
+
+AddEventHandler('chat:removeSuggestion', function(command)
+    SendNUIMessage({
+        action = 'removeSuggestion',
+        command = tostring(command or '')
+    })
+end)
+
+AddEventHandler('chat:clear', function()
+    SendNUIMessage({ action = 'clear' })
 end)
 
 RegisterNUICallback('submit', function(data, callback)
@@ -138,12 +280,27 @@ CreateThread(function()
         { '/me', 'Describe what your character does' },
         { '/do', 'Describe the scene or its result' },
         { '/ooc', 'Send an out-of-character message' },
+        { '/try', 'Attempt an action with a server-generated result' },
+        { '/whisper', 'Speak to players within 3 meters' },
+        { '/shout', 'Speak to players within 40 meters' },
         { '/e sit', 'Play an emote; use /e cancel to stop' },
+        { '/characters', 'Open character selection while logged out' },
+        { '/logout', 'Save and return to character selection' },
         { '/911', 'Contact emergency services' },
         { '/inventory', 'Open your inventory' },
         { '/phone', 'Open your phone' },
         { '/jobs', 'Open the jobs menu' },
-        { '/garage', 'Open a nearby garage' }
+        { '/paycheck', 'Show current job pay and next payday' },
+        { '/garage', 'Open a nearby garage' },
+        { '/engine', 'Start or stop your current vehicle engine' },
+        { '/vlock', 'Lock or unlock a nearby accessible vehicle' },
+        { '/trunk', 'Open the inventory of a nearby accessible vehicle' },
+        { '/refuel', 'Refuel the nearby vehicle after selecting a fuel method' },
+        { '/bank', 'Open a nearby bank or ATM' },
+        { '/appearance', 'Open the character appearance editor' },
+        { '/hud', 'Hide or show the Fluxcore HUD' },
+        { '/voice', 'Show proximity voice status' },
+        { '/controls', 'Show the main Fluxcore key mappings' }
     }) do
         SendNUIMessage({ action = 'suggestion', suggestion = {
             command = suggestion[1],
@@ -152,9 +309,54 @@ CreateThread(function()
     end
 end)
 
+CreateThread(function()
+    while true do
+        if currentEmote then
+            local ped = PlayerPedId()
+            if ped == 0
+                or nativeTrue(IsEntityDead(ped))
+                or nativeTrue(IsPedInAnyVehicle(ped, false)) then
+                stopEmote()
+            end
+            Wait(250)
+        else
+            Wait(750)
+        end
+    end
+end)
+
+CreateThread(function()
+    while true do
+        local now = GetGameTimer()
+        local offsets = {}
+        for index = #roleplayBubbles, 1, -1 do
+            local bubble = roleplayBubbles[index]
+            if bubble.expiresAt <= now then
+                table.remove(roleplayBubbles, index)
+            else
+                local player = GetPlayerFromServerId(bubble.serverId)
+                if player ~= -1 and nativeTrue(NetworkIsPlayerActive(player)) then
+                    local ped = GetPlayerPed(player)
+                    if ped ~= 0 and nativeTrue(DoesEntityExist(ped)) then
+                        local offset = offsets[bubble.serverId] or 0
+                        drawWorldText(
+                            GetEntityCoords(ped),
+                            bubble.text,
+                            offset * 0.18
+                        )
+                        offsets[bubble.serverId] = offset + 1
+                    end
+                end
+            end
+        end
+        Wait(#roleplayBubbles > 0 and 0 or 500)
+    end
+end)
+
 AddEventHandler('onClientResourceStop', function(resource)
     if resource == GetCurrentResourceName() then
         SetNuiFocus(false, false)
+        SetTextChatEnabled(true)
         stopEmote()
     end
 end)

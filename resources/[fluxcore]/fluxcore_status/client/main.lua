@@ -5,6 +5,13 @@ local hudSnapshot = nil
 local minimapConfigured = false
 local minimapScaleform = nil
 local minimapBarsHiddenAt = 0
+local hudHidden = false
+local seatbeltFastened = false
+local voice = {
+    ready = false,
+    talking = false,
+    proximityDistance = nil
+}
 
 local clientConfig = {
     disableVanillaHud = true,
@@ -81,7 +88,9 @@ end
 
 local function pedVitals()
     local ped = PlayerPedId()
-    if ped == 0 or not nativeTrue(DoesEntityExist(ped)) then
+    if ped == 0
+        or not nativeTrue(DoesEntityExist(ped))
+        or nativeTrue(IsEntityDead(ped)) then
         return 0, 0, 0
     end
 
@@ -100,6 +109,31 @@ local function pedVitals()
     return health, armor, stamina
 end
 
+local function vehicleFuelPercent(vehicle)
+    if not nativeTrue(DoesVehicleUseFuel(vehicle)) then
+        return nil
+    end
+    local tankVolume = tonumber(GetVehicleHandlingFloat(
+        vehicle,
+        'CHandlingData',
+        'fPetrolTankVolume'
+    )) or 0.0
+    if tankVolume <= 0.0 then
+        return 0
+    end
+    local fuelLiters = tonumber(GetVehicleFuelLevel(vehicle)) or 0.0
+    return clamp(rounded((fuelLiters / tankVolume) * 100), 0, 100)
+end
+
+local function vehicleGear(vehicle)
+    local relativeSpeed = GetEntitySpeedVector(vehicle, true)
+    if relativeSpeed and (tonumber(relativeSpeed.y) or 0.0) < -0.5 then
+        return 'R'
+    end
+    local gear = tonumber(GetVehicleCurrentGear(vehicle)) or 0
+    return gear > 0 and gear or 'N'
+end
+
 local function vehicleSnapshot()
     local ped = PlayerPedId()
     if ped == 0 or not nativeTrue(IsPedInAnyVehicle(ped, false)) then
@@ -113,14 +147,18 @@ local function vehicleSnapshot()
         speed = rounded(GetEntitySpeed(vehicle) * 3.6),
         speedUnit = 'kmh',
         rpm = clamp(rounded(GetVehicleCurrentRpm(vehicle) * 100), 0, 100),
-        gear = GetVehicleCurrentGear(vehicle),
-        fuel = clamp(rounded(GetVehicleFuelLevel(vehicle)), 0, 100),
+        gear = vehicleGear(vehicle),
+        fuel = vehicleFuelPercent(vehicle),
         engineHealth = clamp(
             rounded(GetVehicleEngineHealth(vehicle) / 10),
             0,
             100
         ),
-        plate = tostring(GetVehicleNumberPlateText(vehicle) or ''):gsub('%s+$', '')
+        engineRunning = nativeTrue(GetIsVehicleEngineRunning(vehicle)),
+        seatbelt = seatbeltFastened,
+        plate = tostring(GetVehicleNumberPlateText(vehicle) or '')
+            :gsub('^%s+', '')
+            :gsub('%s+$', '')
     }
 end
 
@@ -147,10 +185,11 @@ local function buildHudSnapshot()
             stress = rounded(needs.stress),
             stamina = stamina
         },
+        voice = copy(voice),
         vehicle = vehicle,
         visibility = {
-            hud = true,
-            minimap = true,
+            hud = not hudHidden,
+            minimap = not hudHidden,
             money = false,
             job = true,
             weapon = ped ~= 0 and nativeTrue(IsPedArmed(ped, 7)),
@@ -190,7 +229,7 @@ local function configureMinimap()
         'L',
         'B',
         -0.0045,
-        -0.022,
+        -0.060,
         0.150,
         0.188888
     )
@@ -199,7 +238,7 @@ local function configureMinimap()
         'L',
         'B',
         0.020,
-        0.032,
+        -0.006,
         0.111,
         0.159
     )
@@ -208,7 +247,7 @@ local function configureMinimap()
         'L',
         'B',
         -0.030,
-        0.022,
+        -0.016,
         0.266,
         0.237
     )
@@ -269,6 +308,22 @@ RegisterNetEvent('fluxcore_status:client:update', function(snapshot)
     publishHud(true)
 end)
 
+RegisterNetEvent('fluxcore_status:client:heal', function(amount)
+    local ped = PlayerPedId()
+    if ped == 0
+        or not nativeTrue(DoesEntityExist(ped))
+        or nativeTrue(IsEntityDead(ped)) then
+        return
+    end
+    local maximum = GetEntityMaxHealth(ped)
+    local health = GetEntityHealth(ped)
+    SetEntityHealth(
+        ped,
+        math.min(maximum, health + math.max(1, math.min(100, tonumber(amount) or 1)))
+    )
+    publishHud(true)
+end)
+
 RegisterNetEvent('Fluxcore:client:playerLoaded', function(snapshot)
     playerData = copy(snapshot)
     TriggerServerEvent('fluxcore_status:server:request')
@@ -282,10 +337,100 @@ end)
 RegisterNetEvent('Fluxcore:client:playerLoggedOut', function()
     needs = nil
     playerData = nil
+    hudHidden = false
+    voice = { ready = false, talking = false, proximityDistance = nil }
     lastSnapshotJson = nil
     hudSnapshot = nil
     TriggerEvent('fluxcore_status:client:hudUpdated', nil)
     SendNUIMessage({ action = 'fluxcore:hud:close' })
+end)
+
+RegisterCommand('hud', function()
+    hudHidden = not hudHidden
+    publishHud(true)
+    TriggerEvent('chat:addMessage', {
+        args = {
+            'HUD',
+            hudHidden and 'Fluxcore HUD hidden.' or 'Fluxcore HUD visible.'
+        }
+    })
+end, false)
+
+AddEventHandler('fluxcore_voice:client:stateChanged', function(snapshot)
+    if type(snapshot) ~= 'table' then
+        return
+    end
+    voice = {
+        ready = snapshot.ready == true,
+        talking = snapshot.talking == true,
+        proximityDistance = tonumber(snapshot.proximityDistance)
+    }
+    publishHud(true)
+end)
+
+local function refreshVoiceState()
+    if GetResourceState('fluxcore_voice') ~= 'started' then
+        voice = { ready = false, talking = false, proximityDistance = nil }
+        publishHud(true)
+        return
+    end
+    local ok, snapshot = pcall(function()
+        return exports.fluxcore_voice:GetVoiceState()
+    end)
+    if ok and type(snapshot) == 'table' then
+        voice = {
+            ready = snapshot.ready == true,
+            talking = snapshot.talking == true,
+            proximityDistance = tonumber(snapshot.proximityDistance)
+        }
+        publishHud(true)
+    end
+end
+
+local function refreshSeatbeltState()
+    if GetResourceState('fluxcore_vehicles') ~= 'started' then
+        seatbeltFastened = false
+        publishHud(true)
+        return
+    end
+    local ok, enabled = pcall(function()
+        return exports.fluxcore_vehicles:IsSeatbeltFastened()
+    end)
+    seatbeltFastened = ok and enabled == true
+    publishHud(true)
+end
+
+AddEventHandler('fluxcore_vehicles:client:seatbeltChanged', function(enabled)
+    seatbeltFastened = enabled == true
+    publishHud(true)
+end)
+
+AddEventHandler('onClientResourceStart', function(startedResource)
+    if startedResource == 'fluxcore_voice'
+        or startedResource == GetCurrentResourceName() then
+        CreateThread(function()
+            Wait(100)
+            refreshVoiceState()
+        end)
+    end
+    if startedResource == 'fluxcore_vehicles'
+        or startedResource == GetCurrentResourceName() then
+        CreateThread(function()
+            Wait(100)
+            refreshSeatbeltState()
+        end)
+    end
+end)
+
+AddEventHandler('onClientResourceStop', function(stoppedResource)
+    if stoppedResource == 'fluxcore_voice' then
+        voice = { ready = false, talking = false, proximityDistance = nil }
+        publishHud(true)
+    end
+    if stoppedResource == 'fluxcore_vehicles' then
+        seatbeltFastened = false
+        publishHud(true)
+    end
 end)
 
 CreateThread(function()
@@ -319,8 +464,11 @@ CreateThread(function()
                 configureMinimap()
             end
             DisplayRadar(
-                not clientConfig.minimapVehicleOnly
-                    or hudSnapshot.vehicle ~= nil
+                not hudHidden
+                    and (
+                        not clientConfig.minimapVehicleOnly
+                        or hudSnapshot.vehicle ~= nil
+                    )
             )
             if hudSnapshot.vehicle ~= nil
                 and GetGameTimer() - minimapBarsHiddenAt >= 1000 then
@@ -338,12 +486,17 @@ CreateThread(function()
         return
     end
     disableVanillaPolice()
+    local nextEnforcementAt = GetGameTimer() + 5000
     while true do
         local player = PlayerId()
         if GetPlayerWantedLevel(player) ~= 0 then
             ClearPlayerWantedLevel(player)
             SetPlayerWantedLevel(player, 0, false)
             SetPlayerWantedLevelNow(player, false)
+        end
+        if GetGameTimer() >= nextEnforcementAt then
+            disableVanillaPolice()
+            nextEnforcementAt = GetGameTimer() + 5000
         end
         Wait(1000)
     end
@@ -385,7 +538,12 @@ end)
 
 CreateThread(function()
     while true do
-        Wait(playerData and 500 or 1000)
+        Wait(
+            playerData
+                and nativeTrue(IsPedInAnyVehicle(PlayerPedId(), false))
+                and 100
+                or (playerData and 500 or 1000)
+        )
         if playerData and needs then
             publishHud(false)
         end

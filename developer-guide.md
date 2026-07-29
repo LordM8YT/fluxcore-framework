@@ -91,6 +91,18 @@ end
 
 `GetPlayer()` returns a detached snapshot. Changing the table does not change core state.
 
+### Usable inventory items
+
+Usable inventory handlers may return `{ consume, afterUse }`. Fluxcore commits
+the inventory consumption first and then calls the synchronous `afterUse`
+callback, which is the correct place to grant an external effect such as
+health, status, ammo, or an equipped prop.
+
+The inventory tracks the resource that calls `RegisterUsableItem` and removes
+its handlers when that resource stops. A provider must register them again
+after `fluxcore_inventory` starts; the bundled status and fuel resources
+demonstrate this restart-safe lifecycle.
+
 ## Handle result envelopes
 
 Mutations return one of:

@@ -3,6 +3,7 @@
   "pricePerLiter": 3,
   "minimumLiters": 1,
   "maximumLiters": 100,
+  "defaultTankLiters": 65,
   "consumptionMultiplier": 1,
   "requestWindowMs": 10000,
   "requestLimit": 8,

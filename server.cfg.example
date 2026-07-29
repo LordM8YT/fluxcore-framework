@@ -3,6 +3,7 @@
 
 endpoint_add_tcp "0.0.0.0:30120"
 endpoint_add_udp "0.0.0.0:30120"
+set resources_useSystemChat false
 
 sv_hostname "Fluxcore Framework Development"
 sets sv_projectName "Fluxcore Framework"
@@ -12,6 +13,7 @@ sv_maxclients 8
 # OneSync is always enabled by Cfx Server for Enhanced and its convar is
 # read-only. txAdmin recipes should use `$onesync: on` instead.
 set sv_stateBagStrictMode true
+voice_internal
 
 # Enables Enhanced client developer tools. Disable this in production, or
 # replace it with per-player deferrals.handover access.
@@ -24,12 +26,15 @@ set fluxcore_maxCharacters 4
 set fluxcore_saveIntervalMs 60000
 setr sv_showBusySpinnerOnLoadingScreen false
 
+stop chat
 ensure fluxcore_loading
 ensure fluxcore_core
+ensure fluxcore_chat
+ensure fluxcore_voice
 ensure fluxcore_interact
-ensure fluxcore_status
 ensure fluxcore_jobs
 ensure fluxcore_inventory
+ensure fluxcore_status
 ensure fluxcore_banking
 ensure fluxcore_vehicles
 ensure fluxcore_fuel
@@ -44,7 +49,8 @@ ensure fluxcore_ui
 ensure fluxcore_admin
 ensure fluxcore_phone
 ensure fluxcore_identity
-ensure fluxcore_example
+# Development-only API examples. Enable manually when testing integrations.
+# ensure fluxcore_example
 
 # Job-management commands are denied to players unless their principal inherits
 # this ACE. Example:
