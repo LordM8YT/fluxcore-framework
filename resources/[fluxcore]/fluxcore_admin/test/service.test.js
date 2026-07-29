@@ -8,7 +8,7 @@ const path = require('node:path');
 const { AdminDatabase } = require('../server/database');
 const { AdminService } = require('../server/service');
 
-function createHarness(t, granted = ['Fluxcore.admin']) {
+function createHarness(t, granted = ['fluxcore.admin']) {
   const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'Fluxcore-admin-'));
   const database = new AdminDatabase(path.join(directory, 'admin.sqlite'));
   const players = new Map([
@@ -90,13 +90,13 @@ test('bootstrap exposes only selected Fluxcore characters', (t) => {
 
   assert.equal(bootstrap.players.length, 2);
   assert.equal(bootstrap.players[1].name, 'Tara Target');
-  assert.equal(bootstrap.permissions['Fluxcore.admin.economy'], true);
+  assert.equal(bootstrap.permissions['fluxcore.admin.economy'], true);
 });
 
 test('granular ACE permissions deny unrelated actions and audit denial', (t) => {
   const { service, database } = createHarness(t, [
-    'Fluxcore.admin.open',
-    'Fluxcore.admin.players',
+    'fluxcore.admin.open',
+    'fluxcore.admin.players',
   ]);
   assert.equal(service.execute(7, 'bootstrap', {}).players.length, 2);
   assert.throws(
@@ -111,11 +111,11 @@ test('granular ACE permissions deny unrelated actions and audit denial', (t) => 
 });
 
 test('open permission alone does not disclose the player roster', (t) => {
-  const { service } = createHarness(t, ['Fluxcore.admin.open']);
+  const { service } = createHarness(t, ['fluxcore.admin.open']);
   const bootstrap = service.execute(7, 'bootstrap', {});
 
   assert.deepEqual(bootstrap.players, []);
-  assert.equal(bootstrap.permissions['Fluxcore.admin.players'], false);
+  assert.equal(bootstrap.permissions['fluxcore.admin.players'], false);
 });
 
 test('moderation, teleport, economy, jobs, and items use trusted adapters', (t) => {

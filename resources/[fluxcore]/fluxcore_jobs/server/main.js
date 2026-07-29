@@ -126,7 +126,7 @@ function actorForCommand(source) {
 }
 
 function mayManage(source) {
-  return Number(source) === 0 || IsPlayerAceAllowed(String(source), 'Fluxcore.jobs.manage');
+  return Number(source) === 0 || IsPlayerAceAllowed(String(source), 'fluxcore.jobs.manage');
 }
 
 on('Fluxcore:server:playerLoaded', (source) => {

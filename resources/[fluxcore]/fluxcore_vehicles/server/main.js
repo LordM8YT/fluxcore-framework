@@ -466,7 +466,7 @@ RegisterCommand(
   (source, args) => {
     if (
       Number(source) !== 0 &&
-      !IsPlayerAceAllowed(String(source), 'Fluxcore.vehicles.manage')
+      !IsPlayerAceAllowed(String(source), 'fluxcore.vehicles.manage')
     ) {
       notify(
         source,
