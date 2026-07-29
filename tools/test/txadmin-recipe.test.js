@@ -45,6 +45,8 @@ test('generated server config exposes every txAdmin placeholder', () => {
 
   assert.doesNotMatch(serverConfig, /^set onesync on$/mu);
   assert.match(serverConfig, /^set sv_stateBagStrictMode true$/mu);
+  assert.match(serverConfig, /^voice_internal$/mu);
+  assert.doesNotMatch(serverConfig, /^setr? sv_mumble\b/mu);
   assert.match(serverConfig, /^set sv_devMode true$/mu);
   assert.doesNotMatch(serverConfig, /^set sv_devmode true$/mu);
   assert.doesNotMatch(serverConfig, /^sv_enforceGameBuild\s+/mu);
@@ -68,6 +70,7 @@ test('Fluxcore resources start after core in dependency order', () => {
     'ensure fluxcore_loading',
     'ensure fluxcore_core',
     'ensure fluxcore_chat',
+    'ensure fluxcore_voice',
     'ensure fluxcore_interact',
     'ensure fluxcore_status',
     'ensure fluxcore_jobs',

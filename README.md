@@ -35,6 +35,7 @@ Fluxcore is an independent, Enhanced-first roleplay framework for FiveM. It is b
 | `fluxcore_inventory`  | server-authoritative items, containers and world drops                   |
 | `fluxcore_status`     | persistent needs, Fluxcord HUD, RP minimap and vanilla police suppression |
 | `fluxcore_chat`       | replacement RP chat, slash commands and basic emotes                     |
+| `fluxcore_voice`      | guarded Enhanced proximity-voice channel and talking-state export        |
 | `fluxcore_vehicles`   | ownership, keys, public garages, locks and trunks                        |
 | `fluxcore_fuel`       | native consumption and server-validated fuel purchases                  |
 | `fluxcore_appearance` | persistent freemode appearance and temporary live-preview editor          |

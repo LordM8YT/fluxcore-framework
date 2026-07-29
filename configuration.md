@@ -8,6 +8,7 @@ Place core settings before every `ensure fluxcore_*` line:
 
 ```cfg
 set sv_stateBagStrictMode true
+voice_internal
 
 setr fluxcore_locale "en"
 set fluxcore_maxCharacters 4
@@ -33,6 +34,7 @@ setr sv_showBusySpinnerOnLoadingScreen false
 ensure fluxcore_loading
 ensure fluxcore_core
 ensure fluxcore_chat
+ensure fluxcore_voice
 ensure fluxcore_interact
 ensure fluxcore_status
 ensure fluxcore_jobs
@@ -60,6 +62,7 @@ The manifests also declare dependencies, but explicit order keeps boot output pr
 | --------------------- | -------------------------------------------- |
 | `fluxcore_identity`   | `config.lua`                                 |
 | `fluxcore_loading`    | bundled `web/` files                         |
+| `fluxcore_voice`      | `config/voice.json`                          |
 | `fluxcore_jobs`       | `config/jobs.json`                           |
 | `fluxcore_inventory`  | `config/items.json`, `config/ui.json`        |
 | `fluxcore_status`     | `config/status.json`                         |

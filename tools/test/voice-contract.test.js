@@ -1,0 +1,39 @@
+'use strict';
+
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+const test = require('node:test');
+
+const root = path.resolve(__dirname, '..', '..');
+const resource = path.join(root, 'resources', '[fluxcore]', 'fluxcore_voice');
+const read = (...parts) => fs.readFileSync(path.join(resource, ...parts), 'utf8');
+
+test('voice resource uses the guarded Enhanced internal voice API', () => {
+  const manifest = read('fxmanifest.lua');
+  const server = read('server.lua');
+
+  assert.match(manifest, /dependency 'fluxcore_core'/u);
+  assert.match(manifest, /client_script 'client\/main\.lua'/u);
+  assert.match(manifest, /server_script 'server\.lua'/u);
+  assert.match(server, /type\(CreateVoiceChannel\) == 'function'/u);
+  assert.match(server, /CreateVoiceChannel\(1, config\.proximityDistance\)/u);
+  assert.match(server, /AddPlayerToVoiceChannel\(channel, id\)/u);
+  assert.match(server, /RemovePlayerFromVoiceChannel\(proximityChannel, id\)/u);
+  assert.match(server, /DeleteVoiceChannel\(proximityChannel\)/u);
+  assert.match(server, /AddEventHandler\('playerJoining'/u);
+  assert.match(server, /AddEventHandler\('playerDropped'/u);
+  assert.doesNotMatch(server, /mumble/iu);
+});
+
+test('voice client exports bounded, Enhanced-compatible talking state', () => {
+  const client = read('client', 'main.lua');
+  const config = JSON.parse(read('config', 'voice.json'));
+
+  assert.ok(config.proximityDistance >= 1 && config.proximityDistance <= 100);
+  assert.ok(config.talkingPollMs >= 50 && config.talkingPollMs <= 1000);
+  assert.match(client, /NetworkIsPlayerTalking\(PlayerId\(\)\)/u);
+  assert.match(client, /talkingValue == true or talkingValue == 1/u);
+  assert.match(client, /exports\('GetVoiceState'/u);
+  assert.match(client, /fluxcore_voice:client:stateChanged/u);
+});

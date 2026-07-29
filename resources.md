@@ -11,6 +11,9 @@ hunger, thirst, stress, job and vehicle information. It consumes
 `fluxcore.hud.bootstrap.v1`; a replacement HUD can keep the same contract and
 remove only the bundled `web/` presentation.
 
+`fluxcore_voice` owns the Enhanced-native proximity channel and exposes local
+talking state without coupling it to the temporary HUD. See [Voice](voice.md).
+
 Fluxcore separates domains into small owning resources. Install all resources together for the complete framework, or omit optional UI/domain resources when their dependants are not used.
 
 ## `fluxcore_core`

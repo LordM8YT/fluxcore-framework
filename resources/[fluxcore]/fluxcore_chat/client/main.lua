@@ -13,7 +13,7 @@ local emotes = {
 
 local function setChatOpen(open)
     chatOpen = open == true
-    SetNuiFocus(chatOpen, chatOpen)
+    SetNuiFocus(chatOpen, false)
     SetNuiFocusKeepInput(false)
     SendNUIMessage({ action = chatOpen and 'open' or 'close' })
 end
@@ -112,6 +112,17 @@ AddEventHandler('chat:addSuggestion', function(command, help)
         action = 'suggestion',
         suggestion = { command = tostring(command or ''), help = tostring(help or '') }
     })
+end)
+
+AddEventHandler('chat:removeSuggestion', function(command)
+    SendNUIMessage({
+        action = 'removeSuggestion',
+        command = tostring(command or '')
+    })
+end)
+
+AddEventHandler('chat:clear', function()
+    SendNUIMessage({ action = 'clear' })
 end)
 
 RegisterNUICallback('submit', function(data, callback)
