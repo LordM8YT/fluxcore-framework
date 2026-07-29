@@ -428,12 +428,6 @@ onNet('fluxcore_vehicles:server:toggleEngine', (networkId) => {
         'you must be the driver to control the engine',
       );
     }
-    vehicles.prepareEntityAccess(
-      source,
-      networkId,
-      coordinates(ped),
-      coordinates(entity),
-    );
     const id = Number(networkId);
     const enabled = !(engineStates.get(id) ?? false);
     engineStates.set(id, enabled);

@@ -278,15 +278,19 @@ test('vehicle engine control is mapped and server-authoritative', () => {
   const root = path.join(resourceRoot, 'fluxcore_vehicles');
   const client = fs.readFileSync(path.join(root, 'client', 'main.lua'), 'utf8');
   const server = fs.readFileSync(path.join(root, 'server', 'main.js'), 'utf8');
+  const engineHandler = server.slice(
+    server.indexOf("onNet('fluxcore_vehicles:server:toggleEngine'"),
+    server.indexOf("onNet('fluxcore_vehicles:server:initialized'"),
+  );
 
-  assert.match(client, /RegisterKeyMapping\([\s\S]*'engine'[\s\S]*'G'/u);
+  assert.match(client, /RegisterKeyMapping\([\s\S]*'\+fluxcore_vehicle_engine_v2'[\s\S]*'G'/u);
   assert.match(client, /RegisterCommand\('engine',\s*toggleEngine/u);
-  assert.doesNotMatch(client, /\+fluxcore_engine/u);
+  assert.match(client, /RegisterCommand\('\+fluxcore_vehicle_engine_v2'/u);
   assert.match(client, /GetPedInVehicleSeat\(vehicle,\s*-1\) ~= ped/u);
   assert.match(client, /fluxcore_vehicles:server:toggleEngine/u);
   assert.match(client, /SetVehicleEngineOn\(vehicle,\s*enabled == true/u);
   assert.match(server, /GetPedInVehicleSeat\(entity,\s*-1\)/u);
-  assert.match(server, /prepareEntityAccess\(/u);
+  assert.doesNotMatch(engineHandler, /vehicles\.prepareEntityAccess\(/u);
   assert.match(server, /state\.set\('Fluxcore:engineOn',\s*enabled,\s*true\)/u);
 });
 
@@ -300,9 +304,8 @@ test('vehicle seatbelt is mapped, blocks exit, and feeds the HUD state', () => {
     'utf8',
   );
 
-  assert.match(vehicles, /RegisterCommand\('seatbelt'/u);
-  assert.match(vehicles, /RegisterKeyMapping\([\s\S]*'seatbelt'[\s\S]*'B'/u);
-  assert.doesNotMatch(vehicles, /\+fluxcore_seatbelt/u);
+  assert.match(vehicles, /RegisterCommand\('seatbelt',\s*toggleSeatbelt/u);
+  assert.match(vehicles, /RegisterKeyMapping\([\s\S]*'\+fluxcore_vehicle_seatbelt_v2'[\s\S]*'B'/u);
   assert.match(vehicles, /LocalPlayer\.state:set\('Fluxcore:seatbelt'/u);
   assert.match(vehicles, /exports\('IsSeatbeltFastened'/u);
   assert.match(vehicles, /DisableControlAction\(0,\s*75,\s*true\)/u);

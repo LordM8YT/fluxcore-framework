@@ -352,7 +352,7 @@ RegisterCommand('trunk', function()
     TriggerServerEvent('fluxcore_vehicles:server:trunk', id)
 end, false)
 
-RegisterCommand('vlock', function()
+local function toggleVehicleLock()
     local id = networkId(closestVehicle())
     if not id then
         message(locale(
@@ -363,9 +363,14 @@ RegisterCommand('vlock', function()
         return
     end
     TriggerServerEvent('fluxcore_vehicles:server:toggleLock', id)
+end
+
+RegisterCommand('vlock', toggleVehicleLock, false)
+RegisterCommand('+fluxcore_vehicle_lock_v2', toggleVehicleLock, false)
+RegisterCommand('-fluxcore_vehicle_lock_v2', function()
 end, false)
 RegisterKeyMapping(
-    'vlock',
+    '+fluxcore_vehicle_lock_v2',
     locale('vehicles.lockKey', nil, 'Lock or unlock your Fluxcore vehicle'),
     'keyboard',
     'L'
@@ -375,30 +380,43 @@ local function toggleEngine()
     local ped = PlayerPedId()
     local vehicle = GetVehiclePedIsIn(ped, false)
     if vehicle == 0 or GetPedInVehicleSeat(vehicle, -1) ~= ped then
+        message('You must be the driver to control the engine.', 'error')
         return
     end
     local id = networkId(vehicle)
     if id then
         TriggerServerEvent('fluxcore_vehicles:server:toggleEngine', id)
+    else
+        message('The vehicle is not networked yet.', 'error')
     end
 end
 
 RegisterCommand('engine', toggleEngine, false)
+RegisterCommand('+fluxcore_vehicle_engine_v2', toggleEngine, false)
+RegisterCommand('-fluxcore_vehicle_engine_v2', function()
+end, false)
 RegisterKeyMapping(
-    'engine',
+    '+fluxcore_vehicle_engine_v2',
     'Start or stop your Fluxcore vehicle engine',
     'keyboard',
     'G'
 )
 
-RegisterCommand('seatbelt', function()
+local function toggleSeatbelt()
     local ped = PlayerPedId()
     if nativeTrue(IsPedInAnyVehicle(ped, false)) then
         setSeatbelt(not seatbelt)
+    else
+        message('You must be inside a vehicle to use the seatbelt.', 'error')
     end
+end
+
+RegisterCommand('seatbelt', toggleSeatbelt, false)
+RegisterCommand('+fluxcore_vehicle_seatbelt_v2', toggleSeatbelt, false)
+RegisterCommand('-fluxcore_vehicle_seatbelt_v2', function()
 end, false)
 RegisterKeyMapping(
-    'seatbelt',
+    '+fluxcore_vehicle_seatbelt_v2',
     'Fasten or unfasten your Fluxcore seatbelt',
     'keyboard',
     'B'
