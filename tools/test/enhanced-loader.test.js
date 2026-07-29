@@ -193,6 +193,20 @@ test('identity closes its NUI before handling the spawn request', () => {
   );
 });
 
+test('identity owns cursor focus after shutting down the manual loading screen', () => {
+  const client = fs.readFileSync(
+    path.join(resourceRoot, 'fluxcore_identity', 'client.lua'),
+    'utf8',
+  );
+
+  assert.match(client, /local function shutdownLoadingScreens\(\)/u);
+  assert.match(client, /ShutdownLoadingScreenNui\(\)/u);
+  assert.match(
+    client,
+    /shutdownLoadingScreens\(\)[\s\S]*SetNuiFocus\(true,\s*true\)[\s\S]*SetCursorLocation\(0\.5,\s*0\.5\)[\s\S]*identity:open/u,
+  );
+});
+
 test('identity isolates character selection in a scripted preview scene', () => {
   const client = fs.readFileSync(
     path.join(resourceRoot, 'fluxcore_identity', 'client.lua'),
