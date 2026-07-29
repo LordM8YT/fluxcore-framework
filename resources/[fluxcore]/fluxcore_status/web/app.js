@@ -55,8 +55,14 @@ function render(payload = {}) {
   if (vehicle) {
     text('speed', String(Math.max(0, Number(vehicle.speed) || 0)).padStart(3, '0'));
     text('speed-unit', String(vehicle.speedUnit || 'kmh').toUpperCase());
-    text('gear', Number(vehicle.gear) > 0 ? vehicle.gear : 'N');
-    text('fuel', `${Math.round(Number(vehicle.fuel) || 0)}%`);
+    const gear = String(vehicle.gear ?? 'N').toUpperCase();
+    text('gear', gear === 'R' || Number(gear) > 0 ? gear : 'N');
+    text(
+      'fuel',
+      vehicle.fuel == null
+        ? '--'
+        : `${Math.max(0, Math.min(100, Math.round(Number(vehicle.fuel) || 0)))}%`,
+    );
     text('engine', `${Math.round(Number(vehicle.engineHealth) || 0)}%`);
     text('engine-state', vehicle.engineRunning ? 'ON' : 'OFF');
     text('seatbelt', vehicle.seatbelt ? 'ON' : 'OFF');

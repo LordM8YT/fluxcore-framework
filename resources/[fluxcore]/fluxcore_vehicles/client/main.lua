@@ -1,5 +1,6 @@
 local vehicles = {}
 local seatbelt = false
+local seatbeltVehicle = 0
 local rawConfig = LoadResourceFile(GetCurrentResourceName(), 'config/vehicles.json')
 local config = rawConfig and json.decode(rawConfig) or { garages = {} }
 
@@ -29,6 +30,9 @@ end
 
 local function setSeatbelt(enabled)
     seatbelt = enabled == true
+    seatbeltVehicle = seatbelt
+        and GetVehiclePedIsIn(PlayerPedId(), false)
+        or 0
     LocalPlayer.state:set('Fluxcore:seatbelt', seatbelt, true)
     TriggerEvent('fluxcore_vehicles:client:seatbeltChanged', seatbelt)
     message(seatbelt and 'Seatbelt fastened.' or 'Seatbelt unfastened.')
@@ -380,26 +384,21 @@ local function toggleEngine()
 end
 
 RegisterCommand('engine', toggleEngine, false)
-RegisterCommand('+fluxcore_engine', toggleEngine, false)
-RegisterCommand('-fluxcore_engine', function()
-end, false)
 RegisterKeyMapping(
-    '+fluxcore_engine',
+    'engine',
     'Start or stop your Fluxcore vehicle engine',
     'keyboard',
     'G'
 )
 
-RegisterCommand('+fluxcore_seatbelt', function()
+RegisterCommand('seatbelt', function()
     local ped = PlayerPedId()
     if nativeTrue(IsPedInAnyVehicle(ped, false)) then
         setSeatbelt(not seatbelt)
     end
 end, false)
-RegisterCommand('-fluxcore_seatbelt', function()
-end, false)
 RegisterKeyMapping(
-    '+fluxcore_seatbelt',
+    'seatbelt',
     'Fasten or unfasten your Fluxcore seatbelt',
     'keyboard',
     'B'
@@ -541,7 +540,10 @@ CreateThread(function()
     while true do
         if seatbelt then
             local ped = PlayerPedId()
+            local vehicle = GetVehiclePedIsIn(ped, false)
             if not nativeTrue(IsPedInAnyVehicle(ped, false))
+                or vehicle == 0
+                or vehicle ~= seatbeltVehicle
                 or nativeTrue(IsEntityDead(ped)) then
                 setSeatbelt(false)
             else

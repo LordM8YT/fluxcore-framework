@@ -279,8 +279,9 @@ test('vehicle engine control is mapped and server-authoritative', () => {
   const client = fs.readFileSync(path.join(root, 'client', 'main.lua'), 'utf8');
   const server = fs.readFileSync(path.join(root, 'server', 'main.js'), 'utf8');
 
-  assert.match(client, /RegisterKeyMapping\([\s\S]*'\+fluxcore_engine'[\s\S]*'G'/u);
+  assert.match(client, /RegisterKeyMapping\([\s\S]*'engine'[\s\S]*'G'/u);
   assert.match(client, /RegisterCommand\('engine',\s*toggleEngine/u);
+  assert.doesNotMatch(client, /\+fluxcore_engine/u);
   assert.match(client, /GetPedInVehicleSeat\(vehicle,\s*-1\) ~= ped/u);
   assert.match(client, /fluxcore_vehicles:server:toggleEngine/u);
   assert.match(client, /SetVehicleEngineOn\(vehicle,\s*enabled == true/u);
@@ -299,11 +300,14 @@ test('vehicle seatbelt is mapped, blocks exit, and feeds the HUD state', () => {
     'utf8',
   );
 
-  assert.match(vehicles, /RegisterKeyMapping\([\s\S]*'\+fluxcore_seatbelt'[\s\S]*'B'/u);
+  assert.match(vehicles, /RegisterCommand\('seatbelt'/u);
+  assert.match(vehicles, /RegisterKeyMapping\([\s\S]*'seatbelt'[\s\S]*'B'/u);
+  assert.doesNotMatch(vehicles, /\+fluxcore_seatbelt/u);
   assert.match(vehicles, /LocalPlayer\.state:set\('Fluxcore:seatbelt'/u);
   assert.match(vehicles, /exports\('IsSeatbeltFastened'/u);
   assert.match(vehicles, /DisableControlAction\(0,\s*75,\s*true\)/u);
   assert.match(vehicles, /IsEntityDead\(ped\)/u);
+  assert.match(vehicles, /vehicle ~= seatbeltVehicle/u);
   assert.match(status, /fluxcore_vehicles:client:seatbeltChanged/u);
   assert.match(status, /exports\.fluxcore_vehicles:IsSeatbeltFastened\(\)/u);
   assert.match(status, /seatbelt = seatbeltFastened/u);
@@ -399,6 +403,19 @@ test('status converts native vehicle fuel liters into tank percentage', () => {
   assert.match(client, /GetVehicleHandlingFloat\(/u);
   assert.match(client, /'fPetrolTankVolume'/u);
   assert.match(client, /\(fuelLiters \/ tankVolume\) \* 100/u);
+  assert.match(client, /DoesVehicleUseFuel\(vehicle\)/u);
+});
+
+test('vehicle HUD reports reverse gear and refreshes live driving data', () => {
+  const root = path.join(resourceRoot, 'fluxcore_status');
+  const client = fs.readFileSync(path.join(root, 'client', 'main.lua'), 'utf8');
+  const app = fs.readFileSync(path.join(root, 'web', 'app.js'), 'utf8');
+
+  assert.match(client, /GetEntitySpeedVector\(vehicle,\s*true\)/u);
+  assert.match(client, /return 'R'/u);
+  assert.match(client, /IsPedInAnyVehicle\(PlayerPedId\(\),\s*false\)[\s\S]*and 100/u);
+  assert.match(app, /gear === 'R'/u);
+  assert.match(app, /vehicle\.fuel == null[\s\S]*'--'/u);
 });
 
 test('status HUD recovers optional voice state across resource restarts', () => {

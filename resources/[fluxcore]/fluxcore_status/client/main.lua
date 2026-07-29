@@ -110,6 +110,9 @@ local function pedVitals()
 end
 
 local function vehicleFuelPercent(vehicle)
+    if not nativeTrue(DoesVehicleUseFuel(vehicle)) then
+        return nil
+    end
     local tankVolume = tonumber(GetVehicleHandlingFloat(
         vehicle,
         'CHandlingData',
@@ -120,6 +123,15 @@ local function vehicleFuelPercent(vehicle)
     end
     local fuelLiters = tonumber(GetVehicleFuelLevel(vehicle)) or 0.0
     return clamp(rounded((fuelLiters / tankVolume) * 100), 0, 100)
+end
+
+local function vehicleGear(vehicle)
+    local relativeSpeed = GetEntitySpeedVector(vehicle, true)
+    if relativeSpeed and (tonumber(relativeSpeed.y) or 0.0) < -0.5 then
+        return 'R'
+    end
+    local gear = tonumber(GetVehicleCurrentGear(vehicle)) or 0
+    return gear > 0 and gear or 'N'
 end
 
 local function vehicleSnapshot()
@@ -135,7 +147,7 @@ local function vehicleSnapshot()
         speed = rounded(GetEntitySpeed(vehicle) * 3.6),
         speedUnit = 'kmh',
         rpm = clamp(rounded(GetVehicleCurrentRpm(vehicle) * 100), 0, 100),
-        gear = GetVehicleCurrentGear(vehicle),
+        gear = vehicleGear(vehicle),
         fuel = vehicleFuelPercent(vehicle),
         engineHealth = clamp(
             rounded(GetVehicleEngineHealth(vehicle) / 10),
@@ -144,7 +156,9 @@ local function vehicleSnapshot()
         ),
         engineRunning = nativeTrue(GetIsVehicleEngineRunning(vehicle)),
         seatbelt = seatbeltFastened,
-        plate = tostring(GetVehicleNumberPlateText(vehicle) or ''):gsub('%s+$', '')
+        plate = tostring(GetVehicleNumberPlateText(vehicle) or '')
+            :gsub('^%s+', '')
+            :gsub('%s+$', '')
     }
 end
 
@@ -524,7 +538,12 @@ end)
 
 CreateThread(function()
     while true do
-        Wait(playerData and 500 or 1000)
+        Wait(
+            playerData
+                and nativeTrue(IsPedInAnyVehicle(PlayerPedId(), false))
+                and 100
+                or (playerData and 500 or 1000)
+        )
         if playerData and needs then
             publishHud(false)
         end
