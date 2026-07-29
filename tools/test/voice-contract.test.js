@@ -17,12 +17,15 @@ test('voice resource uses the guarded Enhanced internal voice API', () => {
   assert.match(manifest, /client_script 'client\/main\.lua'/u);
   assert.match(manifest, /server_script 'server\.lua'/u);
   assert.match(server, /type\(CreateVoiceChannel\) == 'function'/u);
-  assert.match(server, /CreateVoiceChannel\(1, config\.proximityDistance\)/u);
-  assert.match(server, /AddPlayerToVoiceChannel\(channel, id\)/u);
-  assert.match(server, /RemovePlayerFromVoiceChannel\(proximityChannel, id\)/u);
-  assert.match(server, /DeleteVoiceChannel\(proximityChannel\)/u);
-  assert.match(server, /AddEventHandler\('playerJoining'/u);
+  assert.match(server, /pcall\(\s*CreateVoiceChannel/u);
+  assert.match(server, /pcall\(AddPlayerToVoiceChannel,\s*channel,\s*id\)/u);
+  assert.match(server, /pcall\(RemovePlayerFromVoiceChannel,\s*proximityChannel,\s*id\)/u);
+  assert.match(server, /pcall\(DeleteVoiceChannel,\s*proximityChannel\)/u);
+  assert.doesNotMatch(server, /AddEventHandler\('playerJoining'/u);
   assert.match(server, /AddEventHandler\('playerDropped'/u);
+  assert.match(server, /AddEventHandler\('Fluxcore:server:playerLoaded'/u);
+  assert.match(server, /AddEventHandler\('Fluxcore:server:playerLoggedOut'/u);
+  assert.match(server, /GetPlayerData\(tonumber\(playerSource\)\)/u);
   assert.doesNotMatch(server, /mumble/iu);
 });
 
@@ -33,7 +36,8 @@ test('voice client exports bounded, Enhanced-compatible talking state', () => {
   assert.ok(config.proximityDistance >= 1 && config.proximityDistance <= 100);
   assert.ok(config.talkingPollMs >= 50 && config.talkingPollMs <= 1000);
   assert.match(client, /NetworkIsPlayerTalking\(PlayerId\(\)\)/u);
-  assert.match(client, /talkingValue == true or talkingValue == 1/u);
+  assert.match(client, /ready[\s\S]*talkingValue == true or talkingValue == 1/u);
   assert.match(client, /exports\('GetVoiceState'/u);
   assert.match(client, /fluxcore_voice:client:stateChanged/u);
+  assert.match(client, /snapshot and snapshot\.ready ~= false/u);
 });

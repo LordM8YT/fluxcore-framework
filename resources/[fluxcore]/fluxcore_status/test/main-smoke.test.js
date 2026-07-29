@@ -38,6 +38,13 @@ test('Cfx wiring boots and exposes private status operations', () => {
       return characterId === player.characterId ? 7 : 0;
     },
   };
+  const usableItems = new Map();
+  registerExport.fluxcore_inventory = {
+    RegisterUsableItem(itemName, handler) {
+      usableItems.set(itemName, handler);
+      return { ok: true, data: true };
+    },
+  };
 
   const context = {
     require: createRequire(mainPath),
@@ -49,6 +56,9 @@ test('Cfx wiring boots and exposes private status operations', () => {
     },
     GetResourcePath() {
       return temporaryRoot;
+    },
+    GetResourceState(resourceName) {
+      return resourceName === 'fluxcore_inventory' ? 'started' : 'missing';
     },
     LoadResourceFile(_resource, relativePath) {
       return fs.readFileSync(path.join(resourceRoot, relativePath), 'utf8');
@@ -86,6 +96,10 @@ test('Cfx wiring boots and exposes private status operations', () => {
     assert.equal(registeredExports.has('RemoveStatus'), true);
     assert.equal(intervals.size, 1);
     assert.equal(registeredExports.get('GetStatus')(7).hunger, 100);
+    assert.deepEqual(
+      [...usableItems.keys()].sort(),
+      ['bandage', 'sandwich', 'water'],
+    );
 
     const response = registeredExports.get('RemoveStatus')(7, 'hunger', 10);
     assert.equal(response.ok, true);
@@ -93,6 +107,22 @@ test('Cfx wiring boots and exposes private status operations', () => {
     assert.equal(
       emitted.some(
         (event) => event.eventName === 'fluxcore_status:client:update',
+      ),
+      true,
+    );
+    const sandwich = usableItems.get('sandwich')(7);
+    assert.equal(sandwich.consume, 1);
+    sandwich.afterUse();
+    assert.equal(registeredExports.get('GetStatus')(7).hunger, 100);
+    assert.equal(usableItems.get('water')(7), false);
+    const bandage = usableItems.get('bandage')(7);
+    assert.equal(bandage.consume, 1);
+    bandage.afterUse();
+    assert.equal(
+      emitted.some(
+        (event) => event.eventName === 'fluxcore_status:client:heal'
+          && event.source === 7
+          && event.args[0] === 25,
       ),
       true,
     );

@@ -4,7 +4,9 @@ const elements = Object.fromEntries(
   [
     'app', 'player-name', 'job', 'money', 'cash', 'bank', 'health', 'armor',
     'armor-item', 'hunger', 'thirst', 'stamina', 'stress', 'vehicle', 'speed',
-    'speed-unit', 'gear', 'fuel', 'engine', 'plate', 'rpm',
+    'speed-unit', 'gear', 'fuel', 'engine', 'engine-state', 'seatbelt', 'plate',
+    'rpm', 'voice-item',
+    'voice',
   ].map((id) => [id, document.querySelector(`#${id}`)]),
 );
 
@@ -40,6 +42,14 @@ function render(payload = {}) {
   }
   elements['armor-item'].classList.toggle('hidden', Number(status.armor) <= 0);
 
+  const voice = payload.voice || {};
+  elements['voice-item'].classList.toggle('hidden', voice.ready !== true);
+  elements['voice-item'].classList.toggle('talking', voice.talking === true);
+  elements['voice-item'].title = voice.ready
+    ? `Proximity voice · ${Math.round(Number(voice.proximityDistance) || 0)} m`
+    : 'Voice unavailable';
+  text('voice', voice.talking ? 'LIVE' : 'MIC');
+
   const vehicle = payload.vehicle;
   elements.vehicle.classList.toggle('hidden', !vehicle);
   if (vehicle) {
@@ -48,6 +58,8 @@ function render(payload = {}) {
     text('gear', Number(vehicle.gear) > 0 ? vehicle.gear : 'N');
     text('fuel', `${Math.round(Number(vehicle.fuel) || 0)}%`);
     text('engine', `${Math.round(Number(vehicle.engineHealth) || 0)}%`);
+    text('engine-state', vehicle.engineRunning ? 'ON' : 'OFF');
+    text('seatbelt', vehicle.seatbelt ? 'ON' : 'OFF');
     text('plate', vehicle.plate || '');
     elements.rpm.style.width = `${Math.max(0, Math.min(100, Number(vehicle.rpm) || 0))}%`;
   }

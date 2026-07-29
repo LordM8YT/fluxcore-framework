@@ -232,6 +232,25 @@ test('identity isolates character selection in a scripted preview scene', () => 
   );
 });
 
+test('identity owns the production character-switch commands', () => {
+  const client = fs.readFileSync(
+    path.join(resourceRoot, 'fluxcore_identity', 'client.lua'),
+    'utf8',
+  );
+
+  assert.match(client, /RegisterCommand\('characters'/u);
+  assert.match(client, /RegisterCommand\('logout'/u);
+  assert.match(client, /CallAsync\('session:logout'/u);
+  assert.match(
+    client,
+    /Fluxcore:client:playerLoggedOut[\s\S]*SetTimeout\(250,\s*openMenu\)/u,
+  );
+  assert.match(
+    client,
+    /if exports\.fluxcore_core:IsLoggedIn\(\) then[\s\S]*DoScreenFadeIn\(0\)[\s\S]*return/u,
+  );
+});
+
 test('inventory owns TAB and suppresses the GTA weapon wheel', () => {
   const client = fs.readFileSync(
     path.join(resourceRoot, 'fluxcore_inventory', 'client', 'main.lua'),
@@ -249,6 +268,42 @@ test('inventory owns TAB and suppresses the GTA weapon wheel', () => {
   assert.match(client, /DisableControlAction\(2,\s*37,\s*true\)/u);
   assert.match(client, /BlockWeaponWheelThisFrame\(\)/u);
   assert.match(client, /HideHudComponentThisFrame\(19\)/u);
+  assert.match(client, /\+fluxcore_hotbar_%d/u);
+  assert.match(client, /fluxcore_inventory:client:equipWeapon/u);
+  assert.match(client, /fluxcore_inventory:client:addWeaponAmmo/u);
+  assert.match(client, /RemoveWeaponFromPed/u);
+});
+
+test('vehicle engine control is mapped and server-authoritative', () => {
+  const root = path.join(resourceRoot, 'fluxcore_vehicles');
+  const client = fs.readFileSync(path.join(root, 'client', 'main.lua'), 'utf8');
+  const server = fs.readFileSync(path.join(root, 'server', 'main.js'), 'utf8');
+
+  assert.match(client, /RegisterKeyMapping\([\s\S]*'\+fluxcore_engine'[\s\S]*'G'/u);
+  assert.match(client, /RegisterCommand\('engine',\s*toggleEngine/u);
+  assert.match(client, /GetPedInVehicleSeat\(vehicle,\s*-1\) ~= ped/u);
+  assert.match(client, /fluxcore_vehicles:server:toggleEngine/u);
+  assert.match(client, /SetVehicleEngineOn\(vehicle,\s*enabled == true/u);
+  assert.match(server, /GetPedInVehicleSeat\(entity,\s*-1\)/u);
+  assert.match(server, /prepareEntityAccess\(/u);
+  assert.match(server, /state\.set\('Fluxcore:engineOn',\s*enabled,\s*true\)/u);
+});
+
+test('vehicle seatbelt is mapped, blocks exit, and feeds the HUD state', () => {
+  const vehicles = fs.readFileSync(
+    path.join(resourceRoot, 'fluxcore_vehicles', 'client', 'main.lua'),
+    'utf8',
+  );
+  const status = fs.readFileSync(
+    path.join(resourceRoot, 'fluxcore_status', 'client', 'main.lua'),
+    'utf8',
+  );
+
+  assert.match(vehicles, /RegisterKeyMapping\([\s\S]*'\+fluxcore_seatbelt'[\s\S]*'B'/u);
+  assert.match(vehicles, /LocalPlayer\.state:set\('Fluxcore:seatbelt'/u);
+  assert.match(vehicles, /DisableControlAction\(0,\s*75,\s*true\)/u);
+  assert.match(vehicles, /IsEntityDead\(ped\)/u);
+  assert.match(status, /LocalPlayer\.state\['Fluxcore:seatbelt'\] == true/u);
 });
 
 test('status replaces the vanilla HUD with a vehicle-only RP minimap', () => {
@@ -266,6 +321,12 @@ test('status replaces the vanilla HUD with a vehicle-only RP minimap', () => {
     /DisplayRadar\([\s\S]*?clientConfig\.minimapVehicleOnly[\s\S]*?hudSnapshot\.vehicle ~= nil[\s\S]*?\)/u,
   );
   assert.match(client, /HideHudComponentThisFrame\(component\)/u);
+  assert.match(client, /RegisterCommand\('hud'/u);
+  assert.match(client, /hud = not hudHidden/u);
+  assert.match(
+    client,
+    /Fluxcore:client:playerLoggedOut[\s\S]*hudHidden = false/u,
+  );
   assert.match(
     client,
     /HideHudComponentThisFrame\(component\)[\s\S]*if hudSnapshot then/u,
@@ -287,6 +348,11 @@ test('status disables GTA wanted levels and ambient police dispatch', () => {
   assert.match(client, /SetDispatchCopsForPlayer\(player,\s*false\)/u);
   assert.match(client, /EnableDispatchService\(service,\s*false\)/u);
   assert.match(client, /ClearPlayerWantedLevel\(player\)/u);
+  assert.match(client, /nextEnforcementAt = GetGameTimer\(\) \+ 5000/u);
+  assert.match(
+    client,
+    /if GetGameTimer\(\) >= nextEnforcementAt then[\s\S]*disableVanillaPolice\(\)/u,
+  );
   assert.match(client, /onClientResourceStop[\s\S]*restoreVanillaPolice\(\)/u);
 });
 
@@ -323,6 +389,21 @@ test('status HUD renders native sprint stamina as a separate live value', () => 
   assert.match(app, /'thirst', 'stamina', 'stress'/u);
 });
 
+test('status HUD recovers optional voice state across resource restarts', () => {
+  const root = path.join(resourceRoot, 'fluxcore_status');
+  const client = fs.readFileSync(path.join(root, 'client', 'main.lua'), 'utf8');
+  const page = fs.readFileSync(path.join(root, 'web', 'index.html'), 'utf8');
+  const app = fs.readFileSync(path.join(root, 'web', 'app.js'), 'utf8');
+
+  assert.match(client, /fluxcore_voice:client:stateChanged/u);
+  assert.match(client, /GetResourceState\('fluxcore_voice'\) ~= 'started'/u);
+  assert.match(client, /exports\.fluxcore_voice:GetVoiceState\(\)/u);
+  assert.match(client, /onClientResourceStart[\s\S]*refreshVoiceState\(\)/u);
+  assert.match(client, /onClientResourceStop[\s\S]*stoppedResource == 'fluxcore_voice'/u);
+  assert.match(page, /id="voice-item"/u);
+  assert.match(app, /voice\.talking === true/u);
+});
+
 test('appearance provides a bounded live-preview creator with safe cleanup', () => {
   const root = path.join(resourceRoot, 'fluxcore_appearance');
   const manifest = fs.readFileSync(path.join(root, 'fxmanifest.lua'), 'utf8');
@@ -349,7 +430,7 @@ test('loading screen follows the Cfx progress and manual-shutdown contract', () 
 
 test('cross-resource client lifecycle handlers are network-safe', () => {
   const consumers = {
-    fluxcore_identity: ['fluxcore:client:playerLoggedOut'],
+    fluxcore_identity: ['Fluxcore:client:playerLoggedOut'],
   };
 
   for (const [resourceName, eventNames] of Object.entries(consumers)) {
@@ -374,16 +455,44 @@ test('replacement chat owns mapped input and supports RP commands', () => {
   const client = fs.readFileSync(path.join(root, 'client', 'main.lua'), 'utf8');
   const server = fs.readFileSync(path.join(root, 'server.lua'), 'utf8');
   const page = fs.readFileSync(path.join(root, 'web', 'index.html'), 'utf8');
+  const app = fs.readFileSync(path.join(root, 'web', 'app.js'), 'utf8');
 
   assert.match(manifest, /ui_page 'web\/index\.html'/u);
   assert.match(client, /RegisterKeyMapping\('fluxcore_chat_open'/u);
   assert.match(client, /RegisterCommand\('me'/u);
   assert.match(client, /RegisterCommand\('do'/u);
   assert.match(client, /RegisterCommand\('ooc'/u);
+  assert.match(client, /\{ 'try', 'whisper', 'shout' \}/u);
   assert.match(client, /RegisterCommand\('e'/u);
+  assert.match(client, /RegisterCommand\('controls'/u);
+  assert.match(client, /RegisterKeyMapping\(\s*'\+fluxcore_cancel_emote'/u);
+  assert.match(client, /IsEntityDead\(ped\)/u);
+  assert.match(client, /IsPedInAnyVehicle\(ped,\s*false\)/u);
   assert.match(client, /AddEventHandler\('chat:addMessage'/u);
+  assert.match(client, /AddEventHandler\('chat:addSuggestions'/u);
+  assert.match(client, /local hasAuthor = args\[2\] ~= nil/u);
   assert.match(client, /ExecuteCommand\(text:sub\(2\)\)/u);
+  assert.match(client, /GetPlayerFromServerId\(bubble\.serverId\)/u);
+  assert.match(client, /pcall\(utf8\.offset, text, 121\)/u);
+  assert.match(client, /offsets\[bubble\.serverId\]/u);
+  assert.match(
+    client,
+    /Fluxcore:client:playerLoggedOut[\s\S]*roleplayBubbles = \{\}[\s\S]*action = 'clear'/u,
+  );
+  assert.match(client, /World3dToScreen2d/u);
   assert.match(server, /RP_DISTANCE = 20\.0/u);
+  assert.match(server, /WHISPER_DISTANCE = 3\.0/u);
+  assert.match(server, /SHOUT_DISTANCE = 40\.0/u);
+  assert.match(server, /math\.random\(0,\s*1\)/u);
+  assert.match(server, /source = playerSource/u);
+  assert.match(server, /pcall\(utf8\.offset,\s*text,\s*MAX_LENGTH \+ 1\)/u);
+  assert.match(server, /type\(player\.profile\) ~= 'table'/u);
   assert.match(server, /GetPlayerPed\(playerSource\)/u);
+  assert.match(
+    server,
+    /local function forgetPlayer\(playerSource\)[\s\S]*lastMessageAt\[id\] = nil[\s\S]*Fluxcore:server:playerLoggedOut', forgetPlayer/u,
+  );
   assert.match(page, /background:\s*none\s*!important/u);
+  assert.match(app, /event\.key === 'Tab' && currentSuggestion/u);
+  assert.match(app, /setSelectionRange/u);
 });

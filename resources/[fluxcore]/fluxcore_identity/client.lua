@@ -350,7 +350,7 @@ AddEventHandler('fluxcore_identity:client:spawnRequested', function(snapshot)
     selectedSpawn = 'last'
 end)
 
-RegisterNetEvent('fluxcore:client:playerLoggedOut', function()
+RegisterNetEvent('Fluxcore:client:playerLoggedOut', function()
     SetTimeout(250, openMenu)
 end)
 
@@ -358,9 +358,35 @@ RegisterCommand('identity', function()
     openMenu()
 end, false)
 
+RegisterCommand('characters', function()
+    openMenu()
+end, false)
+
+RegisterCommand('logout', function()
+    if not exports.fluxcore_core:IsLoggedIn() then
+        openMenu()
+        return
+    end
+    exports.fluxcore_core:CallAsync('session:logout', {}, function(response)
+        if not response.ok then
+            print(('[fluxcore_identity] logout failed: %s'):format(
+                response.error and response.error.message
+                    or locale('common.unknown', nil, 'unknown error')
+            ))
+        end
+    end)
+end, false)
+
 CreateThread(function()
     while not nativeTrue(NetworkIsPlayerActive(PlayerId())) do
         Wait(250)
+    end
+
+    if exports.fluxcore_core:IsLoggedIn() then
+        shutdownLoadingScreens()
+        releaseNuiFocus()
+        DoScreenFadeIn(0)
+        return
     end
 
     DoScreenFadeOut(0)

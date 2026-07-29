@@ -33,6 +33,10 @@ talking-state poll interval:
 Players can run `/voice` to check whether the proximity channel is active.
 Client resources can read `exports.fluxcore_voice:GetVoiceState()` or listen
 for `fluxcore_voice:client:stateChanged` to render a talking indicator.
+The bundled Fluxcore HUD does this automatically: the microphone indicator is
+visible while voice is ready and turns green while the local player is talking.
+Players join proximity voice only after selecting a character and leave the
+channel on logout, so the isolated character-preview studio stays private.
 
 {% hint style="warning" %}
 Voice needs a current Enhanced server artifact and two connected clients for a

@@ -171,11 +171,54 @@ class InventoryService {
         this.config.playerSlots,
         this.config.playerMaxWeight,
       );
+      try {
+        this.grantStarterItems(container);
+      } catch (error) {
+        this.database.deleteContainer(container.id);
+        throw error;
+      }
     }
     if (!container) {
       throw inventoryError('CONTAINER_NOT_FOUND', 'inventory container was not found');
     }
     return container;
+  }
+
+  grantStarterItems(container) {
+    if (!Array.isArray(this.config.starterItems)
+      || this.config.starterItems.length === 0) {
+      return;
+    }
+    const metadata = normalizeMetadata({});
+    this.database.transaction(() => {
+      for (const starter of this.config.starterItems) {
+        const item = this.itemDefinition(starter.name);
+        const plan = this.planAdd(
+          container,
+          item.name,
+          item.definition,
+          starter.amount,
+          metadata.json,
+        );
+        this.applyAdd(
+          container,
+          item.name,
+          item.definition,
+          starter.amount,
+          metadata.json,
+          plan,
+        );
+        this.database.audit(
+          'starter',
+          null,
+          container.id,
+          item.name,
+          starter.amount,
+          metadata.metadata,
+          'fluxcore_inventory',
+        );
+      }
+    });
   }
 
   registerStash(stashId, label, slots, maxWeight) {
@@ -834,13 +877,29 @@ class InventoryService {
     return removed;
   }
 
-  registerUsableItem(itemName, handler) {
+  registerUsableItem(itemName, handler, owner = 'fluxcore_inventory') {
     const item = this.itemDefinition(itemName);
     if (typeof handler !== 'function') {
       throw inventoryError('VALIDATION_ERROR', 'usable item handler is invalid');
     }
-    this.usableItems.set(item.name, handler);
+    const resource = String(owner || '').trim();
+    if (!resource || resource.length > 64) {
+      throw inventoryError('VALIDATION_ERROR', 'usable item owner is invalid');
+    }
+    this.usableItems.set(item.name, { handler, owner: resource });
     return true;
+  }
+
+  unregisterUsableItems(owner) {
+    const resource = String(owner || '').trim();
+    let removed = 0;
+    for (const [itemName, registration] of this.usableItems.entries()) {
+      if (registration.owner === resource) {
+        this.usableItems.delete(itemName);
+        removed += 1;
+      }
+    }
+    return removed;
   }
 
   useItem(identifier, slot) {
@@ -851,10 +910,11 @@ class InventoryService {
     if (!item) {
       throw inventoryError('ITEM_NOT_FOUND', 'item slot is empty');
     }
-    const handler = this.usableItems.get(item.name);
-    if (!handler) {
+    const registration = this.usableItems.get(item.name);
+    if (!registration) {
       throw inventoryError('ITEM_NOT_USABLE', `${item.name} is not usable`);
     }
+    const handler = registration.handler;
     const outcome = handler(online.source, this.decorateItem(item));
     if (outcome && typeof outcome.then === 'function') {
       throw inventoryError(
@@ -883,7 +943,34 @@ class InventoryService {
         );
       });
     }
+    let effectError = null;
+    if (typeof outcome?.afterUse === 'function') {
+      try {
+        outcome.afterUse();
+      } catch (error) {
+        effectError = error;
+      }
+    }
+    if (!effectError) {
+      this.runtime.emitClient(
+        online.source,
+        'fluxcore_inventory:client:itemUsed',
+        {
+          name: item.name,
+          label: this.config.items[item.name]?.label || item.name,
+          consumed: consume,
+        },
+      );
+    }
     this.syncContainer(inventory.id);
+    if (effectError) {
+      throw inventoryError(
+        'USE_EFFECT_FAILED',
+        `item was consumed but its effect failed: ${
+          effectError?.message || String(effectError)
+        }`,
+      );
+    }
     return this.getInventory(inventory.id);
   }
 

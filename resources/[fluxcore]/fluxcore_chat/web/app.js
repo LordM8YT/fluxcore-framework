@@ -9,6 +9,7 @@ const commands = new Map();
 const history = [];
 let historyIndex = 0;
 const messageLifetimeMs = 12000;
+let currentSuggestion = null;
 
 const post = (route, body = {}) => fetch(`https://${resource}/${route}`, {
   method: 'POST',
@@ -21,6 +22,7 @@ function renderSuggestions() {
   const matches = [...commands.values()]
     .filter((entry) => query.startsWith('/') && entry.command.toLowerCase().startsWith(query))
     .slice(0, 6);
+  currentSuggestion = matches[0]?.command || null;
   suggestions.replaceChildren(...matches.map((entry) => {
     const row = document.createElement('div');
     row.className = 'suggestion';
@@ -91,6 +93,12 @@ composer.addEventListener('submit', (event) => {
 input.addEventListener('input', renderSuggestions);
 document.addEventListener('keydown', (event) => {
   if (event.key === 'Escape') post('close');
+  if (event.key === 'Tab' && currentSuggestion) {
+    event.preventDefault();
+    input.value = `${currentSuggestion} `;
+    input.setSelectionRange(input.value.length, input.value.length);
+    renderSuggestions();
+  }
   if (event.key === 'ArrowUp' && history.length) {
     event.preventDefault();
     historyIndex = Math.max(0, historyIndex - 1);

@@ -19,10 +19,13 @@ do
 end
 
 RegisterNetEvent('fluxcore_voice:client:ready', function(snapshot)
-    ready = true
-    voiceState = snapshot
+    ready = snapshot and snapshot.ready ~= false
+    voiceState = ready and snapshot or nil
+    if not ready then
+        talking = false
+    end
     TriggerEvent('fluxcore_voice:client:stateChanged', {
-        ready = true,
+        ready = ready,
         talking = talking,
         proximityDistance = snapshot and snapshot.proximityDistance or nil
     })
@@ -41,7 +44,8 @@ end)
 CreateThread(function()
     while true do
         local talkingValue = NetworkIsPlayerTalking(PlayerId())
-        local nextTalking = talkingValue == true or talkingValue == 1
+        local nextTalking = ready
+            and (talkingValue == true or talkingValue == 1)
         if nextTalking ~= talking then
             talking = nextTalking
             TriggerEvent('fluxcore_voice:client:stateChanged', {

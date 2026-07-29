@@ -39,7 +39,17 @@ local function ensureChannel()
     if not voiceAvailable() then
         return nil
     end
-    local channel = CreateVoiceChannel(1, config.proximityDistance)
+    local ok, channel = pcall(
+        CreateVoiceChannel,
+        1,
+        config.proximityDistance
+    )
+    if not ok then
+        print(('[fluxcore_voice] channel creation failed: %s'):format(
+            tostring(channel)
+        ))
+        return nil
+    end
     if type(channel) ~= 'number' or channel < 0 or channel >= 65535 then
         return nil
     end
@@ -55,9 +65,17 @@ local function addPlayer(playerSource)
     if not id or id <= 0 or not channel or members[id] then
         return false
     end
-    AddPlayerToVoiceChannel(channel, id)
+    local ok, errorMessage = pcall(AddPlayerToVoiceChannel, channel, id)
+    if not ok then
+        print(('[fluxcore_voice] could not add source %d: %s'):format(
+            id,
+            tostring(errorMessage)
+        ))
+        return false
+    end
     members[id] = true
     TriggerClientEvent('fluxcore_voice:client:ready', id, {
+        ready = true,
         channel = channel,
         proximityDistance = config.proximityDistance
     })
@@ -70,9 +88,14 @@ local function removePlayer(playerSource)
         return false
     end
     if proximityChannel and type(RemovePlayerFromVoiceChannel) == 'function' then
-        RemovePlayerFromVoiceChannel(proximityChannel, id)
+        pcall(RemovePlayerFromVoiceChannel, proximityChannel, id)
     end
     members[id] = nil
+    TriggerClientEvent('fluxcore_voice:client:ready', id, {
+        ready = false,
+        channel = nil,
+        proximityDistance = config.proximityDistance
+    })
     return true
 end
 
@@ -83,12 +106,13 @@ CreateThread(function()
         return
     end
     for _, playerSource in ipairs(GetPlayers()) do
-        addPlayer(playerSource)
+        local ok, player = pcall(function()
+            return exports.fluxcore_core:GetPlayerData(tonumber(playerSource))
+        end)
+        if ok and type(player) == 'table' and player.characterId then
+            addPlayer(playerSource)
+        end
     end
-end)
-
-AddEventHandler('playerJoining', function()
-    addPlayer(source)
 end)
 
 AddEventHandler('playerDropped', function()
@@ -99,18 +123,30 @@ AddEventHandler('Fluxcore:server:playerLoaded', function(playerSource)
     addPlayer(playerSource)
 end)
 
+AddEventHandler('Fluxcore:server:playerLoggedOut', function(playerSource)
+    removePlayer(playerSource)
+end)
+
 RegisterCommand('voice', function(playerSource)
     if playerSource <= 0 then
+        local memberCount = 0
+        for _ in pairs(members) do
+            memberCount = memberCount + 1
+        end
         print(('Voice proximity: %.1f meters | channel: %s | members: %d')
             :format(
                 config.proximityDistance,
                 tostring(proximityChannel or 'unavailable'),
-                #GetPlayers()
+                memberCount
             ))
         return
     end
     if not proximityChannel then
         notify(playerSource, 'Voice is unavailable on this server artifact.', 'error')
+        return
+    end
+    if not members[playerSource] then
+        notify(playerSource, 'Select a character before using proximity voice.', 'error')
         return
     end
     notify(
@@ -125,7 +161,7 @@ AddEventHandler('onResourceStop', function(stoppedResource)
         return
     end
     if proximityChannel and type(DeleteVoiceChannel) == 'function' then
-        DeleteVoiceChannel(proximityChannel)
+        pcall(DeleteVoiceChannel, proximityChannel)
     end
 end)
 

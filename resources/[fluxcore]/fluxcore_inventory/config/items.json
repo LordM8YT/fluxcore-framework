@@ -6,6 +6,15 @@
   "dropMaxWeight": 100000,
   "dropLifetimeMs": 1800000,
   "dropOpenDistance": 3,
+  "starterItems": [
+    { "name": "water", "amount": 2 },
+    { "name": "sandwich", "amount": 2 },
+    { "name": "bandage", "amount": 2 },
+    { "name": "phone", "amount": 1 },
+    { "name": "radio", "amount": 1 },
+    { "name": "weapon_pistol", "amount": 1 },
+    { "name": "pistol_ammo", "amount": 24 }
+  ],
   "items": {
     "water": {
       "label": "Water",

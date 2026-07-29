@@ -63,10 +63,15 @@ With player A:
 * Test every configured spawn.
 * Move, disconnect and verify saved position.
 * Log out and switch character.
+* Confirm `/logout` closes gameplay UI, clears roleplay chat, shows the
+  character menu with a visible cursor, and never joins proximity voice in the
+  preview studio.
 * Delete a character with exact confirmation.
 * Restart the server and verify deletion persists.
 * Restart `fluxcore_identity` while logged out and confirm camera, focus,
   frozen controls and radar recover after the next spawn.
+* Restart `fluxcore_identity` while logged in and confirm it does not leave a
+  black screen or steal NUI focus.
 - Enter and leave a vehicle: the compact RP minimap should appear only in the
   vehicle, with vanilla GTA HUD components and weapon wheel absent.
 - Fire a weapon near ambient NPCs and confirm no wanted stars, dispatch calls,
@@ -98,12 +103,17 @@ Default duty points:
 | Mechanic | La Mesa Customs | `731.29, -1088.95, 22.17` |
 
 Verify marker, blip, duty toggle, `/jobs`, server distance rejection and duty cleanup after disconnect.
+Remain on duty through one configured payday and verify the grade payment is
+credited once. Clock off before the next interval and confirm no payment.
 {% endstep %}
 
 {% step %}
 ## Inventory
 
 Give `water`, `bandage` and `phone` through `/vadmin`.
+
+On a brand-new character, first confirm the configured starter package appears
+once. Empty and reopen the inventory to ensure it is not granted again.
 
 Verify:
 
@@ -119,7 +129,9 @@ Verify:
 * empty-drop cleanup
 * `player`/`secondary` UI sides
 
-Keep the text fallback until a frontend follows `fluxcore.inventory.bootstrap.v1`.
+Verify both the temporary visual frontend and its text commands. Use water,
+sandwich and bandage once below maximum status/health and confirm exactly one
+item is consumed; full hunger or thirst must reject consumption.
 {% endstep %}
 
 {% step %}
@@ -151,6 +163,8 @@ Verify:
 * storage through the garage marker
 * rejected remote operations
 * shared and revoked keys
+* `G` engine toggle rejects non-drivers and players without a key
+* `B` seatbelt blocks exit, updates the HUD and clears after death/exit
 {% endstep %}
 
 {% step %}
@@ -168,6 +182,8 @@ With an owned vehicle and enough cash:
 * verify the mouse controls the target UI rather than the gameplay camera
 * buy a partial amount and then use `/refuel full`
 * confirm the exact wallet deduction and fuel increase
+* on a vehicle whose HUD is below 100%, confirm refuelling is offered even if
+  its handling metadata has no usable petrol-tank volume
 * verify consumption while driving and no consumption for unsupported vehicles
 * reject a remote player, remote station, invalid amount and insufficient funds
 * store and respawn the vehicle through a garage and confirm its fuel level persists

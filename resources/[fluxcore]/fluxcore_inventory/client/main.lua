@@ -4,6 +4,9 @@ local drops = {}
 local pendingRequests = {}
 local requestSequence = 0
 local uiOpen = false
+local equippedWeapons = {
+    weapon_pistol = 'WEAPON_PISTOL'
+}
 
 local function locale(key, replacements, fallback)
     return exports.fluxcore_core:Locale(key, replacements, fallback)
@@ -37,7 +40,10 @@ do
         local ok, parsed = pcall(json.decode, raw)
         if ok and type(parsed) == 'table' then
             uiConfig.enabled = parsed.enabled == true
-            uiConfig.hotbarSlots = tonumber(parsed.hotbarSlots) or 5
+            uiConfig.hotbarSlots = math.max(
+                1,
+                math.min(9, math.floor(tonumber(parsed.hotbarSlots) or 5))
+            )
             uiConfig.showDropMarkers = parsed.showDropMarkers ~= false
         end
     end
@@ -292,6 +298,36 @@ RegisterNetEvent('Fluxcore:client:playerLoggedOut', function()
     closeInventory(false)
     inventory = nil
     drops = {}
+    local ped = PlayerPedId()
+    if ped ~= 0 then
+        RemoveAllPedWeapons(ped, true)
+    end
+end)
+
+RegisterNetEvent('fluxcore_inventory:client:equipWeapon', function(weaponName)
+    local ped = PlayerPedId()
+    local weapon = GetHashKey(tostring(weaponName or ''))
+    if ped == 0 or weapon == 0 or nativeTrue(IsEntityDead(ped)) then
+        return
+    end
+    GiveWeaponToPed(ped, weapon, 0, false, true)
+    SetCurrentPedWeapon(ped, weapon, true)
+end)
+
+RegisterNetEvent('fluxcore_inventory:client:addWeaponAmmo', function(weaponName, amount)
+    local ped = PlayerPedId()
+    local weapon = GetHashKey(tostring(weaponName or ''))
+    if ped == 0 or weapon == 0 or nativeTrue(IsEntityDead(ped)) then
+        return
+    end
+    GiveWeaponToPed(ped, weapon, 0, false, false)
+    AddAmmoToPed(ped, weapon, math.max(1, math.min(100, tonumber(amount) or 1)))
+    SetCurrentPedWeapon(ped, weapon, true)
+end)
+
+RegisterNetEvent('fluxcore_inventory:client:itemUsed', function(item)
+    local label = type(item) == 'table' and item.label or 'Item'
+    message(('Used %s.'):format(tostring(label)))
 end)
 
 RegisterNUICallback('inventoryRequest', function(data, callback)
@@ -330,10 +366,28 @@ end, false)
 
 RegisterKeyMapping(
     '+fluxcore_inventory',
-    'Åpne inventory',
+    'Open Fluxcore inventory',
     'keyboard',
     'TAB'
 )
+
+for slot = 1, uiConfig.hotbarSlots do
+    local command = ('+fluxcore_hotbar_%d'):format(slot)
+    RegisterCommand(command, function()
+        local ped = PlayerPedId()
+        if not uiOpen and ped ~= 0 and not nativeTrue(IsEntityDead(ped)) then
+            TriggerServerEvent('fluxcore_inventory:server:use', slot)
+        end
+    end, false)
+    RegisterCommand(('-fluxcore_hotbar_%d'):format(slot), function()
+    end, false)
+    RegisterKeyMapping(
+        command,
+        ('Use Fluxcore hotbar slot %d'):format(slot),
+        'keyboard',
+        tostring(slot)
+    )
+end
 
 RegisterCommand('invslot', function(_, args)
     if not args[1] or not args[2] then
@@ -418,6 +472,20 @@ end)
 
 exports('GetItemCount', function(itemName)
     return getItemCount(itemName)
+end)
+
+CreateThread(function()
+    while true do
+        Wait(inventory and 1000 or 2000)
+        local ped = PlayerPedId()
+        if ped ~= 0 and inventory then
+            for itemName, weaponName in pairs(equippedWeapons) do
+                if getItemCount(itemName) < 1 then
+                    RemoveWeaponFromPed(ped, GetHashKey(weaponName))
+                end
+            end
+        end
+    end
 end)
 
 exports('HasItem', function(itemName, amount)
@@ -505,6 +573,12 @@ AddEventHandler('onResourceStop', function(resourceName)
         return
     end
     SetNuiFocus(false, false)
+    local ped = PlayerPedId()
+    if ped ~= 0 then
+        for _, weaponName in pairs(equippedWeapons) do
+            RemoveWeaponFromPed(ped, GetHashKey(weaponName))
+        end
+    end
     for requestId, callback in pairs(pendingRequests) do
         pendingRequests[requestId] = nil
         callback({

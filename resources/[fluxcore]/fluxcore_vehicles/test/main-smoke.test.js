@@ -74,6 +74,9 @@ test('Cfx wiring boots and registers vehicle and trunk APIs', () => {
     GetEntityCoords() {
       return { x: 275.58, y: -344.74, z: 45.17 };
     },
+    GetPedInVehicleSeat() {
+      return 70;
+    },
     GetAllVehicles() {
       return [];
     },
@@ -129,6 +132,7 @@ test('Cfx wiring boots and registers vehicle and trunk APIs', () => {
     });
     assert.equal(netHandlers.has('fluxcore_vehicles:server:spawn'), true);
     assert.equal(netHandlers.has('fluxcore_vehicles:server:trunk'), true);
+    assert.equal(netHandlers.has('fluxcore_vehicles:server:toggleEngine'), true);
     assert.equal(commands.has('givevehicle'), true);
     assert.equal(registeredExports.has('RegisterOwnedVehicle'), true);
 
@@ -147,6 +151,32 @@ test('Cfx wiring boots and registers vehicle and trunk APIs', () => {
     assert.equal(spawned.ok, true);
     assert.equal(spawned.data.networkId, 55);
     assert.equal(entityState[0].key, 'Fluxcore:initVehicle');
+    assert.equal(
+      entityState.some(
+        (entry) => entry.key === 'Fluxcore:engineOn'
+          && entry.value === false
+          && entry.replicated === true,
+      ),
+      true,
+    );
+    context.source = 7;
+    netHandlers.get('fluxcore_vehicles:server:toggleEngine')(55);
+    assert.equal(
+      entityState.some(
+        (entry) => entry.key === 'Fluxcore:engineOn'
+          && entry.value === true,
+      ),
+      true,
+    );
+    assert.equal(
+      emitted.some(
+        (entry) => entry.eventName === 'fluxcore_vehicles:client:engineChanged'
+          && entry.source === -1
+          && entry.args[0] === 55
+          && entry.args[1] === true,
+      ),
+      true,
+    );
 
     eventHandlers.get('Fluxcore:server:playerLoaded')(7, player);
     assert.equal(
@@ -155,6 +185,7 @@ test('Cfx wiring boots and registers vehicle and trunk APIs', () => {
       ),
       true,
     );
+    eventHandlers.get('onResourceStart')('fluxcore_inventory');
     eventHandlers.get('onResourceStop')('fluxcore_vehicles');
   } finally {
     fs.rmSync(temporaryRoot, { recursive: true, force: true });

@@ -63,6 +63,7 @@ Player commands:
 * `/jobs`
 * `/job <name>`
 * `/duty`
+* `/paycheck`
 
 Management commands:
 
@@ -74,6 +75,8 @@ add_ace group.admin fluxcore.jobs.manage allow
 ```
 
 Duty changes are validated against actual server-observed coordinates. Default points use Mission Row, Pillbox Medical and La Mesa Customs without MLOs.
+The server pays the active grade at the configured interval only while the
+character is on duty.
 
 ## `fluxcore_inventory`
 
@@ -102,6 +105,11 @@ Mutation exports:
 Slot, stack and weight checks run on the server. UI clients submit only the opaque `player` and `secondary` sides; the server resolves container IDs.
 
 Temporary test commands include `/inventory`, `/invslot`, `/useitem`, `/dropitem`, `/takeitem` and `/putitem`.
+The bundled visual inventory opens with TAB. Status registers `water`,
+`sandwich`, and `bandage` as restart-safe usable items.
+Slots 1-5 are a rebindable hotbar. The test pistol equips from
+`weapon_pistol`; using `pistol_ammo` consumes up to 12 rounds server-side
+before adding them to the equipped pistol.
 
 ## `fluxcore_status`
 
@@ -235,5 +243,10 @@ local result = exports.fluxcore_phone:SendMessage(
 Phone contents are owner-only. Voice calls remain outside the current milestone.
 
 ## `fluxcore_example`
+
+Development-only examples for public APIs. This resource is intentionally not
+started by the normal txAdmin configuration or `server.cfg.example`; enable it
+manually only while testing integrations because it registers test targets on
+fuel pumps, vehicles, ATMs, payphones, vending machines and pedestrians.
 
 Contains temporary commands demonstrating the public API. Treat it as development material and review or remove it before production.

@@ -52,6 +52,33 @@ function validateConfig(input, resourcePath = process.cwd()) {
     throw inventoryError('CONFIG_INVALID', 'at least one item must be configured');
   }
 
+  const starterItems = Array.isArray(input.starterItems)
+    ? input.starterItems.map((entry, index) => {
+      if (!entry || typeof entry !== 'object' || Array.isArray(entry)) {
+        throw inventoryError(
+          'CONFIG_INVALID',
+          `starterItems[${index}] must be an object`,
+        );
+      }
+      const name = String(entry.name || '').trim().toLowerCase();
+      if (!items[name]) {
+        throw inventoryError(
+          'CONFIG_INVALID',
+          `starterItems[${index}] references unknown item ${name}`,
+        );
+      }
+      return {
+        name,
+        amount: integer(
+          entry.amount ?? 1,
+          1,
+          1_000_000,
+          `starterItems[${index}].amount`,
+        ),
+      };
+    })
+    : [];
+
   return {
     databaseFile: path.resolve(
       resourcePath,
@@ -83,6 +110,7 @@ function validateConfig(input, resourcePath = process.cwd()) {
       20,
       'dropOpenDistance',
     ),
+    starterItems,
     items,
   };
 }

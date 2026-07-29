@@ -74,6 +74,10 @@ function renderContainer(container, side, grid, label, slots, weight, bar) {
     button.className = `slot${item ? '' : ' empty'}`;
     button.dataset.side = side;
     button.dataset.slot = String(slot);
+    if (side === 'player' && (state.hotbar || []).includes(slot)) {
+      button.classList.add('hotbar');
+      button.title = `Hotbar ${slot}`;
+    }
     if (selected?.side === side && selected.slot === slot) button.classList.add('selected');
 
     const number = document.createElement('span');

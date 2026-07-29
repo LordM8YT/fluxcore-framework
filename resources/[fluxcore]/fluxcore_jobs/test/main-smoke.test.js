@@ -19,6 +19,8 @@ test('Cfx wiring boots and serves job events, commands, and exports', () => {
   const emitted = [];
   const player = { characterId: 'vrd_0123456789abcdef' };
   let currentJob = null;
+  let bankCredits = 0;
+  const intervals = new Set();
 
   function registerExport(name, handler) {
     registeredExports.set(name, handler);
@@ -30,7 +32,7 @@ test('Cfx wiring boots and serves job events, commands, and exports', () => {
         : null;
     },
     GetPlayers() {
-      return [];
+      return [{ source: 7 }];
     },
     GetPlayerSource(characterId) {
       return characterId === player.characterId ? 7 : 0;
@@ -38,6 +40,12 @@ test('Cfx wiring boots and serves job events, commands, and exports', () => {
     SetJob(_identifier, job) {
       currentJob = job;
       return { ok: true, data: job };
+    },
+    AddMoney(_identifier, currency, amount, reason) {
+      assert.equal(currency, 'bank');
+      assert.equal(reason, 'job_payday');
+      bankCredits += Number(amount);
+      return { ok: true, data: bankCredits };
     },
   };
 
@@ -85,6 +93,13 @@ test('Cfx wiring boots and serves job events, commands, and exports', () => {
       handler();
       return 1;
     },
+    setInterval(handler) {
+      intervals.add(handler);
+      return handler;
+    },
+    clearInterval(handler) {
+      intervals.delete(handler);
+    },
   };
   context.global = context;
   vm.createContext(context);
@@ -116,8 +131,12 @@ test('Cfx wiring boots and serves job events, commands, and exports', () => {
       registeredExports.get('HasPermission')(7, 'police.evidence'),
       true,
     );
+    assert.equal(intervals.size, 1);
+    [...intervals][0]();
+    assert.equal(bankCredits, 750);
 
     eventHandlers.get('onResourceStop')('fluxcore_jobs');
+    assert.equal(intervals.size, 0);
   } finally {
     fs.rmSync(temporaryRoot, { recursive: true, force: true });
   }

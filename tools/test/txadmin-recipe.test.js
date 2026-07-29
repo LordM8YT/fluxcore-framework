@@ -72,9 +72,9 @@ test('Fluxcore resources start after core in dependency order', () => {
     'ensure fluxcore_chat',
     'ensure fluxcore_voice',
     'ensure fluxcore_interact',
-    'ensure fluxcore_status',
     'ensure fluxcore_jobs',
     'ensure fluxcore_inventory',
+    'ensure fluxcore_status',
     'ensure fluxcore_banking',
     'ensure fluxcore_vehicles',
     'ensure fluxcore_fuel',
@@ -85,6 +85,7 @@ test('Fluxcore resources start after core in dependency order', () => {
     'ensure fluxcore_mdt',
     'ensure fluxcore_properties',
     'ensure fluxcore_world',
+    'ensure fluxcore_ui',
     'ensure fluxcore_admin',
     'ensure fluxcore_phone',
     'ensure fluxcore_identity',
@@ -95,4 +96,14 @@ test('Fluxcore resources start after core in dependency order', () => {
   assert.deepEqual(indexes, [...indexes].sort((a, b) => a - b));
   assert.equal(indexOfLine(serverConfig, 'ensure basic-gamemode'), -1);
   assert.equal(indexOfLine(serverConfig, 'stop basic-gamemode'), -1);
+  assert.equal(indexOfLine(serverConfig, 'ensure fluxcore_example'), -1);
+});
+
+test('example config does not enable development-only target registrations', () => {
+  const exampleConfig = fs.readFileSync(
+    path.join(root, 'server.cfg.example'),
+    'utf8',
+  );
+  assert.equal(indexOfLine(exampleConfig, 'ensure fluxcore_example'), -1);
+  assert.match(exampleConfig, /^# ensure fluxcore_example$/mu);
 });

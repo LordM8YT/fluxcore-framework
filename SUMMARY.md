@@ -3,6 +3,7 @@
 * [Fluxcore Framework](README.md)
 * [Interactions and Shared UI](interactions-and-shared-ui.md)
 * [Player Experience](player-experience.md)
+* [Chat and Player Controls](chat-and-player-controls.md)
 * [Voice](voice.md)
 * [Character Creation](character-creation.md)
 * [Contributing](contributing.md)

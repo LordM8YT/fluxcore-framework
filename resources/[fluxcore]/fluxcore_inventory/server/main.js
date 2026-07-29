@@ -48,6 +48,37 @@ const inventory = new InventoryService(database, config, core, runtime);
 const controller = new InventoryController(inventory);
 const requestTimes = new Map();
 
+inventory.registerUsableItem('weapon_pistol', (source) => {
+  return {
+    consume: 0,
+    afterUse() {
+      runtime.emitClient(
+        Number(source),
+        'fluxcore_inventory:client:equipWeapon',
+        'WEAPON_PISTOL',
+      );
+    },
+  };
+});
+
+inventory.registerUsableItem('pistol_ammo', (source, item) => {
+  if (inventory.getItemCount(source, 'weapon_pistol') < 1) {
+    return false;
+  }
+  const amount = Math.min(12, Number(item.amount) || 1);
+  return {
+    consume: amount,
+    afterUse() {
+      runtime.emitClient(
+        Number(source),
+        'fluxcore_inventory:client:addWeaponAmmo',
+        'WEAPON_PISTOL',
+        amount,
+      );
+    },
+  };
+});
+
 function rateLimit(source, key, minimumIntervalMs) {
   const id = `${source}:${key}`;
   const now = Date.now();
@@ -299,7 +330,7 @@ globalThis.exports('DeleteContainer', (containerId) =>
   result(() => inventory.deleteContainer(containerId)),
 );
 globalThis.exports('RegisterUsableItem', (itemName, handler) =>
-  result(() => inventory.registerUsableItem(itemName, handler)),
+  result(() => inventory.registerUsableItem(itemName, handler, invokingResource())),
 );
 globalThis.exports('OpenInventory', (source, secondaryContainerId) => {
   const response = result(() =>
@@ -345,6 +376,14 @@ on('onResourceStop', (stoppedResource) => {
   if (stoppedResource === resourceName) {
     clearInterval(cleanupTimer);
     database.close();
+  } else {
+    const removed = inventory.unregisterUsableItems(stoppedResource);
+    if (removed > 0) {
+      runtime.log(
+        'info',
+        `removed ${removed} usable item registration(s) owned by ${stoppedResource}`,
+      );
+    }
   }
 });
 

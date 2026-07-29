@@ -8,6 +8,9 @@ body { margin: 0; overflow: hidden; }
 .message.me { color: #c4b5fd; font-style: italic; }
 .message.do { color: #f9a8d4; }
 .message.ooc { color: #94a3b8; }
+.message.try { color: #fbbf24; font-style: italic; }
+.message.whisper { color: #cbd5e1; font-size: .82rem; }
+.message.shout { color: #fb7185; font-weight: 650; }
 .message.system { color: #facc15; }
 .message.error { color: #fb7185; }
 .message.expired { opacity: 0; transition: opacity .35s ease; }

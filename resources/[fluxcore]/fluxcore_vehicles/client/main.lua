@@ -1,4 +1,5 @@
 local vehicles = {}
+local seatbelt = false
 local rawConfig = LoadResourceFile(GetCurrentResourceName(), 'config/vehicles.json')
 local config = rawConfig and json.decode(rawConfig) or { garages = {} }
 
@@ -24,6 +25,13 @@ local function message(text, kind)
         args = { 'Fluxcore', tostring(text) }
     })
     print(('[fluxcore_vehicles] %s'):format(tostring(text)))
+end
+
+local function setSeatbelt(enabled)
+    seatbelt = enabled == true
+    LocalPlayer.state:set('Fluxcore:seatbelt', seatbelt, true)
+    TriggerEvent('fluxcore_vehicles:client:seatbeltChanged', seatbelt)
+    message(seatbelt and 'Seatbelt fastened.' or 'Seatbelt unfastened.')
 end
 
 local function distance(left, right)
@@ -252,12 +260,25 @@ RegisterNetEvent('fluxcore_vehicles:client:lockChanged', function(id, locked)
     end)
 end)
 
+RegisterNetEvent('fluxcore_vehicles:client:engineChanged', function(id, enabled)
+    if not nativeTrue(NetworkDoesEntityExistWithNetworkId(id)) then
+        return
+    end
+    local vehicle = NetToVeh(id)
+    if vehicle ~= 0 and nativeTrue(DoesEntityExist(vehicle)) then
+        SetVehicleEngineOn(vehicle, enabled == true, true, true)
+    end
+end)
+
 RegisterNetEvent('Fluxcore:client:playerLoaded', function()
     TriggerServerEvent('fluxcore_vehicles:server:request')
 end)
 
 RegisterNetEvent('Fluxcore:client:playerLoggedOut', function()
     vehicles = {}
+    if seatbelt then
+        setSeatbelt(false)
+    end
 end)
 
 RegisterCommand('garage', function(_, args)
@@ -346,6 +367,44 @@ RegisterKeyMapping(
     'L'
 )
 
+local function toggleEngine()
+    local ped = PlayerPedId()
+    local vehicle = GetVehiclePedIsIn(ped, false)
+    if vehicle == 0 or GetPedInVehicleSeat(vehicle, -1) ~= ped then
+        return
+    end
+    local id = networkId(vehicle)
+    if id then
+        TriggerServerEvent('fluxcore_vehicles:server:toggleEngine', id)
+    end
+end
+
+RegisterCommand('engine', toggleEngine, false)
+RegisterCommand('+fluxcore_engine', toggleEngine, false)
+RegisterCommand('-fluxcore_engine', function()
+end, false)
+RegisterKeyMapping(
+    '+fluxcore_engine',
+    'Start or stop your Fluxcore vehicle engine',
+    'keyboard',
+    'G'
+)
+
+RegisterCommand('+fluxcore_seatbelt', function()
+    local ped = PlayerPedId()
+    if nativeTrue(IsPedInAnyVehicle(ped, false)) then
+        setSeatbelt(not seatbelt)
+    end
+end, false)
+RegisterCommand('-fluxcore_seatbelt', function()
+end, false)
+RegisterKeyMapping(
+    '+fluxcore_seatbelt',
+    'Fasten or unfasten your Fluxcore seatbelt',
+    'keyboard',
+    'B'
+)
+
 exports('GetVehicles', function()
     return copy(vehicles)
 end)
@@ -363,9 +422,26 @@ CreateThread(function()
     while not nativeTrue(NetworkIsPlayerActive(PlayerId())) do
         Wait(250)
     end
+    LocalPlayer.state:set('Fluxcore:seatbelt', false, true)
     if GetResourceState('fluxcore_core') == 'started'
         and exports.fluxcore_core:IsLoggedIn() then
         TriggerServerEvent('fluxcore_vehicles:server:request')
+    end
+end)
+
+CreateThread(function()
+    while true do
+        local ped = PlayerPedId()
+        local vehicle = GetVehiclePedIsIn(ped, false)
+        if vehicle ~= 0 and GetPedInVehicleSeat(vehicle, -1) == ped then
+            local state = Entity(vehicle).state['Fluxcore:engineOn']
+            if state == false then
+                SetVehicleEngineOn(vehicle, false, true, true)
+            end
+            Wait(100)
+        else
+            Wait(500)
+        end
     end
 end)
 
@@ -454,5 +530,30 @@ CreateThread(function()
             end
         end
         Wait(waitMs)
+    end
+end)
+
+CreateThread(function()
+    while true do
+        if seatbelt then
+            local ped = PlayerPedId()
+            if not nativeTrue(IsPedInAnyVehicle(ped, false))
+                or nativeTrue(IsEntityDead(ped)) then
+                setSeatbelt(false)
+            else
+                DisableControlAction(0, 75, true)
+                DisableControlAction(1, 75, true)
+                DisableControlAction(2, 75, true)
+            end
+            Wait(0)
+        else
+            Wait(250)
+        end
+    end
+end)
+
+AddEventHandler('onResourceStop', function(stoppedResource)
+    if stoppedResource == GetCurrentResourceName() and seatbelt then
+        LocalPlayer.state:set('Fluxcore:seatbelt', false, true)
     end
 end)

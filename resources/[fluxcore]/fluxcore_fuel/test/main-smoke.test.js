@@ -11,10 +11,18 @@ test('Cfx wiring boots and exposes the fuel purchase boundary', (t) => {
   const handlers = new Map();
   const registeredExports = new Map();
   const emitted = [];
+  let usableRegistrations = 0;
 
   Object.assign(global, {
     GetCurrentResourceName() {
       return 'fluxcore_fuel';
+    },
+    GetResourceState(resourceName) {
+      return resourceName === 'fluxcore_inventory' ? 'started' : 'missing';
+    },
+    setTimeout(handler) {
+      handler();
+      return 1;
     },
     LoadResourceFile(_resource, relativePath) {
       return fs.readFileSync(path.join(resourceRoot, relativePath), 'utf8');
@@ -64,6 +72,7 @@ test('Cfx wiring boots and exposes the fuel purchase boundary', (t) => {
     },
     fluxcore_inventory: {
       RegisterUsableItem() {
+        usableRegistrations += 1;
         return { ok: true, data: true };
       },
       CanCarryItem() {
@@ -86,6 +95,7 @@ test('Cfx wiring boots and exposes the fuel purchase boundary', (t) => {
     delete require.cache[mainPath];
     for (const key of [
       'GetCurrentResourceName',
+      'GetResourceState',
       'LoadResourceFile',
       'GetPlayerPed',
       'NetworkGetEntityFromNetworkId',
@@ -96,6 +106,7 @@ test('Cfx wiring boots and exposes the fuel purchase boundary', (t) => {
       'emitNet',
       'onNet',
       'on',
+      'setTimeout',
       'exports',
       'source',
     ]) {
@@ -107,6 +118,9 @@ test('Cfx wiring boots and exposes the fuel purchase boundary', (t) => {
   assert.equal(netHandlers.has('fluxcore_fuel:server:buyCan'), true);
   assert.equal(netHandlers.has('fluxcore_fuel:server:useCan'), true);
   assert.equal(registeredExports.has('PurchaseFuel'), true);
+  assert.equal(usableRegistrations, 1);
+  handlers.get('onResourceStart')('fluxcore_inventory');
+  assert.equal(usableRegistrations, 2);
 
   global.source = 7;
   netHandlers.get('fluxcore_fuel:server:purchase')(12, 'davis', 10);

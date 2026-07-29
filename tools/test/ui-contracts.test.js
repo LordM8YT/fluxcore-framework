@@ -35,6 +35,7 @@ test('inventory mock uses opaque sides instead of trusted container input', () =
   assert.equal(mock.player.type, 'player');
   assert.equal(mock.secondary, null);
   assert.ok(Array.isArray(mock.hotbar));
+  assert.deepEqual(mock.hotbar, [1, 2, 3, 4, 5]);
   assert.equal(mock.capabilities.transfer, false);
 });
 
@@ -44,6 +45,10 @@ test('HUD and phone mocks contain only owner-facing public shapes', () => {
 
   assert.equal(typeof hud.status.hunger, 'number');
   assert.equal(typeof hud.player.money.bank, 'number');
+  assert.equal(typeof hud.voice.ready, 'boolean');
+  assert.equal(typeof hud.voice.talking, 'boolean');
+  assert.equal(typeof hud.voice.proximityDistance, 'number');
+  assert.equal(typeof hud.vehicle.engineRunning, 'boolean');
   assert.match(phone.account.phoneNumber, /^\d+$/u);
   assert.equal(phone.conversations[0].lastMessage.readAt, null);
 });

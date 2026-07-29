@@ -57,6 +57,21 @@ local function usableVehicle(vehicle)
     return vehicle
 end
 
+local function tankVolume(vehicle)
+    local handlingVolume = tonumber(GetVehicleHandlingFloat(
+        vehicle,
+        'CHandlingData',
+        'fPetrolTankVolume'
+    )) or 0.0
+    if handlingVolume >= 1.0 and handlingVolume <= 500.0 then
+        return handlingVolume
+    end
+    return math.max(
+        1.0,
+        math.min(500.0, tonumber(config.defaultTankLiters) or 65.0)
+    )
+end
+
 local function loadModel(model)
     local hash = type(model) == 'number' and model or joaat(tostring(model))
     if not IsModelInCdimage(hash) then return nil end
@@ -219,11 +234,7 @@ local function requestRefuel(stationId, requested, targetVehicle)
         end
     end
 
-    local tank = GetVehicleHandlingFloat(
-        vehicle,
-        'CHandlingData',
-        'fPetrolTankVolume'
-    )
+    local tank = tankVolume(vehicle)
     local currentPercent = math.max(
         0.0,
         math.min(100.0, GetVehicleFuelLevel(vehicle))
@@ -312,11 +323,7 @@ RegisterNetEvent('fluxcore_fuel:client:purchaseResult', function(response)
         0.0,
         math.min(100.0, GetVehicleFuelLevel(vehicle))
     )
-    local tank = GetVehicleHandlingFloat(
-        vehicle,
-        'CHandlingData',
-        'fPetrolTankVolume'
-    )
+    local tank = tankVolume(vehicle)
     local addedPercent = tank > 0.0
         and (tonumber(purchase.liters or 0) / tank) * 100.0
         or 0.0

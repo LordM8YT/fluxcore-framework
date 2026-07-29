@@ -9,7 +9,10 @@ license 'MIT'
 
 node_version '26'
 
-dependency 'fluxcore_core'
+dependencies {
+    'fluxcore_core',
+    'fluxcore_inventory'
+}
 
 ui_page 'web/index.html'
 

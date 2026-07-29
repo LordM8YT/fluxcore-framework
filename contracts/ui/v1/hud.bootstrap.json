@@ -23,13 +23,28 @@
     "stress": 12,
     "stamina": 94
   },
-  "vehicle": null,
+  "voice": {
+    "ready": true,
+    "talking": false,
+    "proximityDistance": 15
+  },
+  "vehicle": {
+    "speed": 0,
+    "speedUnit": "kmh",
+    "rpm": 0,
+    "gear": 0,
+    "fuel": 63,
+    "engineHealth": 100,
+    "engineRunning": false,
+    "seatbelt": false,
+    "plate": "FLUX 001"
+  },
   "visibility": {
     "hud": true,
     "minimap": true,
     "money": false,
     "job": true,
     "weapon": false,
-    "vehicle": false
+    "vehicle": true
   }
 }
