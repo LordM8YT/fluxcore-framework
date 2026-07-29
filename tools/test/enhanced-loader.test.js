@@ -389,6 +389,15 @@ test('status HUD renders native sprint stamina as a separate live value', () => 
   assert.match(app, /'thirst', 'stamina', 'stress'/u);
 });
 
+test('status converts native vehicle fuel liters into tank percentage', () => {
+  const root = path.join(resourceRoot, 'fluxcore_status');
+  const client = fs.readFileSync(path.join(root, 'client', 'main.lua'), 'utf8');
+
+  assert.match(client, /GetVehicleHandlingFloat\(/u);
+  assert.match(client, /'fPetrolTankVolume'/u);
+  assert.match(client, /\(fuelLiters \/ tankVolume\) \* 100/u);
+});
+
 test('status HUD recovers optional voice state across resource restarts', () => {
   const root = path.join(resourceRoot, 'fluxcore_status');
   const client = fs.readFileSync(path.join(root, 'client', 'main.lua'), 'utf8');

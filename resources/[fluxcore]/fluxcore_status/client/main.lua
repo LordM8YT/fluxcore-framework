@@ -108,6 +108,19 @@ local function pedVitals()
     return health, armor, stamina
 end
 
+local function vehicleFuelPercent(vehicle)
+    local tankVolume = tonumber(GetVehicleHandlingFloat(
+        vehicle,
+        'CHandlingData',
+        'fPetrolTankVolume'
+    )) or 0.0
+    if tankVolume <= 0.0 then
+        return 0
+    end
+    local fuelLiters = tonumber(GetVehicleFuelLevel(vehicle)) or 0.0
+    return clamp(rounded((fuelLiters / tankVolume) * 100), 0, 100)
+end
+
 local function vehicleSnapshot()
     local ped = PlayerPedId()
     if ped == 0 or not nativeTrue(IsPedInAnyVehicle(ped, false)) then
@@ -122,7 +135,7 @@ local function vehicleSnapshot()
         speedUnit = 'kmh',
         rpm = clamp(rounded(GetVehicleCurrentRpm(vehicle) * 100), 0, 100),
         gear = GetVehicleCurrentGear(vehicle),
-        fuel = clamp(rounded(GetVehicleFuelLevel(vehicle)), 0, 100),
+        fuel = vehicleFuelPercent(vehicle),
         engineHealth = clamp(
             rounded(GetVehicleEngineHealth(vehicle) / 10),
             0,
