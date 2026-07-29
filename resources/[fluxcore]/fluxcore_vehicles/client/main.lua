@@ -33,7 +33,6 @@ local function setSeatbelt(enabled)
     seatbeltVehicle = seatbelt
         and GetVehiclePedIsIn(PlayerPedId(), false)
         or 0
-    LocalPlayer.state:set('Fluxcore:seatbelt', seatbelt, true)
     TriggerEvent('fluxcore_vehicles:client:seatbeltChanged', seatbelt)
     message(seatbelt and 'Seatbelt fastened.' or 'Seatbelt unfastened.')
 end
@@ -385,7 +384,11 @@ local function toggleEngine()
     end
     local id = networkId(vehicle)
     if id then
-        TriggerServerEvent('fluxcore_vehicles:server:toggleEngine', id)
+        TriggerServerEvent(
+            'fluxcore_vehicles:server:toggleEngine',
+            id,
+            not nativeTrue(GetIsVehicleEngineRunning(vehicle))
+        )
     else
         message('The vehicle is not networked yet.', 'error')
     end
@@ -443,7 +446,6 @@ CreateThread(function()
     while not nativeTrue(NetworkIsPlayerActive(PlayerId())) do
         Wait(250)
     end
-    LocalPlayer.state:set('Fluxcore:seatbelt', false, true)
     if GetResourceState('fluxcore_core') == 'started'
         and exports.fluxcore_core:IsLoggedIn() then
         TriggerServerEvent('fluxcore_vehicles:server:request')
@@ -578,6 +580,6 @@ end)
 
 AddEventHandler('onResourceStop', function(stoppedResource)
     if stoppedResource == GetCurrentResourceName() and seatbelt then
-        LocalPlayer.state:set('Fluxcore:seatbelt', false, true)
+        TriggerEvent('fluxcore_vehicles:client:seatbeltChanged', false)
     end
 end)

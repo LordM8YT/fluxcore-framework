@@ -160,7 +160,7 @@ test('Cfx wiring boots and registers vehicle and trunk APIs', () => {
       true,
     );
     context.source = 7;
-    netHandlers.get('fluxcore_vehicles:server:toggleEngine')(55);
+    netHandlers.get('fluxcore_vehicles:server:toggleEngine')(55, true);
     assert.equal(
       entityState.some(
         (entry) => entry.key === 'Fluxcore:engineOn'
@@ -188,6 +188,11 @@ test('Cfx wiring boots and registers vehicle and trunk APIs', () => {
     eventHandlers.get('onResourceStart')('fluxcore_inventory');
     eventHandlers.get('onResourceStop')('fluxcore_vehicles');
   } finally {
-    fs.rmSync(temporaryRoot, { recursive: true, force: true });
+    fs.rmSync(temporaryRoot, {
+      recursive: true,
+      force: true,
+      maxRetries: 5,
+      retryDelay: 20,
+    });
   }
 });
