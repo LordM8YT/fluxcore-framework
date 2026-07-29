@@ -284,8 +284,8 @@ test('vehicle engine control is mapped and server-authoritative', () => {
   );
 
   assert.match(client, /RegisterKeyMapping\([\s\S]*'\+fluxcore_vehicle_engine_v2'[\s\S]*'G'/u);
-  assert.match(client, /RegisterCommand\('engine',\s*toggleEngine/u);
   assert.match(client, /RegisterCommand\('\+fluxcore_vehicle_engine_v2'/u);
+  assert.doesNotMatch(client, /RegisterCommand\('engine'/u);
   assert.match(client, /GetPedInVehicleSeat\(vehicle,\s*-1\) ~= ped/u);
   assert.match(client, /fluxcore_vehicles:server:toggleEngine/u);
   assert.match(client, /not nativeTrue\(GetIsVehicleEngineRunning\(vehicle\)\)/u);
@@ -305,8 +305,9 @@ test('vehicle seatbelt is mapped, blocks exit, and feeds the HUD state', () => {
     'utf8',
   );
 
-  assert.match(vehicles, /RegisterCommand\('seatbelt',\s*toggleSeatbelt/u);
+  assert.doesNotMatch(vehicles, /RegisterCommand\('seatbelt'/u);
   assert.match(vehicles, /RegisterKeyMapping\([\s\S]*'\+fluxcore_vehicle_seatbelt_v2'[\s\S]*'B'/u);
+  assert.doesNotMatch(vehicles, /RegisterCommand\('vlock'/u);
   assert.doesNotMatch(vehicles, /LocalPlayer\.state:set\('Fluxcore:seatbelt'/u);
   assert.match(vehicles, /exports\('IsSeatbeltFastened'/u);
   assert.match(vehicles, /DisableControlAction\(0,\s*75,\s*true\)/u);

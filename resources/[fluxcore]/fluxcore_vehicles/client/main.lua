@@ -364,7 +364,6 @@ local function toggleVehicleLock()
     TriggerServerEvent('fluxcore_vehicles:server:toggleLock', id)
 end
 
-RegisterCommand('vlock', toggleVehicleLock, false)
 RegisterCommand('+fluxcore_vehicle_lock_v2', toggleVehicleLock, false)
 RegisterCommand('-fluxcore_vehicle_lock_v2', function()
 end, false)
@@ -394,7 +393,6 @@ local function toggleEngine()
     end
 end
 
-RegisterCommand('engine', toggleEngine, false)
 RegisterCommand('+fluxcore_vehicle_engine_v2', toggleEngine, false)
 RegisterCommand('-fluxcore_vehicle_engine_v2', function()
 end, false)
@@ -414,7 +412,6 @@ local function toggleSeatbelt()
     end
 end
 
-RegisterCommand('seatbelt', toggleSeatbelt, false)
 RegisterCommand('+fluxcore_vehicle_seatbelt_v2', toggleSeatbelt, false)
 RegisterCommand('-fluxcore_vehicle_seatbelt_v2', function()
 end, false)
