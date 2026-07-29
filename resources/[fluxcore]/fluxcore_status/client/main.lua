@@ -229,7 +229,7 @@ local function configureMinimap()
         'L',
         'B',
         -0.0045,
-        -0.047,
+        -0.060,
         0.150,
         0.188888
     )
@@ -238,7 +238,7 @@ local function configureMinimap()
         'L',
         'B',
         0.020,
-        0.007,
+        -0.006,
         0.111,
         0.159
     )
@@ -247,7 +247,7 @@ local function configureMinimap()
         'L',
         'B',
         -0.030,
-        -0.003,
+        -0.016,
         0.266,
         0.237
     )

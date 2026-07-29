@@ -100,7 +100,7 @@ body { color: var(--text); }
 .vehicle-panel {
   position: fixed;
   bottom: 8.25rem;
-  left: 18rem;
+  left: 20rem;
   display: grid;
   width: 25rem;
   grid-template-columns: 7.4rem 1fr;
@@ -147,6 +147,14 @@ body { color: var(--text); }
 
 @media (max-width: 800px) {
   .player-panel { top: 1rem; right: 1rem; }
-  .vehicle-panel { bottom: 7rem; left: 15rem; width: 22rem; }
-  .status-panel { bottom: 3rem; left: 1rem; }
+  .vehicle-panel {
+    bottom: 8.5rem;
+    left: 22rem;
+    width: 18rem;
+    grid-template-columns: 6.5rem 1fr;
+    gap: 0.65rem;
+    padding: 0.8rem;
+  }
+  .vehicle-data { gap: 0.3rem 0.4rem; }
+  .status-panel { bottom: 4rem; left: 1rem; }
 }
