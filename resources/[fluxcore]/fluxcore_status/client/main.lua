@@ -6,6 +6,7 @@ local minimapConfigured = false
 local minimapScaleform = nil
 local minimapBarsHiddenAt = 0
 local hudHidden = false
+local seatbeltFastened = false
 local voice = {
     ready = false,
     talking = false,
@@ -142,7 +143,7 @@ local function vehicleSnapshot()
             100
         ),
         engineRunning = nativeTrue(GetIsVehicleEngineRunning(vehicle)),
-        seatbelt = LocalPlayer.state['Fluxcore:seatbelt'] == true,
+        seatbelt = seatbeltFastened,
         plate = tostring(GetVehicleNumberPlateText(vehicle) or ''):gsub('%s+$', '')
     }
 end
@@ -372,6 +373,24 @@ local function refreshVoiceState()
     end
 end
 
+local function refreshSeatbeltState()
+    if GetResourceState('fluxcore_vehicles') ~= 'started' then
+        seatbeltFastened = false
+        publishHud(true)
+        return
+    end
+    local ok, enabled = pcall(function()
+        return exports.fluxcore_vehicles:IsSeatbeltFastened()
+    end)
+    seatbeltFastened = ok and enabled == true
+    publishHud(true)
+end
+
+AddEventHandler('fluxcore_vehicles:client:seatbeltChanged', function(enabled)
+    seatbeltFastened = enabled == true
+    publishHud(true)
+end)
+
 AddEventHandler('onClientResourceStart', function(startedResource)
     if startedResource == 'fluxcore_voice'
         or startedResource == GetCurrentResourceName() then
@@ -380,11 +399,22 @@ AddEventHandler('onClientResourceStart', function(startedResource)
             refreshVoiceState()
         end)
     end
+    if startedResource == 'fluxcore_vehicles'
+        or startedResource == GetCurrentResourceName() then
+        CreateThread(function()
+            Wait(100)
+            refreshSeatbeltState()
+        end)
+    end
 end)
 
 AddEventHandler('onClientResourceStop', function(stoppedResource)
     if stoppedResource == 'fluxcore_voice' then
         voice = { ready = false, talking = false, proximityDistance = nil }
+        publishHud(true)
+    end
+    if stoppedResource == 'fluxcore_vehicles' then
+        seatbeltFastened = false
         publishHud(true)
     end
 end)

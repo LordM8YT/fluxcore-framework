@@ -409,6 +409,10 @@ exports('GetVehicles', function()
     return copy(vehicles)
 end)
 
+exports('IsSeatbeltFastened', function()
+    return seatbelt
+end)
+
 exports('HasKey', function(vehicleId)
     for _, vehicle in ipairs(vehicles) do
         if vehicle.id == vehicleId then

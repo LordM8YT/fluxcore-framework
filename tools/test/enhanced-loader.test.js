@@ -301,9 +301,12 @@ test('vehicle seatbelt is mapped, blocks exit, and feeds the HUD state', () => {
 
   assert.match(vehicles, /RegisterKeyMapping\([\s\S]*'\+fluxcore_seatbelt'[\s\S]*'B'/u);
   assert.match(vehicles, /LocalPlayer\.state:set\('Fluxcore:seatbelt'/u);
+  assert.match(vehicles, /exports\('IsSeatbeltFastened'/u);
   assert.match(vehicles, /DisableControlAction\(0,\s*75,\s*true\)/u);
   assert.match(vehicles, /IsEntityDead\(ped\)/u);
-  assert.match(status, /LocalPlayer\.state\['Fluxcore:seatbelt'\] == true/u);
+  assert.match(status, /fluxcore_vehicles:client:seatbeltChanged/u);
+  assert.match(status, /exports\.fluxcore_vehicles:IsSeatbeltFastened\(\)/u);
+  assert.match(status, /seatbelt = seatbeltFastened/u);
 });
 
 test('status replaces the vanilla HUD with a vehicle-only RP minimap', () => {
