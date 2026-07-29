@@ -1,8 +1,8 @@
 # FiveM Enhanced compatibility notes
 
-Last reviewed: 2026-07-27
+Last reviewed: 2026-07-29
 Validated locally against: FiveM for GTAV Enhanced early access and Cfx Server
-artifact `b96-ea/Win`.
+build `103` (Early Access Hotfix 6, Windows).
 
 This file is Fluxcore's project memory for Enhanced runtime behavior. It
 combines official Cfx documentation with observations reproduced in the local
@@ -56,6 +56,20 @@ documents, among other changes:
 
 Do not copy Legacy configuration into Fluxcore without comparing it to the
 live [Enhanced change log](https://docs.fivem.net/docs/developers/legacy-vs-enhanced/).
+
+### Early Access Hotfix 6
+
+- The connection handshake changed and requires Cfx Server build 103 or newer
+  for clients on the matching patch.
+- Invalid entity arguments no longer stop script execution, but Fluxcore still
+  validates entity existence because a no-op is not a successful operation.
+- A resource's own `onClientResourceStart` and `onClientResourceStop` events
+  fire again. Keep direct bootstrap and restart recovery paths for compatibility
+  with earlier Enhanced builds and provider restart ordering.
+- Pending voice connections no longer flood the client console. Fluxcore's
+  guarded voice bootstrap remains necessary while the internal voice server is
+  unavailable.
+- The Enhanced CEF remote-debugging port matches gen8 again.
 
 ## NUI and transparency
 
