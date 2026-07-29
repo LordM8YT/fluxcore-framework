@@ -3,6 +3,7 @@
   "tickIntervalMs": 60000,
   "disableVanillaHud": true,
   "disableVanillaPolice": true,
+  "disableVanillaRadio": true,
   "minimapVehicleOnly": true,
   "needs": {
     "hunger": {

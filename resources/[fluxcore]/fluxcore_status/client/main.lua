@@ -4,10 +4,12 @@ local lastSnapshotJson = nil
 local hudSnapshot = nil
 local minimapConfigured = false
 local minimapScaleform = nil
+local minimapBarsHiddenAt = 0
 
 local clientConfig = {
     disableVanillaHud = true,
     disableVanillaPolice = true,
+    disableVanillaRadio = true,
     minimapVehicleOnly = true
 }
 
@@ -19,6 +21,8 @@ do
             clientConfig.disableVanillaHud = parsed.disableVanillaHud ~= false
             clientConfig.disableVanillaPolice =
                 parsed.disableVanillaPolice ~= false
+            clientConfig.disableVanillaRadio =
+                parsed.disableVanillaRadio ~= false
             clientConfig.minimapVehicleOnly =
                 parsed.minimapVehicleOnly ~= false
         end
@@ -89,7 +93,7 @@ local function pedVitals()
     )
     local armor = clamp(rounded(GetPedArmour(ped)), 0, 100)
     local stamina = clamp(
-        rounded(GetPlayerSprintStaminaRemaining(PlayerId())),
+        100 - rounded(GetPlayerSprintStaminaRemaining(PlayerId())),
         0,
         100
     )
@@ -181,11 +185,6 @@ local function configureMinimap()
         and GetGameTimer() < deadline do
         Wait(0)
     end
-    if nativeTrue(HasScaleformMovieLoaded(minimapScaleform)) then
-        BeginScaleformMovieMethod(minimapScaleform, 'SETUP_HEALTH_ARMOUR')
-        ScaleformMovieMethodAddParamInt(3)
-        EndScaleformMovieMethod()
-    end
     SetMinimapComponentPosition(
         'minimap',
         'L',
@@ -216,7 +215,24 @@ local function configureMinimap()
     SetRadarBigmapEnabled(true, false)
     Wait(50)
     SetRadarBigmapEnabled(false, false)
+    Wait(50)
+    if nativeTrue(HasScaleformMovieLoaded(minimapScaleform)) then
+        BeginScaleformMovieMethod(minimapScaleform, 'SETUP_HEALTH_ARMOUR')
+        ScaleformMovieMethodAddParamInt(3)
+        EndScaleformMovieMethod()
+    end
     minimapConfigured = true
+end
+
+local function hideMinimapHealthArmour()
+    if not minimapScaleform
+        or not nativeTrue(HasScaleformMovieLoaded(minimapScaleform)) then
+        return
+    end
+    BeginScaleformMovieMethod(minimapScaleform, 'SETUP_HEALTH_ARMOUR')
+    ScaleformMovieMethodAddParamInt(3)
+    EndScaleformMovieMethod()
+    minimapBarsHiddenAt = GetGameTimer()
 end
 
 local function disableVanillaPolice()
@@ -285,6 +301,19 @@ CreateThread(function()
             end
             DisplayAmmoThisFrame(false)
         end
+        if clientConfig.disableVanillaRadio then
+            DisableControlAction(0, 81, true)
+            DisableControlAction(0, 82, true)
+            DisableControlAction(0, 85, true)
+            SetUserRadioControlEnabled(false)
+            SetFrontendRadioActive(false)
+            local ped = PlayerPedId()
+            if ped ~= 0 and nativeTrue(IsPedInAnyVehicle(ped, false)) then
+                local vehicle = GetVehiclePedIsIn(ped, false)
+                SetVehicleRadioEnabled(vehicle, false)
+                SetVehRadioStation(vehicle, 'OFF')
+            end
+        end
         if hudSnapshot then
             if not minimapConfigured then
                 configureMinimap()
@@ -293,6 +322,10 @@ CreateThread(function()
                 not clientConfig.minimapVehicleOnly
                     or hudSnapshot.vehicle ~= nil
             )
+            if hudSnapshot.vehicle ~= nil
+                and GetGameTimer() - minimapBarsHiddenAt >= 1000 then
+                hideMinimapHealthArmour()
+            end
         else
             DisplayRadar(false)
         end
@@ -321,6 +354,7 @@ AddEventHandler('onClientResourceStop', function(stoppedResource)
         DisplayHud(true)
         DisplayRadar(true)
         SetRadarBigmapEnabled(false, false)
+        SetUserRadioControlEnabled(true)
         if minimapScaleform then
             SetScaleformMovieAsNoLongerNeeded(minimapScaleform)
         end

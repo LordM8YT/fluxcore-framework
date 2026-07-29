@@ -224,8 +224,12 @@ local function requestRefuel(stationId, requested, targetVehicle)
         'CHandlingData',
         'fPetrolTankVolume'
     )
-    local current = math.max(0.0, GetVehicleFuelLevel(vehicle))
-    local needed = math.max(0.0, tank - current)
+    local currentPercent = math.max(
+        0.0,
+        math.min(100.0, GetVehicleFuelLevel(vehicle))
+    )
+    local currentLiters = tank * (currentPercent / 100.0)
+    local needed = math.max(0.0, tank - currentLiters)
     if needed < (tonumber(config.minimumLiters) or 1.0) then
         notify('The tank is already full.', 'inform')
         return
@@ -239,9 +243,10 @@ local function requestRefuel(stationId, requested, targetVehicle)
         if not liters then
             local value = exports.fluxcore_interact:InputDialog({
                 title = 'Refuel vehicle',
-                description = ('%.1f / %.1f liters | $%s per liter'):format(
-                    current,
+                description = ('%.1f / %.1f liters (%d%%) | $%s per liter'):format(
+                    currentLiters,
                     tank,
+                    math.floor(currentPercent + 0.5),
                     tostring(config.pricePerLiter or 3)
                 ),
                 label = 'Liters',
@@ -303,15 +308,21 @@ RegisterNetEvent('fluxcore_fuel:client:purchaseResult', function(response)
         return
     end
     local vehicle = NetToVeh(purchase.networkId)
-    local current = math.max(0.0, GetVehicleFuelLevel(vehicle))
+    local currentPercent = math.max(
+        0.0,
+        math.min(100.0, GetVehicleFuelLevel(vehicle))
+    )
     local tank = GetVehicleHandlingFloat(
         vehicle,
         'CHandlingData',
         'fPetrolTankVolume'
     )
+    local addedPercent = tank > 0.0
+        and (tonumber(purchase.liters or 0) / tank) * 100.0
+        or 0.0
     SetVehicleFuelLevel(
         vehicle,
-        math.min(tank, current + tonumber(purchase.liters or 0))
+        math.min(100.0, currentPercent + addedPercent)
     )
     if purchase.usedCan then
         clearHeldFuel(true)

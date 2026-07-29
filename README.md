@@ -34,6 +34,7 @@ Fluxcore is an independent, Enhanced-first roleplay framework for FiveM. It is b
 | `fluxcore_jobs`       | persistent job assignments, grades, duty and permissions                 |
 | `fluxcore_inventory`  | server-authoritative items, containers and world drops                   |
 | `fluxcore_status`     | persistent needs, Fluxcord HUD, RP minimap and vanilla police suppression |
+| `fluxcore_chat`       | replacement RP chat, slash commands and basic emotes                     |
 | `fluxcore_vehicles`   | ownership, keys, public garages, locks and trunks                        |
 | `fluxcore_fuel`       | native consumption and server-validated fuel purchases                  |
 | `fluxcore_appearance` | persistent freemode appearance and temporary live-preview editor          |
@@ -48,7 +49,8 @@ Fluxcore is an independent, Enhanced-first roleplay framework for FiveM. It is b
 | `fluxcore_phone`      | phone numbers, contacts and offline text messaging                       |
 | `fluxcore_example`    | temporary examples for the public API                                    |
 
-Read [Player Experience](player-experience.md) for loading, characters,
+Read [Player Experience](player-experience.md) and
+[Character Creation](character-creation.md) for loading, characters,
 inventory controls, HUD, minimap and RP police behavior. Domain references
 cover [Interactions and Shared UI](interactions-and-shared-ui.md),
 [Fuel](fuel.md), [Banking](banking.md), [Businesses](businesses.md),

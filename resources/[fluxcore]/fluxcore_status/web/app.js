@@ -3,7 +3,7 @@
 const elements = Object.fromEntries(
   [
     'app', 'player-name', 'job', 'money', 'cash', 'bank', 'health', 'armor',
-    'armor-item', 'hunger', 'thirst', 'stress', 'vehicle', 'speed',
+    'armor-item', 'hunger', 'thirst', 'stamina', 'stress', 'vehicle', 'speed',
     'speed-unit', 'gear', 'fuel', 'engine', 'plate', 'rpm',
   ].map((id) => [id, document.querySelector(`#${id}`)]),
 );
@@ -33,7 +33,9 @@ function render(payload = {}) {
   text('bank', money(player.money?.bank));
   elements.money.classList.toggle('hidden', visibility.money === false);
 
-  for (const name of ['health', 'armor', 'hunger', 'thirst', 'stress']) {
+  for (const name of [
+    'health', 'armor', 'hunger', 'thirst', 'stamina', 'stress',
+  ]) {
     text(name, Math.max(0, Math.min(100, Math.round(Number(status[name]) || 0))));
   }
   elements['armor-item'].classList.toggle('hidden', Number(status.armor) <= 0);

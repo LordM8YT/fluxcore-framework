@@ -111,6 +111,7 @@ setr sv_showBusySpinnerOnLoadingScreen false
 
 ensure fluxcore_loading
 ensure fluxcore_core
+ensure fluxcore_chat
 ensure fluxcore_interact
 ensure fluxcore_status
 ensure fluxcore_jobs
@@ -128,7 +129,6 @@ ensure fluxcore_world
 ensure fluxcore_admin
 ensure fluxcore_phone
 ensure fluxcore_identity
-ensure fluxcore_example
 ```
 
 Administrators need this ACE for business creation:
@@ -145,8 +145,10 @@ Start Cfx Server with the external configuration.
 {% endstep %}
 {% endstepper %}
 
-{% hint style="warning" %}
-`fluxcore_example` is useful for development but should be reviewed or removed before a public production launch.
+{% hint style="info" %}
+`fluxcore_example` is not started by default. It contains development-only
+targets which overlap real systems, including the fuel pumps. Start it manually
+only when testing the public framework API, then stop it before gameplay.
 {% endhint %}
 
 ## First boot
