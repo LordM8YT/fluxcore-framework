@@ -1,5 +1,5 @@
 {
-  "enabled": false,
+  "enabled": true,
   "hotbarSlots": 5,
   "showDropMarkers": true
 }

@@ -1,5 +1,16 @@
 # Resources
 
+`fluxcore_ui` is the temporary frontend adapter for domain resources that
+already expose versioned bootstrap data but do not yet own a finished NUI. It
+uses `fluxcore_interact` menus and dialogs, reads no database directly, and can
+be removed when replacement frontends subscribe to the same client open events
+and `Request` exports.
+
+`fluxcore_status` includes the temporary HUD renderer for health, armor,
+hunger, thirst, stress, job and vehicle information. It consumes
+`fluxcore.hud.bootstrap.v1`; a replacement HUD can keep the same contract and
+remove only the bundled `web/` presentation.
+
 Fluxcore separates domains into small owning resources. Install all resources together for the complete framework, or omit optional UI/domain resources when their dependants are not used.
 
 ## `fluxcore_core`
@@ -134,9 +145,30 @@ Vehicles are created server-side through OneSync. Clients never select the owner
 
 Test commands include `/garage`, `/trunk`, `/vlock` and the ACE-protected `/givevehicle`.
 
+## `fluxcore_fuel`
+
+Enables FiveM's native vehicle fuel consumption and adds configurable base-map fuel stations. Players use the shared target cursor or `/refuel [liters|full]`; no separate full-screen NUI is included.
+
+Every purchase is server-authoritative. The server resolves the network vehicle and player ped, verifies the player is the driver and near the selected station, bounds the requested liters and removes money through `fluxcore_core`.
+
+Server export:
+
+```js
+const result = global.exports.fluxcore_fuel.PurchaseFuel(
+  source,
+  networkId,
+  stationId,
+  liters,
+);
+```
+
+Configuration lives in `fluxcore_fuel/config/fuel.json`. Read [Fuel](fuel.md).
+
 ## `fluxcore_appearance`
 
-Owns freemode model, components, props, head blend, face features, hair, eyes and overlays. It intentionally does not own an editor UI.
+Owns freemode model, components, props, head blend, face features, hair, eyes
+and overlays. It includes a temporary live-preview editor that opens once for
+new characters and through `/appearance` for existing characters.
 
 Client exports:
 
@@ -145,7 +177,9 @@ Client exports:
 * `SaveAppearance(appearance)`
 * `ResetAppearance()`
 
-The local `fluxcore_appearance:client:openRequested` event supplies current data to an editor. Every save is normalized against server-side ranges.
+The local `fluxcore_appearance:client:openRequested` event supplies current
+data to replacement editors. Every save is normalized against server-side
+ranges. See [Player Experience](player-experience.md).
 
 ## Domain resources
 

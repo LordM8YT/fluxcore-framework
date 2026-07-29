@@ -1,0 +1,13 @@
+{
+  "name": "fluxcore-fuel",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Native fuel consumption and server-authorized refuelling for Fluxcore Framework",
+  "license": "MIT",
+  "scripts": {
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=24"
+  }
+}

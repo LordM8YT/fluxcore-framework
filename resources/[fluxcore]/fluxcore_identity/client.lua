@@ -3,6 +3,9 @@ local RESOURCE_NAME = GetCurrentResourceName()
 local isOpen = false
 local isLoading = false
 local selectedSpawn = 'last'
+local previewCamera = nil
+local previewActive = false
+local originalPosition = nil
 
 local function locale(key, replacements, fallback)
     return exports.fluxcore_core:Locale(key, replacements, fallback)
@@ -57,6 +60,98 @@ local function releaseNuiFocus()
     end
 end
 
+local function destroyPreviewCamera()
+    if previewCamera and DoesCamExist(previewCamera) then
+        RenderScriptCams(false, false, 0, true, true)
+        DestroyCam(previewCamera, false)
+    end
+    previewCamera = nil
+    ClearFocus()
+end
+
+local function restorePreviewPlayer()
+    local ped = PlayerPedId()
+    if ped == 0 or not nativeTrue(DoesEntityExist(ped)) then
+        return
+    end
+    FreezeEntityPosition(ped, false)
+    SetEntityCollision(ped, true, true)
+    SetEntityInvincible(ped, false)
+    SetEntityVisible(ped, true, false)
+    SetPlayerControl(PlayerId(), true, false)
+    if originalPosition then
+        SetEntityCoordsNoOffset(
+            ped,
+            originalPosition.x,
+            originalPosition.y,
+            originalPosition.z,
+            false,
+            false,
+            false
+        )
+        SetEntityHeading(ped, originalPosition.heading)
+    end
+end
+
+local function leavePreview(restorePlayer)
+    destroyPreviewCamera()
+    previewActive = false
+    if restorePlayer then
+        restorePreviewPlayer()
+    end
+    originalPosition = nil
+end
+
+local function enterPreview()
+    local scene = FluxcoreIdentityConfig.preview or {}
+    local position = scene.ped or {}
+    local camera = scene.camera or {}
+    local ped = PlayerPedId()
+    if ped == 0 or not nativeTrue(DoesEntityExist(ped)) then
+        return false
+    end
+
+    local current = GetEntityCoords(ped)
+    originalPosition = {
+        x = current.x,
+        y = current.y,
+        z = current.z,
+        heading = GetEntityHeading(ped)
+    }
+    SetPlayerControl(PlayerId(), false, false)
+    FreezeEntityPosition(ped, true)
+    SetEntityInvincible(ped, true)
+    SetEntityCollision(ped, false, false)
+    SetEntityCoordsNoOffset(
+        ped,
+        tonumber(position.x) or 402.9154,
+        tonumber(position.y) or -996.7597,
+        tonumber(position.z) or -99.0003,
+        false,
+        false,
+        false
+    )
+    SetEntityHeading(ped, tonumber(position.heading) or 180.0)
+    SetEntityVisible(ped, true, false)
+
+    local cameraX = tonumber(camera.x) or 402.9154
+    local cameraY = tonumber(camera.y) or -999.15
+    local cameraZ = tonumber(camera.z) or -98.35
+    RequestCollisionAtCoord(
+        tonumber(position.x) or 402.9154,
+        tonumber(position.y) or -996.7597,
+        tonumber(position.z) or -99.0003
+    )
+    SetFocusPosAndVel(cameraX, cameraY, cameraZ, 0.0, 0.0, 0.0)
+    previewCamera = CreateCam('DEFAULT_SCRIPTED_CAMERA', true)
+    SetCamCoord(previewCamera, cameraX, cameraY, cameraZ)
+    SetCamFov(previewCamera, tonumber(camera.fov) or 34.0)
+    PointCamAtEntity(previewCamera, ped, 0.0, 0.0, 0.55, true)
+    RenderScriptCams(true, false, 0, true, true)
+    previewActive = true
+    return true
+end
+
 local function closeMenu()
     isOpen = false
     isLoading = false
@@ -99,9 +194,12 @@ local function openMenu()
     end
 
     isLoading = true
+    DoScreenFadeOut(0)
     refreshMenu(function(response)
         isLoading = false
         if not response.ok then
+            leavePreview(true)
+            DoScreenFadeIn(300)
             print(('[fluxcore_identity] %s: %s'):format(
                 locale(
                     'identity.errors.openFailed',
@@ -114,9 +212,14 @@ local function openMenu()
             return
         end
 
-        isOpen = true
-        SetNuiFocus(true, true)
-        send('identity:open')
+        CreateThread(function()
+            enterPreview()
+            Wait(350)
+            isOpen = true
+            SetNuiFocus(true, true)
+            send('identity:open')
+            DoScreenFadeIn(500)
+        end)
     end)
 end
 
@@ -223,6 +326,10 @@ AddEventHandler('fluxcore_identity:client:spawnRequested', function(snapshot)
     -- The server can request the spawn before the asynchronous NUI callback
     -- has returned. Close the fullscreen frame here as well so it can never
     -- remain above the game after a successful character selection.
+    DoScreenFadeOut(250)
+    while not nativeTrue(IsScreenFadedOut()) do
+        Wait(0)
+    end
     closeMenu()
 
     local spawn = findSpawn(selectedSpawn)
@@ -232,6 +339,7 @@ AddEventHandler('fluxcore_identity:client:spawnRequested', function(snapshot)
     end
 
     exports.fluxcore_core:SpawnAt(position)
+    leavePreview(false)
     selectedSpawn = 'last'
 end)
 
@@ -248,12 +356,29 @@ CreateThread(function()
         Wait(250)
     end
 
+    DoScreenFadeOut(0)
     Wait(1000)
     openMenu()
+end)
+
+CreateThread(function()
+    while true do
+        if isOpen or isLoading or previewActive then
+            HideHudAndRadarThisFrame()
+            DisableAllControlActions(0)
+            EnableControlAction(0, 1, true)
+            EnableControlAction(0, 2, true)
+            Wait(0)
+        else
+            Wait(500)
+        end
+    end
 end)
 
 AddEventHandler('onResourceStop', function(stoppedResource)
     if stoppedResource == RESOURCE_NAME then
         releaseNuiFocus()
+        leavePreview(true)
+        DoScreenFadeIn(0)
     end
 end)

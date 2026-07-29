@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="no">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Fluxcore Character Creator</title>
+    <style>html,body,#app{background:none!important;background-color:rgba(0,0,0,0)!important}.is-hidden{display:none!important}</style>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <main id="app" class="creator is-hidden">
+        <header>
+            <div><p class="eyebrow">FLUXCORD / IDENTITET</p><h1>Lag karakter</h1></div>
+            <span class="step">Live preview</span>
+        </header>
+        <section class="controls">
+            <label>Modell
+                <select id="model"><option value="mp_m_freemode_01">Mann</option><option value="mp_f_freemode_01">Kvinne</option></select>
+            </label>
+            <div class="row">
+                <label>Ansikt A <input id="shapeFirst" type="range" min="0" max="45"></label>
+                <label>Ansikt B <input id="shapeSecond" type="range" min="0" max="45"></label>
+            </div>
+            <label>Ansiktsmiks <input id="shapeMix" type="range" min="0" max="1" step="0.05"></label>
+            <div class="row">
+                <label>Hud A <input id="skinFirst" type="range" min="0" max="45"></label>
+                <label>Hud B <input id="skinSecond" type="range" min="0" max="45"></label>
+            </div>
+            <label>Hudmiks <input id="skinMix" type="range" min="0" max="1" step="0.05"></label>
+            <div class="row">
+                <label>Hår <input id="hair" type="range" min="0" max="80"></label>
+                <label>Hårfarge <input id="hairColor" type="range" min="0" max="63"></label>
+            </div>
+            <div class="row">
+                <label>Øyne <input id="eyeColor" type="range" min="0" max="31"></label>
+                <label>Skjegg <input id="beard" type="range" min="0" max="29"></label>
+            </div>
+            <div class="row">
+                <label>Overdel <input id="top" type="range" min="0" max="200"></label>
+                <label>Bukse <input id="legs" type="range" min="0" max="160"></label>
+            </div>
+            <label>Sko <input id="shoes" type="range" min="0" max="120"></label>
+        </section>
+        <div class="rotate">
+            <button id="left" type="button" aria-label="Roter venstre">↶</button>
+            <span>Roter karakter</span>
+            <button id="right" type="button" aria-label="Roter høyre">↷</button>
+        </div>
+        <footer>
+            <button id="cancel" class="ghost" type="button">Avbryt</button>
+            <button id="save" class="primary" type="button">Lagre karakter</button>
+        </footer>
+    </main>
+    <script src="app.js"></script>
+</body>
+</html>

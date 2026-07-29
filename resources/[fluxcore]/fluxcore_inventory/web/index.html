@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fluxcore Inventory</title>
+    <style>html,body,#app{background:none!important;background-color:rgba(0,0,0,0)!important}.hidden{display:none!important}</style>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main id="app" class="hidden" aria-label="Inventory">
+      <section class="inventory-shell">
+        <header class="topbar">
+          <div>
+            <span class="eyebrow">Fluxcore</span>
+            <h1>Inventory</h1>
+          </div>
+          <button id="close" class="icon-button" type="button" aria-label="Close">×</button>
+        </header>
+
+        <div class="inventories">
+          <section class="inventory-panel">
+            <div class="panel-heading">
+              <div>
+                <h2 id="player-label">Player inventory</h2>
+                <p id="player-slots">0 slots</p>
+              </div>
+              <span id="player-weight">0 / 0 kg</span>
+            </div>
+            <div class="weight-track"><div id="player-weight-bar"></div></div>
+            <div id="player-grid" class="slot-grid"></div>
+          </section>
+
+          <aside class="actions-panel">
+            <div id="selection" class="selection empty">
+              <span class="selection-icon">•</span>
+              <strong id="selection-label">Select an item</strong>
+              <small id="selection-details">Choose a slot to manage it</small>
+            </div>
+            <label for="amount">Amount</label>
+            <input id="amount" type="number" min="1" step="1" value="1">
+            <button id="use" type="button">Use item</button>
+            <button id="transfer" type="button">Transfer</button>
+            <button id="drop" class="danger" type="button">Drop</button>
+            <p id="feedback" aria-live="polite"></p>
+          </aside>
+
+          <section id="secondary-panel" class="inventory-panel hidden">
+            <div class="panel-heading">
+              <div>
+                <h2 id="secondary-label">Container</h2>
+                <p id="secondary-slots">0 slots</p>
+              </div>
+              <span id="secondary-weight">0 / 0 kg</span>
+            </div>
+            <div class="weight-track"><div id="secondary-weight-bar"></div></div>
+            <div id="secondary-grid" class="slot-grid"></div>
+          </section>
+        </div>
+
+        <footer>
+          <span>Double-click an item to use or transfer it</span>
+          <kbd>ESC</kbd>
+        </footer>
+      </section>
+    </main>
+    <script src="app.js"></script>
+  </body>
+</html>

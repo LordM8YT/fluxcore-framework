@@ -43,6 +43,7 @@ Only the owner mutates a domain:
 | items and containers                             | `fluxcore_inventory`  | inventory server exports         |
 | hunger, thirst and stress                        | `fluxcore_status`     | status server exports            |
 | vehicles and keys                                | `fluxcore_vehicles`   | vehicle server exports           |
+| fuel purchases                                   | `fluxcore_fuel`       | fuel server export               |
 | appearance                                       | `fluxcore_appearance` | appearance exports               |
 | contacts and texts                               | `fluxcore_phone`      | phone request API/server exports |
 

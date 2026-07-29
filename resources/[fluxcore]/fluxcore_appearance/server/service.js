@@ -261,11 +261,13 @@ class AppearanceService {
 
   sync(identifier) {
     const online = this.resolveOnline(identifier);
+    const isNew = !this.database.get(online.characterId);
     const appearance = this.get(online.characterId);
     this.runtime.emitClient(
       online.source,
       'fluxcore_appearance:client:update',
       appearance,
+      isNew,
     );
     return appearance;
   }

@@ -11,8 +11,13 @@ node_version '26'
 
 dependency 'fluxcore_core'
 
+ui_page 'web/index.html'
+
 files {
-    'config/status.json'
+    'config/status.json',
+    'web/index.html',
+    'web/styles.css',
+    'web/app.js'
 }
 
 client_script 'client/main.lua'

@@ -112,6 +112,7 @@ test('client spawning delegates player creation to the Cfx spawnmanager', () => 
 test('Fluxcore NUI pages keep the Enhanced CEF canvas transparent before CSS loads', () => {
   for (const resourceName of [
     'fluxcore_identity',
+    'fluxcore_appearance',
     'fluxcore_admin',
     'fluxcore_phone',
     'fluxcore_interact',
@@ -190,6 +191,113 @@ test('identity closes its NUI before handling the spawn request', () => {
     client,
     /AddEventHandler\('fluxcore_identity:client:spawnRequested',[\s\S]*?closeMenu\(\)[\s\S]*?exports\.fluxcore_core:SpawnAt/u,
   );
+});
+
+test('identity isolates character selection in a scripted preview scene', () => {
+  const client = fs.readFileSync(
+    path.join(resourceRoot, 'fluxcore_identity', 'client.lua'),
+    'utf8',
+  );
+  const config = fs.readFileSync(
+    path.join(resourceRoot, 'fluxcore_identity', 'config.lua'),
+    'utf8',
+  );
+
+  assert.match(config, /preview\s*=\s*\{/u);
+  assert.match(client, /CreateCam\('DEFAULT_SCRIPTED_CAMERA'/u);
+  assert.match(client, /RenderScriptCams\(true/u);
+  assert.match(client, /HideHudAndRadarThisFrame/u);
+  assert.match(client, /SetPlayerControl\(PlayerId\(\), false/u);
+  assert.match(
+    client,
+    /spawnRequested[\s\S]*DoScreenFadeOut[\s\S]*SpawnAt/u,
+  );
+  assert.match(
+    client,
+    /onResourceStop[\s\S]*leavePreview\(true\)[\s\S]*DoScreenFadeIn/u,
+  );
+});
+
+test('inventory owns TAB and suppresses the GTA weapon wheel', () => {
+  const client = fs.readFileSync(
+    path.join(resourceRoot, 'fluxcore_inventory', 'client', 'main.lua'),
+    'utf8',
+  );
+
+  assert.match(client, /RegisterCommand\('\+fluxcore_inventory'/u);
+  assert.match(client, /RegisterCommand\('-fluxcore_inventory'/u);
+  assert.match(
+    client,
+    /RegisterKeyMapping\([\s\S]*?'\+fluxcore_inventory'[\s\S]*?'TAB'/u,
+  );
+  assert.match(client, /DisableControlAction\(0,\s*37,\s*true\)/u);
+  assert.match(client, /DisableControlAction\(1,\s*37,\s*true\)/u);
+  assert.match(client, /DisableControlAction\(2,\s*37,\s*true\)/u);
+  assert.match(client, /BlockWeaponWheelThisFrame\(\)/u);
+  assert.match(client, /HideHudComponentThisFrame\(19\)/u);
+});
+
+test('status replaces the vanilla HUD with a vehicle-only RP minimap', () => {
+  const client = fs.readFileSync(
+    path.join(resourceRoot, 'fluxcore_status', 'client', 'main.lua'),
+    'utf8',
+  );
+
+  assert.match(client, /SetMinimapComponentPosition\(/u);
+  assert.match(client, /SETUP_HEALTH_ARMOUR/u);
+  assert.match(client, /DisplayHud\(false\)/u);
+  assert.match(client, /SetRadarBigmapEnabled\(true,\s*false\)/u);
+  assert.match(
+    client,
+    /DisplayRadar\([\s\S]*?clientConfig\.minimapVehicleOnly[\s\S]*?hudSnapshot\.vehicle ~= nil[\s\S]*?\)/u,
+  );
+  assert.match(client, /HideHudComponentThisFrame\(component\)/u);
+  assert.match(
+    client,
+    /HideHudComponentThisFrame\(component\)[\s\S]*if hudSnapshot then/u,
+  );
+  assert.match(
+    client,
+    /onClientResourceStop[\s\S]*DisplayRadar\(true\)[\s\S]*SetRadarBigmapEnabled\(false,\s*false\)/u,
+  );
+});
+
+test('status disables GTA wanted levels and ambient police dispatch', () => {
+  const client = fs.readFileSync(
+    path.join(resourceRoot, 'fluxcore_status', 'client', 'main.lua'),
+    'utf8',
+  );
+
+  assert.match(client, /SetMaxWantedLevel\(0\)/u);
+  assert.match(client, /SetPoliceIgnorePlayer\(player,\s*true\)/u);
+  assert.match(client, /SetDispatchCopsForPlayer\(player,\s*false\)/u);
+  assert.match(client, /EnableDispatchService\(service,\s*false\)/u);
+  assert.match(client, /ClearPlayerWantedLevel\(player\)/u);
+  assert.match(client, /onClientResourceStop[\s\S]*restoreVanillaPolice\(\)/u);
+});
+
+test('appearance provides a bounded live-preview creator with safe cleanup', () => {
+  const root = path.join(resourceRoot, 'fluxcore_appearance');
+  const manifest = fs.readFileSync(path.join(root, 'fxmanifest.lua'), 'utf8');
+  const client = fs.readFileSync(path.join(root, 'client', 'main.lua'), 'utf8');
+
+  assert.match(manifest, /ui_page 'web\/index\.html'/u);
+  assert.match(client, /RegisterNUICallback\('appearancePreview'/u);
+  assert.match(client, /RegisterNUICallback\('appearanceSave'/u);
+  assert.match(client, /CreateCam\('DEFAULT_SCRIPTED_CAMERA'/u);
+  assert.match(client, /DisableAllControlActions\(0\)/u);
+  assert.match(client, /onResourceStop[\s\S]*closeEditor\(true\)/u);
+});
+
+test('loading screen follows the Cfx progress and manual-shutdown contract', () => {
+  const root = path.join(resourceRoot, 'fluxcore_loading');
+  const manifest = fs.readFileSync(path.join(root, 'fxmanifest.lua'), 'utf8');
+  const app = fs.readFileSync(path.join(root, 'web', 'app.js'), 'utf8');
+
+  assert.match(manifest, /loadscreen 'web\/index\.html'/u);
+  assert.match(manifest, /loadscreen_manual_shutdown 'yes'/u);
+  assert.match(app, /eventName === 'loadProgress'/u);
+  assert.match(app, /loadFraction/u);
 });
 
 test('cross-resource client lifecycle handlers are network-safe', () => {

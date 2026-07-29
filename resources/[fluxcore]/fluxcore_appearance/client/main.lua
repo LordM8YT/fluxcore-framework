@@ -1,6 +1,10 @@
 local appearance = nil
 local hasSpawned = false
 local applying = false
+local editorOpen = false
+local initialCreatorPending = false
+local editorOriginal = nil
+local editorCamera = nil
 
 local function locale(key, replacements, fallback)
     return exports.fluxcore_core:Locale(key, replacements, fallback)
@@ -146,12 +150,66 @@ local function apply(value)
     return true
 end
 
-RegisterNetEvent('fluxcore_appearance:client:update', function(value)
+local function closeEditor(restore)
+    if not editorOpen then
+        return
+    end
+    editorOpen = false
+    SetNuiFocus(false, false)
+    SendNUIMessage({ action = 'appearance:close' })
+    if editorCamera and DoesCamExist(editorCamera) then
+        RenderScriptCams(false, true, 250, true, true)
+        DestroyCam(editorCamera, false)
+    end
+    editorCamera = nil
+    FreezeEntityPosition(PlayerPedId(), false)
+    if restore and editorOriginal then
+        apply(editorOriginal)
+    end
+    editorOriginal = nil
+end
+
+local function openEditor()
+    if editorOpen or not hasSpawned or not appearance then
+        return false
+    end
+    editorOpen = true
+    editorOriginal = copy(appearance)
+    local ped = PlayerPedId()
+    FreezeEntityPosition(ped, true)
+    editorCamera = CreateCam('DEFAULT_SCRIPTED_CAMERA', true)
+    local coords = GetEntityCoords(ped)
+    local forward = GetEntityForwardVector(ped)
+    SetCamCoord(
+        editorCamera,
+        coords.x + forward.x * 2.15,
+        coords.y + forward.y * 2.15,
+        coords.z + 0.65
+    )
+    PointCamAtEntity(editorCamera, ped, 0.0, 0.0, 0.55, true)
+    SetCamFov(editorCamera, 36.0)
+    RenderScriptCams(true, true, 300, true, true)
+    SetNuiFocus(true, true)
+    SendNUIMessage({
+        action = 'appearance:open',
+        appearance = copy(appearance)
+    })
+    TriggerEvent('fluxcore_appearance:client:openRequested', copy(appearance))
+    return true
+end
+
+RegisterNetEvent('fluxcore_appearance:client:update', function(value, isNew)
     appearance = copy(value)
+    initialCreatorPending = initialCreatorPending or isNew == true
     TriggerEvent('fluxcore_appearance:client:updated', copy(value))
     if hasSpawned then
         CreateThread(function()
             apply(appearance)
+            if initialCreatorPending then
+                initialCreatorPending = false
+                Wait(350)
+                openEditor()
+            end
         end)
     end
 end)
@@ -168,8 +226,10 @@ RegisterNetEvent('Fluxcore:client:playerLoaded', function()
 end)
 
 RegisterNetEvent('Fluxcore:client:playerLoggedOut', function()
+    closeEditor(false)
     hasSpawned = false
     appearance = nil
+    initialCreatorPending = false
 end)
 
 AddEventHandler('playerSpawned', function()
@@ -178,6 +238,11 @@ AddEventHandler('playerSpawned', function()
         Wait(100)
         if appearance then
             apply(appearance)
+            if initialCreatorPending then
+                initialCreatorPending = false
+                Wait(350)
+                openEditor()
+            end
         else
             TriggerServerEvent('fluxcore_appearance:server:request')
         end
@@ -193,13 +258,30 @@ RegisterCommand('appearance', function()
         ), 'error')
         return
     end
-    TriggerEvent('fluxcore_appearance:client:openRequested', copy(appearance))
-    message(locale(
-        'appearance.editorHook',
-        nil,
-        'Appearance editor hook opened. No editor UI is installed yet.'
-    ))
+    openEditor()
 end, false)
+
+RegisterNUICallback('appearancePreview', function(value, callback)
+    callback({ ok = apply(value) })
+end)
+
+RegisterNUICallback('appearanceSave', function(value, callback)
+    appearance = copy(value)
+    TriggerServerEvent('fluxcore_appearance:server:save', value)
+    closeEditor(false)
+    callback({ ok = true })
+end)
+
+RegisterNUICallback('appearanceCancel', function(_, callback)
+    closeEditor(true)
+    callback({ ok = true })
+end)
+
+RegisterNUICallback('appearanceRotate', function(data, callback)
+    local amount = tonumber(type(data) == 'table' and data.amount) or 0.0
+    SetEntityHeading(PlayerPedId(), GetEntityHeading(PlayerPedId()) + amount)
+    callback({ ok = true })
+end)
 
 RegisterCommand('resetappearance', function()
     TriggerServerEvent('fluxcore_appearance:server:reset')
@@ -231,5 +313,23 @@ CreateThread(function()
         and exports.fluxcore_core:IsLoggedIn() then
         hasSpawned = nativeTrue(DoesEntityExist(PlayerPedId()))
         TriggerServerEvent('fluxcore_appearance:server:request')
+    end
+end)
+
+CreateThread(function()
+    while true do
+        if editorOpen then
+            DisableAllControlActions(0)
+            HideHudAndRadarThisFrame()
+            Wait(0)
+        else
+            Wait(500)
+        end
+    end
+end)
+
+AddEventHandler('onResourceStop', function(stoppedResource)
+    if stoppedResource == GetCurrentResourceName() then
+        closeEditor(true)
     end
 end)

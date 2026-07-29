@@ -48,6 +48,24 @@
       "weight": 50,
       "stackable": false,
       "maxStack": 1
+    },
+    "fuel_can": {
+      "label": "Fuel Can",
+      "weight": 3000,
+      "stackable": false,
+      "maxStack": 1
+    },
+    "weapon_pistol": {
+      "label": "Pistol",
+      "weight": 1200,
+      "stackable": false,
+      "maxStack": 1
+    },
+    "pistol_ammo": {
+      "label": "Pistol Ammo",
+      "weight": 15,
+      "stackable": true,
+      "maxStack": 100
     }
   }
 }

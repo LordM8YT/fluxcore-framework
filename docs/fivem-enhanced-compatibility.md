@@ -160,6 +160,26 @@ Fluxcore's dependency-free target follows the proven camera strategy used by
 `ox_target`: final-rendered camera coordinates/rotation, trace flags `511` and
 `26`, ignore flags `4`, and waiting for the asynchronous result to finish.
 
+## Native fuel consumption
+
+- FiveM does not consume vehicle fuel by default. Enable it client-side with
+  `SetFuelConsumptionState(true)`.
+- Set the server's chosen global rate through
+  `SetFuelConsumptionRateMultiplier`; do not simulate consumption with an idle
+  frame loop.
+- Check `DoesVehicleUseFuel` before offering a purchase. Read and apply fuel
+  with `GetVehicleFuelLevel` and `SetVehicleFuelLevel`.
+- Cfx supplies consumption natives, not fuel stations or payment logic.
+  Fluxcore owns station configuration and server-validates the driver, network
+  entity, distance, quantity and wallet.
+- Reapply native state during direct client bootstrap after a fuel resource
+  restart. Station target registration must also recover after
+  `fluxcore_interact` restarts.
+
+Live reference:
+
+- [Cfx fuel consumption guide](https://docs.fivem.net/docs/scripting-manual/using-new-game-features/fuel-consumption/)
+
 ## txAdmin and diagnostics
 
 - A running server resource does not prove its client registered targets or its

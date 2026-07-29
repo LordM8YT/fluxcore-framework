@@ -28,12 +28,17 @@ Use `setr` for locale because clients must receive it. See [Localization](locali
 Start the core before every resource that consumes its exports:
 
 ```cfg
+setr sv_showBusySpinnerOnLoadingScreen false
+
+ensure fluxcore_loading
 ensure fluxcore_core
+ensure fluxcore_interact
 ensure fluxcore_status
 ensure fluxcore_jobs
 ensure fluxcore_inventory
 ensure fluxcore_banking
 ensure fluxcore_vehicles
+ensure fluxcore_fuel
 ensure fluxcore_appearance
 ensure fluxcore_businesses
 ensure fluxcore_services
@@ -53,10 +58,12 @@ The manifests also declare dependencies, but explicit order keeps boot output pr
 | Resource              | Main configuration                           |
 | --------------------- | -------------------------------------------- |
 | `fluxcore_identity`   | `config.lua`                                 |
+| `fluxcore_loading`    | bundled `web/` files                         |
 | `fluxcore_jobs`       | `config/jobs.json`                           |
 | `fluxcore_inventory`  | `config/items.json`, `config/ui.json`        |
 | `fluxcore_status`     | `config/status.json`                         |
 | `fluxcore_vehicles`   | `config/vehicles.json`                       |
+| `fluxcore_fuel`       | `config/fuel.json`                           |
 | `fluxcore_appearance` | `config/appearance.json`                     |
 | `fluxcore_banking`    | `fluxcore_banking/config/banking.json`       |
 | `fluxcore_businesses` | `fluxcore_businesses/config/businesses.json` |
@@ -69,6 +76,10 @@ The manifests also declare dependencies, but explicit order keeps boot output pr
 | `fluxcore_phone`      | `config/phone.json`                          |
 
 Restart the owning resource after changing a configuration file.
+
+`fluxcore_status/config/status.json` also controls `disableVanillaHud`,
+`disableVanillaPolice` and `minimapVehicleOnly`. See
+[Player Experience](player-experience.md).
 
 Base-map coordinates are defaults. Server owners can replace them for their MLOs.
 
@@ -120,6 +131,10 @@ The visual inventory is disabled until an implementation that follows `fluxcore.
 ## Vehicles and garages
 
 Garages live in `fluxcore_vehicles/config/vehicles.json`. Each garage declares coordinates, accepted vehicle types and optional blip data. The default public parking locations use accessible base-map exteriors and require no MLO.
+
+## Fuel
+
+Fuel stations, station radii, price, currency and consumption multiplier live in `fluxcore_fuel/config/fuel.json`. Prices are whole currency units per liter. The server validates the driver, network entity, station distance, quantity and wallet before approving a purchase.
 
 ## Phone
 

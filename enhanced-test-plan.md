@@ -56,6 +56,8 @@ Stop on the first resource error. Later dependency failures are usually noise.
 With player A:
 
 * Connect and open character selection.
+* Confirm the world and previous player location never flash before selection;
+  only the isolated preview studio, local ped and bounded identity UI render.
 * Create characters in two slots.
 * Select each character.
 * Test every configured spawn.
@@ -63,6 +65,17 @@ With player A:
 * Log out and switch character.
 * Delete a character with exact confirmation.
 * Restart the server and verify deletion persists.
+* Restart `fluxcore_identity` while logged out and confirm camera, focus,
+  frozen controls and radar recover after the next spawn.
+- Enter and leave a vehicle: the compact RP minimap should appear only in the
+  vehicle, with vanilla GTA HUD components and weapon wheel absent.
+- Fire a weapon near ambient NPCs and confirm no wanted stars, dispatch calls,
+  or vanilla police response is created; only Fluxcore RP dispatch may react.
+- Create a fresh character and confirm the appearance creator opens once after
+  spawn, previews changes live, saves persistently, and Escape restores the
+  original appearance.
+- Reconnect from a cold client and confirm the Fluxcord loading screen tracks
+  real Cfx load progress, then yields cleanly to identity without a black frame.
 
 Player B must not select or delete player A's character.
 {% endstep %}
@@ -138,6 +151,28 @@ Verify:
 * storage through the garage marker
 * rejected remote operations
 * shared and revoked keys
+{% endstep %}
+
+{% step %}
+## Fuel
+
+With an owned vehicle and enough cash:
+
+* drive to two different configured stations
+* use left Alt on a pump, take the hose, then use left Alt on a vehicle and
+  select `Refuel vehicle`
+* confirm the nozzle prop is cleaned up when returned, when moving too far
+  away, and when the resource stops
+* buy a fuel can, confirm it appears in inventory, use it on a vehicle away
+  from the station, and confirm the item is consumed exactly once
+* verify the mouse controls the target UI rather than the gameplay camera
+* buy a partial amount and then use `/refuel full`
+* confirm the exact wallet deduction and fuel increase
+* verify consumption while driving and no consumption for unsupported vehicles
+* reject a remote player, remote station, invalid amount and insufficient funds
+* store and respawn the vehicle through a garage and confirm its fuel level persists
+* restart `fluxcore_interact` and confirm station targets register again
+* restart `fluxcore_fuel` and confirm consumption and targets recover
 {% endstep %}
 
 {% step %}
