@@ -56,7 +56,7 @@ body { color: var(--text); }
 
 .status-panel {
   position: fixed;
-  bottom: 2rem;
+  bottom: 3.5rem;
   left: 1.7rem;
   display: flex;
   gap: 0.55rem;
@@ -99,8 +99,8 @@ body { color: var(--text); }
 
 .vehicle-panel {
   position: fixed;
-  right: 2rem;
-  bottom: 2rem;
+  bottom: 8.25rem;
+  left: 18rem;
   display: grid;
   width: 25rem;
   grid-template-columns: 7.4rem 1fr;
@@ -147,6 +147,6 @@ body { color: var(--text); }
 
 @media (max-width: 800px) {
   .player-panel { top: 1rem; right: 1rem; }
-  .vehicle-panel { right: 1rem; bottom: 1rem; }
-  .status-panel { bottom: 1rem; left: 1rem; }
+  .vehicle-panel { bottom: 7rem; left: 15rem; width: 22rem; }
+  .status-panel { bottom: 3rem; left: 1rem; }
 }
