@@ -2,6 +2,7 @@
 
 * [Fluxcore Framework](README.md)
 * [Interactions and Shared UI](interactions-and-shared-ui.md)
+* [Player Experience](player-experience.md)
 * [Contributing](contributing.md)
 * [Architecture](architecture.md)
 * [Configuration](configuration.md)
@@ -17,6 +18,7 @@
 * [Resources](resources.md)
 * [Troubleshooting](troubleshooting.md)
 * [UI Contracts](ui-contracts.md)
+* [Fuel](fuel.md)
 * [Banking](banking.md)
 * [Businesses](businesses.md)
 * [Services and Invoicing](services-and-invoicing.md)

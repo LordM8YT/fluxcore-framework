@@ -1,6 +1,29 @@
 local needs = nil
 local playerData = nil
 local lastSnapshotJson = nil
+local hudSnapshot = nil
+local minimapConfigured = false
+local minimapScaleform = nil
+
+local clientConfig = {
+    disableVanillaHud = true,
+    disableVanillaPolice = true,
+    minimapVehicleOnly = true
+}
+
+do
+    local raw = LoadResourceFile(GetCurrentResourceName(), 'config/status.json')
+    if raw then
+        local ok, parsed = pcall(json.decode, raw)
+        if ok and type(parsed) == 'table' then
+            clientConfig.disableVanillaHud = parsed.disableVanillaHud ~= false
+            clientConfig.disableVanillaPolice =
+                parsed.disableVanillaPolice ~= false
+            clientConfig.minimapVehicleOnly =
+                parsed.minimapVehicleOnly ~= false
+        end
+    end
+end
 
 local function locale(key, replacements, fallback)
     return exports.fluxcore_core:Locale(key, replacements, fallback)
@@ -137,9 +160,92 @@ local function publishHud(force)
     local encoded = snapshot and json.encode(snapshot) or ''
     if force or encoded ~= lastSnapshotJson then
         lastSnapshotJson = encoded
+        hudSnapshot = copy(snapshot)
         TriggerEvent('fluxcore_status:client:hudUpdated', copy(snapshot))
+        if snapshot then
+            SendNUIMessage({
+                action = 'fluxcore:hud:bootstrap',
+                payload = snapshot
+            })
+        else
+            SendNUIMessage({ action = 'fluxcore:hud:close' })
+        end
     end
     return snapshot
+end
+
+local function configureMinimap()
+    minimapScaleform = RequestScaleformMovie('minimap')
+    local deadline = GetGameTimer() + 5000
+    while not nativeTrue(HasScaleformMovieLoaded(minimapScaleform))
+        and GetGameTimer() < deadline do
+        Wait(0)
+    end
+    if nativeTrue(HasScaleformMovieLoaded(minimapScaleform)) then
+        BeginScaleformMovieMethod(minimapScaleform, 'SETUP_HEALTH_ARMOUR')
+        ScaleformMovieMethodAddParamInt(3)
+        EndScaleformMovieMethod()
+    end
+    SetMinimapComponentPosition(
+        'minimap',
+        'L',
+        'B',
+        -0.0045,
+        -0.022,
+        0.150,
+        0.188888
+    )
+    SetMinimapComponentPosition(
+        'minimap_mask',
+        'L',
+        'B',
+        0.020,
+        0.032,
+        0.111,
+        0.159
+    )
+    SetMinimapComponentPosition(
+        'minimap_blur',
+        'L',
+        'B',
+        -0.030,
+        0.022,
+        0.266,
+        0.237
+    )
+    SetRadarBigmapEnabled(true, false)
+    Wait(50)
+    SetRadarBigmapEnabled(false, false)
+    minimapConfigured = true
+end
+
+local function disableVanillaPolice()
+    local player = PlayerId()
+    SetMaxWantedLevel(0)
+    SetPoliceIgnorePlayer(player, true)
+    SetDispatchCopsForPlayer(player, false)
+    ClearPlayerWantedLevel(player)
+    SetPlayerWantedLevel(player, 0, false)
+    SetPlayerWantedLevelNow(player, false)
+    SetCreateRandomCops(false)
+    SetCreateRandomCopsNotOnScenarios(false)
+    SetCreateRandomCopsOnScenarios(false)
+    for service = 1, 15 do
+        EnableDispatchService(service, false)
+    end
+end
+
+local function restoreVanillaPolice()
+    local player = PlayerId()
+    SetMaxWantedLevel(5)
+    SetPoliceIgnorePlayer(player, false)
+    SetDispatchCopsForPlayer(player, true)
+    SetCreateRandomCops(true)
+    SetCreateRandomCopsNotOnScenarios(true)
+    SetCreateRandomCopsOnScenarios(true)
+    for service = 1, 15 do
+        EnableDispatchService(service, true)
+    end
 end
 
 RegisterNetEvent('fluxcore_status:client:update', function(snapshot)
@@ -161,7 +267,67 @@ RegisterNetEvent('Fluxcore:client:playerLoggedOut', function()
     needs = nil
     playerData = nil
     lastSnapshotJson = nil
+    hudSnapshot = nil
     TriggerEvent('fluxcore_status:client:hudUpdated', nil)
+    SendNUIMessage({ action = 'fluxcore:hud:close' })
+end)
+
+CreateThread(function()
+    local hiddenComponents = {
+        1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
+        12, 13, 15, 16, 17, 18, 19, 20, 21, 22
+    }
+    while true do
+        if clientConfig.disableVanillaHud then
+            DisplayHud(false)
+            for _, component in ipairs(hiddenComponents) do
+                HideHudComponentThisFrame(component)
+            end
+            DisplayAmmoThisFrame(false)
+        end
+        if hudSnapshot then
+            if not minimapConfigured then
+                configureMinimap()
+            end
+            DisplayRadar(
+                not clientConfig.minimapVehicleOnly
+                    or hudSnapshot.vehicle ~= nil
+            )
+        else
+            DisplayRadar(false)
+        end
+        Wait(0)
+    end
+end)
+
+CreateThread(function()
+    if not clientConfig.disableVanillaPolice then
+        return
+    end
+    disableVanillaPolice()
+    while true do
+        local player = PlayerId()
+        if GetPlayerWantedLevel(player) ~= 0 then
+            ClearPlayerWantedLevel(player)
+            SetPlayerWantedLevel(player, 0, false)
+            SetPlayerWantedLevelNow(player, false)
+        end
+        Wait(1000)
+    end
+end)
+
+AddEventHandler('onClientResourceStop', function(stoppedResource)
+    if stoppedResource == GetCurrentResourceName() then
+        DisplayHud(true)
+        DisplayRadar(true)
+        SetRadarBigmapEnabled(false, false)
+        if minimapScaleform then
+            SetScaleformMovieAsNoLongerNeeded(minimapScaleform)
+        end
+        if clientConfig.disableVanillaPolice then
+            restoreVanillaPolice()
+        end
+    end
 end)
 
 exports('GetStatus', function()

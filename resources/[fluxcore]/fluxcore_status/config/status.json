@@ -1,6 +1,9 @@
 {
   "databaseFile": "data/status.sqlite",
   "tickIntervalMs": 60000,
+  "disableVanillaHud": true,
+  "disableVanillaPolice": true,
+  "minimapVehicleOnly": true,
   "needs": {
     "hunger": {
       "default": 100,

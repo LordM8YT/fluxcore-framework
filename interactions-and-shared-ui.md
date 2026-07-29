@@ -32,6 +32,10 @@ The standard txAdmin recipe already uses this order.
 
 The bundled HTML, CSS, and JavaScript are intentionally basic. Frontend contributors may replace the files under `web/` without changing gameplay code as long as UI contract v1 remains compatible.
 
+`fluxcore_ui` uses this basic layer as a temporary renderer for banking,
+businesses, dispatch, MDT, properties, services, and world bootstrap data. The
+domain resources remain the only owners of database reads and mutations.
+
 ### Register a zone
 
 ```lua

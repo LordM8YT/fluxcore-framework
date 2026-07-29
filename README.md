@@ -28,12 +28,15 @@ Fluxcore is an independent, Enhanced-first roleplay framework for FiveM. It is b
 | --------------------- | ------------------------------------------------------------------------ |
 | `fluxcore_core`       | accounts, characters, sessions, money, metadata, active job and position |
 | `fluxcore_interact`   | shared zones, entity interactions, menus, dialogs, notifications, and progress actions |
+| `fluxcore_loading`    | Fluxcord loading screen with real Cfx loading progress                    |
+| `fluxcore_ui`         | temporary data-driven menus for domains awaiting their replacement frontend |
 | `fluxcore_identity`   | character selection, creation, deletion and spawning                     |
 | `fluxcore_jobs`       | persistent job assignments, grades, duty and permissions                 |
 | `fluxcore_inventory`  | server-authoritative items, containers and world drops                   |
-| `fluxcore_status`     | persistent needs and a versioned HUD data provider                       |
+| `fluxcore_status`     | persistent needs, Fluxcord HUD, RP minimap and vanilla police suppression |
 | `fluxcore_vehicles`   | ownership, keys, public garages, locks and trunks                        |
-| `fluxcore_appearance` | persistent freemode appearance                                           |
+| `fluxcore_fuel`       | native consumption and server-validated fuel purchases                  |
+| `fluxcore_appearance` | persistent freemode appearance and temporary live-preview editor          |
 | `fluxcore_banking`    | stable accounts, money movements and statements                          |
 | `fluxcore_businesses` | companies, roles, permissions, treasuries and audit                      |
 | `fluxcore_services`   | on-duty rosters and secure personal and business invoices                |
@@ -45,7 +48,12 @@ Fluxcore is an independent, Enhanced-first roleplay framework for FiveM. It is b
 | `fluxcore_phone`      | phone numbers, contacts and offline text messaging                       |
 | `fluxcore_example`    | temporary examples for the public API                                    |
 
-Read the domain references for [Interactions and Shared UI](interactions-and-shared-ui.md), [Banking](banking.md), [Businesses](businesses.md), [Services and Invoicing](services-and-invoicing.md), [Dispatch](dispatch.md), [MDT](mdt.md), [Properties](properties.md), and [World](world.md).
+Read [Player Experience](player-experience.md) for loading, characters,
+inventory controls, HUD, minimap and RP police behavior. Domain references
+cover [Interactions and Shared UI](interactions-and-shared-ui.md),
+[Fuel](fuel.md), [Banking](banking.md), [Businesses](businesses.md),
+[Services and Invoicing](services-and-invoicing.md), [Dispatch](dispatch.md),
+[MDT](mdt.md), [Properties](properties.md), and [World](world.md).
 
 ## Design principles
 

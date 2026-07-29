@@ -107,12 +107,17 @@ Add a real `sv_licenseKey` only to that external configuration.
 Keep the documented resource order:
 
 ```cfg
+setr sv_showBusySpinnerOnLoadingScreen false
+
+ensure fluxcore_loading
 ensure fluxcore_core
+ensure fluxcore_interact
 ensure fluxcore_status
 ensure fluxcore_jobs
 ensure fluxcore_inventory
 ensure fluxcore_banking
 ensure fluxcore_vehicles
+ensure fluxcore_fuel
 ensure fluxcore_appearance
 ensure fluxcore_businesses
 ensure fluxcore_services

@@ -49,8 +49,8 @@ function harness(t) {
     directory,
   );
   const service = new AppearanceService(database, config, core, {
-    emitClient(source, eventName, payload) {
-      events.push({ source, eventName, payload });
+    emitClient(source, eventName, ...args) {
+      events.push({ source, eventName, payload: args[0], args });
     },
   });
   t.after(() => {
@@ -102,6 +102,7 @@ test('gender default, save, reset, sync, and cleanup persist', (t) => {
   assert.equal(saved.hairColor, 4);
   service.sync(7);
   assert.equal(events.at(-1).eventName, 'fluxcore_appearance:client:update');
+  assert.equal(events.at(-1).args[1], false);
 
   const reset = service.reset(7);
   assert.equal(reset.model, 'mp_f_freemode_01');

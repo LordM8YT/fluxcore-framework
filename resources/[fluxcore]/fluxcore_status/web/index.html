@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fluxcore HUD</title>
+    <style>html,body,#app{background:none!important;background-color:rgba(0,0,0,0)!important}.hidden{display:none!important}</style>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main id="app" class="hidden" aria-label="Fluxcore HUD">
+      <section id="player" class="player-panel">
+        <strong id="player-name">Player</strong>
+        <span id="job">Unemployed</span>
+        <div id="money" class="money">
+          <span>Cash <b id="cash">$0</b></span>
+          <span>Bank <b id="bank">$0</b></span>
+        </div>
+      </section>
+
+      <section class="status-panel" aria-label="Player status">
+        <div class="status health" title="Health"><span>♥</span><b id="health">100</b></div>
+        <div id="armor-item" class="status armor" title="Armor"><span>◆</span><b id="armor">0</b></div>
+        <div class="status hunger" title="Hunger"><span>●</span><b id="hunger">100</b></div>
+        <div class="status thirst" title="Thirst"><span>◆</span><b id="thirst">100</b></div>
+        <div class="status stress" title="Stress"><span>ϟ</span><b id="stress">0</b></div>
+      </section>
+
+      <section id="vehicle" class="vehicle-panel hidden" aria-label="Vehicle status">
+        <div class="speed"><small>SPEED</small><b id="speed">0</b><span id="speed-unit">KM/H</span></div>
+        <div class="vehicle-data">
+          <span>GEAR <b id="gear">N</b></span>
+          <span>FUEL <b id="fuel">0%</b></span>
+          <span>ENGINE <b id="engine">100%</b></span>
+          <span id="plate">PLATE</span>
+        </div>
+        <div class="rpm-track"><div id="rpm"></div></div>
+      </section>
+    </main>
+    <script src="app.js"></script>
+  </body>
+</html>

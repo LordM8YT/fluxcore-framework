@@ -305,13 +305,35 @@ RegisterNUICallback('inventoryRequest', function(data, callback)
     request(method, payload, callback)
 end)
 
-RegisterCommand('inventory', function()
+local function openInventory()
+    if uiOpen then
+        closeInventory(true)
+        return
+    end
     request('bootstrap', {}, function(response)
         if response and response.ok then
             present(response.data)
         end
     end)
+end
+
+RegisterCommand('inventory', function()
+    openInventory()
 end, false)
+
+RegisterCommand('+fluxcore_inventory', function()
+    openInventory()
+end, false)
+
+RegisterCommand('-fluxcore_inventory', function()
+end, false)
+
+RegisterKeyMapping(
+    '+fluxcore_inventory',
+    'Åpne inventory',
+    'keyboard',
+    'TAB'
+)
 
 RegisterCommand('invslot', function(_, args)
     if not args[1] or not args[2] then
@@ -460,6 +482,21 @@ CreateThread(function()
             end
         end
         Wait(sleep)
+    end
+end)
+
+CreateThread(function()
+    while true do
+        DisableControlAction(0, 37, true)
+        DisableControlAction(1, 37, true)
+        DisableControlAction(2, 37, true)
+        DisableControlAction(0, 14, true)
+        DisableControlAction(0, 15, true)
+        DisableControlAction(0, 16, true)
+        DisableControlAction(0, 17, true)
+        BlockWeaponWheelThisFrame()
+        HideHudComponentThisFrame(19)
+        Wait(0)
     end
 end)
 

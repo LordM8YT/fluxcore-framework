@@ -47,3 +47,32 @@ test('HUD and phone mocks contain only owner-facing public shapes', () => {
   assert.match(phone.account.phoneNumber, /^\d+$/u);
   assert.equal(phone.conversations[0].lastMessage.readAt, null);
 });
+
+test('status resource renders HUD v1 and restores the vanilla radar on stop', () => {
+  const statusRoot = path.resolve(
+    __dirname,
+    '..',
+    '..',
+    'resources',
+    '[fluxcore]',
+    'fluxcore_status',
+  );
+  const manifest = fs.readFileSync(
+    path.join(statusRoot, 'fxmanifest.lua'),
+    'utf8',
+  );
+  const client = fs.readFileSync(
+    path.join(statusRoot, 'client', 'main.lua'),
+    'utf8',
+  );
+  const frontend = fs.readFileSync(
+    path.join(statusRoot, 'web', 'app.js'),
+    'utf8',
+  );
+
+  assert.match(manifest, /ui_page 'web\/index\.html'/u);
+  assert.match(client, /action = 'fluxcore:hud:bootstrap'/u);
+  assert.match(client, /HideHudComponentThisFrame/u);
+  assert.match(client, /onClientResourceStop[\s\S]*DisplayRadar\(true\)/u);
+  assert.match(frontend, /fluxcore:hud:bootstrap/u);
+});

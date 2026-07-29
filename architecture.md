@@ -59,6 +59,7 @@ NUI frontends do not access databases or framework exports. The owning client re
 | `fluxcore_inventory`  | containers, items, transfers and world drops                           |
 | `fluxcore_status`     | persistent needs                                                       |
 | `fluxcore_vehicles`   | owned vehicles and keys                                                |
+| `fluxcore_fuel`       | fuel purchase validation; vehicle fuel remains native entity state    |
 | `fluxcore_appearance` | freemode appearance                                                    |
 | `fluxcore_admin`      | administration audit                                                   |
 | `fluxcore_phone`      | numbers, contacts, messages and read state                             |

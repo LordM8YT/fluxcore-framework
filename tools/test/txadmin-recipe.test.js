@@ -65,6 +65,7 @@ test('generated server config exposes every txAdmin placeholder', () => {
 
 test('Fluxcore resources start after core in dependency order', () => {
   const expected = [
+    'ensure fluxcore_loading',
     'ensure fluxcore_core',
     'ensure fluxcore_interact',
     'ensure fluxcore_status',
@@ -72,6 +73,7 @@ test('Fluxcore resources start after core in dependency order', () => {
     'ensure fluxcore_inventory',
     'ensure fluxcore_banking',
     'ensure fluxcore_vehicles',
+    'ensure fluxcore_fuel',
     'ensure fluxcore_appearance',
     'ensure fluxcore_businesses',
     'ensure fluxcore_services',

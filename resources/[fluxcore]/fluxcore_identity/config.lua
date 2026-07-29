@@ -2,6 +2,20 @@ FluxcoreIdentityConfig = {
     titleKey = 'identity.title',
     subtitleKey = 'identity.subtitle',
     allowDelete = true,
+    preview = {
+        ped = {
+            x = 402.9154,
+            y = -996.7597,
+            z = -99.0003,
+            heading = 180.0
+        },
+        camera = {
+            x = 402.9154,
+            y = -999.15,
+            z = -98.35,
+            fov = 34.0
+        }
+    },
     spawns = {
         {
             id = 'last',
