@@ -19,8 +19,11 @@ test('voice resource uses the guarded Enhanced internal voice API', () => {
   assert.match(server, /type\(CreateVoiceChannel\) == 'function'/u);
   assert.match(server, /pcall\(\s*CreateVoiceChannel/u);
   assert.match(server, /pcall\(AddPlayerToVoiceChannel,\s*channel,\s*id\)/u);
-  assert.match(server, /pcall\(RemovePlayerFromVoiceChannel,\s*proximityChannel,\s*id\)/u);
-  assert.match(server, /pcall\(DeleteVoiceChannel,\s*proximityChannel\)/u);
+  assert.match(server, /SetPlayerMutedInVoiceChannel/u);
+  assert.match(server, /pcall\(RemovePlayerFromVoiceChannel,\s*channel,\s*id\)/u);
+  assert.match(server, /pcall\(DeleteVoiceChannel,\s*channel\)/u);
+  assert.match(server, /fluxcore_voice:server:cycleProximity/u);
+  assert.match(server, /now - \(lastCycleAt\[playerSource\] or 0\) < 500/u);
   assert.doesNotMatch(server, /AddEventHandler\('playerJoining'/u);
   assert.match(server, /AddEventHandler\('playerDropped'/u);
   assert.match(server, /AddEventHandler\('Fluxcore:server:playerLoaded'/u);
@@ -33,11 +36,14 @@ test('voice client exports bounded, Enhanced-compatible talking state', () => {
   const client = read('client', 'main.lua');
   const config = JSON.parse(read('config', 'voice.json'));
 
-  assert.ok(config.proximityDistance >= 1 && config.proximityDistance <= 100);
+  assert.deepEqual(config.proximityDistances, [3, 8, 15]);
+  assert.equal(config.defaultProximityIndex, 2);
   assert.ok(config.talkingPollMs >= 50 && config.talkingPollMs <= 1000);
   assert.match(client, /NetworkIsPlayerTalking\(PlayerId\(\)\)/u);
   assert.match(client, /ready[\s\S]*talkingValue == true or talkingValue == 1/u);
   assert.match(client, /exports\('GetVoiceState'/u);
   assert.match(client, /fluxcore_voice:client:stateChanged/u);
   assert.match(client, /snapshot and snapshot\.ready ~= false/u);
+  assert.match(client, /RegisterKeyMapping\([\s\S]*'\+fluxcore_voice_distance'[\s\S]*'GRAVE'/u);
+  assert.match(client, /fluxcore_voice:server:cycleProximity/u);
 });

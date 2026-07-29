@@ -18,6 +18,22 @@ do
     end
 end
 
+RegisterCommand('+fluxcore_voice_distance', function()
+    if ready then
+        TriggerServerEvent('fluxcore_voice:server:cycleProximity')
+    end
+end, false)
+
+RegisterCommand('-fluxcore_voice_distance', function()
+end, false)
+
+RegisterKeyMapping(
+    '+fluxcore_voice_distance',
+    'Cycle Fluxcore voice distance',
+    'keyboard',
+    'GRAVE'
+)
+
 RegisterNetEvent('fluxcore_voice:client:ready', function(snapshot)
     ready = snapshot and snapshot.ready ~= false
     voiceState = ready and snapshot or nil

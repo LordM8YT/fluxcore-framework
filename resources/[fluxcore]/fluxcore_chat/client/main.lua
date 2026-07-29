@@ -167,7 +167,7 @@ RegisterCommand('controls', function()
         'T chat | TAB inventory | 1-5 hotbar | X cancel emote',
         'LEFT ALT target and interact',
         'L vehicle lock | G engine | B seatbelt',
-        '/hud HUD toggle | /voice voice status | /logout characters'
+        'GRAVE voice range | /voice status | /hud HUD | /logout characters'
     }) do
         addMessage({ type = 'system', author = 'Controls', text = text })
     end

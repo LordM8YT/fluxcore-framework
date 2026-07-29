@@ -165,6 +165,7 @@ Verify:
 * shared and revoked keys
 * `G` engine toggle rejects non-drivers and players without a key
 * `B` seatbelt blocks exit, updates the HUD and clears after death/exit
+* `GRAVE` cycles voice through 3, 8 and 15 meters while `B` remains seatbelt
 {% endstep %}
 
 {% step %}

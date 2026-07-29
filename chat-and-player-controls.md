@@ -67,3 +67,6 @@ death, logout or resource restart.
 Proximity voice activates only after character selection and leaves the
 channel on logout. The HUD microphone turns green while the local player is
 talking.
+
+Press `GRAVE` (backtick) to cycle voice range between 3, 8 and 15 meters.
+Seatbelt remains mapped to `B`.
