@@ -85,6 +85,9 @@ Fluxcore rules:
 - A viewport-sized root may paint nothing and capture no pointer input.
   Opaque backgrounds belong only on bounded panels.
 - Hide panels in initial HTML and open them only after an explicit message.
+- A manual loading screen owns hidden cursor focus until
+  `ShutdownLoadingScreenNui()` runs. Shut it down before a character-selection
+  NUI calls `SetNuiFocus(true, true)`, then position the cursor explicitly.
 - Target prompts and notifications do not take focus until the player clicks
   a highlighted target. Target choices, menus, and dialogs may call
   `SetNuiFocus(true, true)` and must always release it.

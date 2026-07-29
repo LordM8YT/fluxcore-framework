@@ -60,6 +60,11 @@ local function releaseNuiFocus()
     end
 end
 
+local function shutdownLoadingScreens()
+    ShutdownLoadingScreen()
+    ShutdownLoadingScreenNui()
+end
+
 local function destroyPreviewCamera()
     if previewCamera and DoesCamExist(previewCamera) then
         RenderScriptCams(false, false, 0, true, true)
@@ -213,10 +218,12 @@ local function openMenu()
         end
 
         CreateThread(function()
+            shutdownLoadingScreens()
             enterPreview()
             Wait(350)
             isOpen = true
             SetNuiFocus(true, true)
+            SetCursorLocation(0.5, 0.5)
             send('identity:open')
             DoScreenFadeIn(500)
         end)
