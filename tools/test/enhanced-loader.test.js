@@ -290,6 +290,39 @@ test('status disables GTA wanted levels and ambient police dispatch', () => {
   assert.match(client, /onClientResourceStop[\s\S]*restoreVanillaPolice\(\)/u);
 });
 
+test('status removes the vanilla radio and minimap health armour bars', () => {
+  const root = path.join(resourceRoot, 'fluxcore_status');
+  const client = fs.readFileSync(path.join(root, 'client', 'main.lua'), 'utf8');
+  const config = JSON.parse(
+    fs.readFileSync(path.join(root, 'config', 'status.json'), 'utf8'),
+  );
+
+  assert.equal(config.disableVanillaRadio, true);
+  assert.match(client, /SETUP_HEALTH_ARMOUR/u);
+  assert.match(client, /ScaleformMovieMethodAddParamInt\(3\)/u);
+  assert.match(client, /GetGameTimer\(\) - minimapBarsHiddenAt >= 1000/u);
+  assert.match(client, /SetUserRadioControlEnabled\(false\)/u);
+  assert.match(client, /SetFrontendRadioActive\(false\)/u);
+  assert.match(client, /SetVehicleRadioEnabled\(vehicle,\s*false\)/u);
+  assert.match(client, /SetVehRadioStation\(vehicle,\s*'OFF'\)/u);
+  assert.match(client, /DisableControlAction\(0,\s*85,\s*true\)/u);
+});
+
+test('status HUD renders native sprint stamina as a separate live value', () => {
+  const root = path.join(resourceRoot, 'fluxcore_status');
+  const client = fs.readFileSync(path.join(root, 'client', 'main.lua'), 'utf8');
+  const page = fs.readFileSync(path.join(root, 'web', 'index.html'), 'utf8');
+  const app = fs.readFileSync(path.join(root, 'web', 'app.js'), 'utf8');
+
+  assert.match(
+    client,
+    /100\s*-\s*rounded\(GetPlayerSprintStaminaRemaining\(PlayerId\(\)\)\)/u,
+  );
+  assert.match(client, /stamina = stamina/u);
+  assert.match(page, /id="stamina">100</u);
+  assert.match(app, /'thirst', 'stamina', 'stress'/u);
+});
+
 test('appearance provides a bounded live-preview creator with safe cleanup', () => {
   const root = path.join(resourceRoot, 'fluxcore_appearance');
   const manifest = fs.readFileSync(path.join(root, 'fxmanifest.lua'), 'utf8');
@@ -333,4 +366,24 @@ test('cross-resource client lifecycle handlers are network-safe', () => {
       );
     }
   }
+});
+
+test('replacement chat owns mapped input and supports RP commands', () => {
+  const root = path.join(resourceRoot, 'fluxcore_chat');
+  const manifest = fs.readFileSync(path.join(root, 'fxmanifest.lua'), 'utf8');
+  const client = fs.readFileSync(path.join(root, 'client', 'main.lua'), 'utf8');
+  const server = fs.readFileSync(path.join(root, 'server.lua'), 'utf8');
+  const page = fs.readFileSync(path.join(root, 'web', 'index.html'), 'utf8');
+
+  assert.match(manifest, /ui_page 'web\/index\.html'/u);
+  assert.match(client, /RegisterKeyMapping\('fluxcore_chat_open'/u);
+  assert.match(client, /RegisterCommand\('me'/u);
+  assert.match(client, /RegisterCommand\('do'/u);
+  assert.match(client, /RegisterCommand\('ooc'/u);
+  assert.match(client, /RegisterCommand\('e'/u);
+  assert.match(client, /AddEventHandler\('chat:addMessage'/u);
+  assert.match(client, /ExecuteCommand\(text:sub\(2\)\)/u);
+  assert.match(server, /RP_DISTANCE = 20\.0/u);
+  assert.match(server, /GetPlayerPed\(playerSource\)/u);
+  assert.match(page, /background:\s*none\s*!important/u);
 });

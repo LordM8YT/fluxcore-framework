@@ -29,6 +29,8 @@ test('fuel resource follows the Enhanced native and lifecycle contract', () => {
   assert.match(client, /SetFuelConsumptionRateMultiplier/u);
   assert.match(client, /DoesVehicleUseFuel/u);
   assert.match(client, /GetVehicleFuelLevel/u);
+  assert.match(client, /currentLiters = tank \* \(currentPercent \/ 100\.0\)/u);
+  assert.match(client, /purchase\.liters or 0\) \/ tank\) \* 100\.0/u);
   assert.match(client, /SetVehicleFuelLevel/u);
 
   const directRegistration = client.indexOf('scheduleRegistration()');

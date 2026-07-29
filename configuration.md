@@ -32,6 +32,7 @@ setr sv_showBusySpinnerOnLoadingScreen false
 
 ensure fluxcore_loading
 ensure fluxcore_core
+ensure fluxcore_chat
 ensure fluxcore_interact
 ensure fluxcore_status
 ensure fluxcore_jobs

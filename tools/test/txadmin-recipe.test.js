@@ -67,6 +67,7 @@ test('Fluxcore resources start after core in dependency order', () => {
   const expected = [
     'ensure fluxcore_loading',
     'ensure fluxcore_core',
+    'ensure fluxcore_chat',
     'ensure fluxcore_interact',
     'ensure fluxcore_status',
     'ensure fluxcore_jobs',
@@ -84,7 +85,6 @@ test('Fluxcore resources start after core in dependency order', () => {
     'ensure fluxcore_admin',
     'ensure fluxcore_phone',
     'ensure fluxcore_identity',
-    'ensure fluxcore_example',
   ];
 
   const indexes = expected.map((line) => indexOfLine(serverConfig, line));

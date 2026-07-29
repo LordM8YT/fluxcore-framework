@@ -82,6 +82,7 @@ body { color: var(--text); }
 .armor span { color: #60a5fa; }
 .hunger span { color: #fbbf24; }
 .thirst span { color: #38bdf8; }
+.stamina span { color: #34d399; transform: rotate(-90deg); }
 .stress span { color: #c084fc; }
 
 .vehicle-panel {

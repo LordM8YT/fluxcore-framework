@@ -4,6 +4,16 @@ Fluxcore includes temporary, replaceable interfaces for the first connection,
 character flow, inventory and in-game HUD. They are intentionally lightweight
 so a custom frontend can replace them without changing domain logic.
 
+## Roleplay chat
+
+`fluxcore_chat` replaces the stock FiveM chat and opens on the configurable
+`T` key mapping. It remains compatible with `chat:addMessage`, so existing
+Fluxcore resources render feedback in the replacement UI. Text without a slash
+is local speech. `/me` and `/do` are proximity-based, while `/ooc` is global.
+Use `/e sit` (or another listed emote) and `/e cancel` for basic animations.
+All other slash input is passed to FiveM's registered command system, including
+framework commands such as `/911`, `/inventory`, `/jobs` and `/garage`.
+
 ## Connection and loading
 
 `fluxcore_loading` replaces the default FiveM loading screen with the
@@ -68,9 +78,11 @@ inventory items and usable-item handlers.
 vehicle panel. By default:
 
 * the vanilla GTA HUD, ammunition display and weapon wheel are hidden;
+* the vanilla vehicle radio and its selection controls are disabled;
 * the minimap appears only while inside a vehicle;
 * the minimap's built-in health and armour bars are removed;
-* health, armour, hunger, thirst and stress use compact status indicators; and
+* health, armour, hunger, thirst, native sprint stamina and stress use compact
+  status indicators; and
 * vehicle speed, gear, fuel, engine condition and plate are displayed.
 
 The behavior is configured in `fluxcore_status/config/status.json`:
@@ -79,6 +91,7 @@ The behavior is configured in `fluxcore_status/config/status.json`:
 {
   "disableVanillaHud": true,
   "disableVanillaPolice": true,
+  "disableVanillaRadio": true,
   "minimapVehicleOnly": true
 }
 ```
@@ -90,7 +103,7 @@ dispatch and random police creation are disabled. Police response must instead
 come from Fluxcore jobs and `fluxcore_dispatch`, where real roleplay players
 receive and handle calls.
 
-Stopping `fluxcore_status` restores the vanilla HUD, radar and police settings
+Stopping `fluxcore_status` restores the vanilla HUD, radar, radio controls and police settings
 to avoid leaking modified native state into other resources.
 
 {% hint style="warning" %}

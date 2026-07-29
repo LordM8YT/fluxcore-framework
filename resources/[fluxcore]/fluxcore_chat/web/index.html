@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    html, body, #app {
+      background: none !important;
+      background-color: rgba(0, 0, 0, 0) !important;
+    }
+  </style>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main id="app">
+    <section id="chat" aria-label="Roleplay chat">
+      <div id="messages"></div>
+      <form id="composer" class="hidden">
+        <span class="prompt">›</span>
+        <input id="input" maxlength="280" autocomplete="off" placeholder="Write a message or /command">
+      </form>
+      <div id="suggestions" class="hidden"></div>
+    </section>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
