@@ -100,11 +100,11 @@ body { color: var(--text); }
 .vehicle-panel {
   position: fixed;
   bottom: 8.25rem;
-  left: 20rem;
+  left: 26rem;
   display: grid;
-  width: 25rem;
-  grid-template-columns: 7.4rem 1fr;
-  gap: 0.95rem;
+  width: 19rem;
+  grid-template-columns: 6.5rem 1fr;
+  gap: 0.65rem;
   padding: 0.95rem;
   border: 1px solid var(--border);
   border-radius: 1rem;
@@ -149,11 +149,9 @@ body { color: var(--text); }
   .player-panel { top: 1rem; right: 1rem; }
   .vehicle-panel {
     bottom: 8.5rem;
-    left: 22rem;
-    width: 18rem;
-    grid-template-columns: 6.5rem 1fr;
-    gap: 0.65rem;
-    padding: 0.8rem;
+    left: 24rem;
+    width: 17rem;
+    grid-template-columns: 6rem 1fr;
   }
   .vehicle-data { gap: 0.3rem 0.4rem; }
   .status-panel { bottom: 4rem; left: 1rem; }
