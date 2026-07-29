@@ -459,6 +459,11 @@ test('replacement chat owns mapped input and supports RP commands', () => {
 
   assert.match(manifest, /ui_page 'web\/index\.html'/u);
   assert.match(client, /RegisterKeyMapping\('fluxcore_chat_open'/u);
+  assert.match(client, /SetTextChatEnabled\(false\)/u);
+  assert.match(
+    client,
+    /onClientResourceStop[\s\S]*SetTextChatEnabled\(true\)/u,
+  );
   assert.match(client, /RegisterCommand\('me'/u);
   assert.match(client, /RegisterCommand\('do'/u);
   assert.match(client, /RegisterCommand\('ooc'/u);

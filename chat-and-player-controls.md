@@ -4,6 +4,9 @@ Fluxcore replaces the GTA chat, weapon wheel, vehicle radio and most vanilla
 HUD elements with framework-owned controls. Every default key mapping can be
 changed in FiveM settings.
 
+The stock Cfx `chat` resource and system chat are disabled in the bundled
+server configurations. Only `fluxcore_chat` owns the `T` input.
+
 ## Chat and roleplay
 
 Press `T` to open chat. Type `/` to filter suggestions, Tab to complete the

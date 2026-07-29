@@ -46,6 +46,9 @@ test('generated server config exposes every txAdmin placeholder', () => {
   assert.doesNotMatch(serverConfig, /^set onesync on$/mu);
   assert.match(serverConfig, /^set sv_stateBagStrictMode true$/mu);
   assert.match(serverConfig, /^voice_internal$/mu);
+  assert.match(serverConfig, /^set resources_useSystemChat false$/mu);
+  assert.match(serverConfig, /^stop chat$/mu);
+  assert.doesNotMatch(serverConfig, /^set resources_useSystemChat true$/mu);
   assert.doesNotMatch(serverConfig, /^setr? sv_mumble\b/mu);
   assert.match(serverConfig, /^set sv_devMode true$/mu);
   assert.doesNotMatch(serverConfig, /^set sv_devmode true$/mu);
@@ -97,6 +100,15 @@ test('Fluxcore resources start after core in dependency order', () => {
   assert.equal(indexOfLine(serverConfig, 'ensure basic-gamemode'), -1);
   assert.equal(indexOfLine(serverConfig, 'stop basic-gamemode'), -1);
   assert.equal(indexOfLine(serverConfig, 'ensure fluxcore_example'), -1);
+});
+
+test('example config disables the stock Cfx chat', () => {
+  const exampleConfig = fs.readFileSync(
+    path.join(root, 'server.cfg.example'),
+    'utf8',
+  );
+  assert.match(exampleConfig, /^set resources_useSystemChat false$/mu);
+  assert.match(exampleConfig, /^stop chat$/mu);
 });
 
 test('example config does not enable development-only target registrations', () => {

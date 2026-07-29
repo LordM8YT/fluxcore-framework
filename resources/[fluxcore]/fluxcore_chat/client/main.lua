@@ -125,6 +125,11 @@ end, false)
 
 RegisterKeyMapping('fluxcore_chat_open', 'Open Fluxcore chat', 'keyboard', 'T')
 
+CreateThread(function()
+    Wait(0)
+    SetTextChatEnabled(false)
+end)
+
 RegisterCommand('me', function(_, args)
     TriggerServerEvent('fluxcore_chat:server:roleplay', 'me', table.concat(args, ' '))
 end, false)
@@ -351,6 +356,7 @@ end)
 AddEventHandler('onClientResourceStop', function(resource)
     if resource == GetCurrentResourceName() then
         SetNuiFocus(false, false)
+        SetTextChatEnabled(true)
         stopEmote()
     end
 end)

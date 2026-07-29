@@ -3,6 +3,7 @@
 
 endpoint_add_tcp "0.0.0.0:30120"
 endpoint_add_udp "0.0.0.0:30120"
+set resources_useSystemChat false
 
 sv_hostname "Fluxcore Framework Development"
 sets sv_projectName "Fluxcore Framework"
@@ -25,6 +26,7 @@ set fluxcore_maxCharacters 4
 set fluxcore_saveIntervalMs 60000
 setr sv_showBusySpinnerOnLoadingScreen false
 
+stop chat
 ensure fluxcore_loading
 ensure fluxcore_core
 ensure fluxcore_chat
