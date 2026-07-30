@@ -88,3 +88,4 @@ The recipe installs a complete server-data directory. See [Installation](install
 * [Issues](https://github.com/LordM8YT/fluxcore-framework/issues)
 * [Releases](https://github.com/LordM8YT/fluxcore-framework/releases)
 * [License](https://github.com/LordM8YT/fluxcore-framework/blob/main/LICENSE)
+* [Discord](https://discord.gg/wPDrpRa53n)
