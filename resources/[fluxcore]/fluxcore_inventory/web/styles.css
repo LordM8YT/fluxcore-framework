@@ -162,10 +162,39 @@ footer {
   background: var(--accent-soft);
 }
 
+.slot.movable { cursor: grab; touch-action: none; }
+.slot.dragging {
+  cursor: grabbing;
+  opacity: 0.38;
+  transform: scale(0.96);
+}
+.slot.drop-target {
+  border-color: #c4b5fd;
+  outline: 2px solid rgba(139, 92, 246, 0.35);
+  outline-offset: -3px;
+  background: rgba(139, 92, 246, 0.28);
+}
+
 .slot.empty { cursor: default; opacity: 0.55; }
+.slot.empty.drop-target { cursor: copy; opacity: 1; }
 .slot-number { position: absolute; top: 0.28rem; left: 0.35rem; color: #71717a; font-size: 0.58rem; }
 .slot-amount { position: absolute; top: 0.28rem; right: 0.35rem; font-size: 0.62rem; font-weight: 700; }
-.slot-icon { display: grid; height: 65%; place-items: center; color: #c4b5fd; font-size: 1.2rem; font-weight: 800; }
+.slot-icon {
+  display: grid;
+  height: 68%;
+  place-items: center;
+  color: #c4b5fd;
+  font-size: 1.2rem;
+  font-weight: 800;
+}
+.slot-image {
+  width: 82%;
+  height: 82%;
+  object-fit: contain;
+  filter: drop-shadow(0 0.35rem 0.45rem rgba(0, 0, 0, 0.38));
+  pointer-events: none;
+}
+.slot-fallback { display: grid; place-items: center; }
 .slot-label { display: block; overflow: hidden; font-size: 0.62rem; font-weight: 600; text-align: center; text-overflow: ellipsis; white-space: nowrap; }
 
 .actions-panel {

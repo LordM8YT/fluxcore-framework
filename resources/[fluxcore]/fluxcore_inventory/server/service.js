@@ -158,6 +158,7 @@ class InventoryService {
 
   requireContainer(containerId) {
     let container = this.database.getContainer(containerId);
+    let created = false;
     if (!container && containerId.startsWith('player:')) {
       const characterId = containerId.slice('player:'.length);
       if (!CHARACTER_ID_PATTERN.test(characterId)) {
@@ -171,15 +172,21 @@ class InventoryService {
         this.config.playerSlots,
         this.config.playerMaxWeight,
       );
-      try {
-        this.grantStarterItems(container);
-      } catch (error) {
-        this.database.deleteContainer(container.id);
-        throw error;
-      }
+      created = true;
     }
     if (!container) {
       throw inventoryError('CONTAINER_NOT_FOUND', 'inventory container was not found');
+    }
+    if (container.type === 'player'
+      && !this.database.hasAuditAction(container.id, 'starter')) {
+      try {
+        this.grantStarterItems(container);
+      } catch (error) {
+        if (created) {
+          this.database.deleteContainer(container.id);
+        }
+        throw error;
+      }
     }
     return container;
   }

@@ -9,7 +9,7 @@ const { InventoryDatabase } = require('../server/database');
 const { InventoryService, normalizeMetadata } = require('../server/service');
 const { validateConfig } = require('../server/config');
 
-function createHarness(t) {
+function createHarness(t, overrides = {}) {
   const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'Fluxcore-inventory-'));
   const database = new InventoryDatabase(path.join(directory, 'inventory.sqlite'));
   const players = new Map([
@@ -50,6 +50,7 @@ function createHarness(t) {
       databaseFile: 'inventory.sqlite',
       playerSlots: 4,
       playerMaxWeight: 2500,
+      starterItems: overrides.starterItems || [],
       items: {
         water: {
           label: 'Water',
@@ -89,6 +90,44 @@ test('metadata is canonical and bounded', () => {
   assert.throws(() => normalizeMetadata({ value: Number.NaN }), {
     code: 'METADATA_INVALID',
   });
+});
+
+test('pre-existing player containers receive starter items exactly once', (t) => {
+  const { service, database } = createHarness(t, {
+    starterItems: [
+      { name: 'water', amount: 2 },
+      { name: 'phone', amount: 1 },
+    ],
+  });
+  const containerId = 'player:vrd_0123456789abcdef';
+  database.ensureContainer(
+    containerId,
+    'player',
+    'vrd_0123456789abcdef',
+    'Player inventory',
+    4,
+    2500,
+  );
+
+  let inventory = service.sync(7);
+  assert.deepEqual(
+    inventory.items.map((item) => [item.name, item.amount]),
+    [['water', 2], ['phone', 1]],
+  );
+  assert.equal(
+    database.listAudit(containerId).filter((entry) => entry.action === 'starter').length,
+    2,
+  );
+
+  inventory = service.sync(7);
+  assert.deepEqual(
+    inventory.items.map((item) => [item.name, item.amount]),
+    [['water', 2], ['phone', 1]],
+  );
+  assert.equal(
+    database.listAudit(containerId).filter((entry) => entry.action === 'starter').length,
+    2,
+  );
 });
 
 test('add, stack, weight, remove, and owner sync are server authoritative', (t) => {
