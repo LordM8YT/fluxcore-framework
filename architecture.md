@@ -62,7 +62,7 @@ NUI frontends do not access databases or framework exports. The owning client re
 | `fluxcore_fuel`       | fuel purchase validation; vehicle fuel remains native entity state    |
 | `fluxcore_appearance` | freemode appearance                                                    |
 | `fluxcore_admin`      | administration audit                                                   |
-| `fluxcore_phone`      | numbers, contacts, messages and read state                             |
+| `fluxcore_phone`      | numbers, contacts, messages, calls, Cipher channels and read state     |
 
 ## Dependency direction
 

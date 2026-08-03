@@ -149,7 +149,7 @@ Fuel stations, station radii, price, currency and consumption multiplier live in
 
 ## Phone
 
-The text phone does not require an inventory item by default. To require one:
+The phone does not require an inventory item by default. To require one:
 
 ```json
 {
@@ -161,6 +161,9 @@ The text phone does not require an inventory item by default. To require one:
 {% hint style="warning" %}
 Phone number prefix and length should be treated as permanent after accounts exist.
 {% endhint %}
+
+`cipherChannels` controls the pseudonymous text and VC rooms shown in Cipher.
+See [Phone](phone.md#cipher) for the schema and privacy model.
 
 ## Local-only secrets
 

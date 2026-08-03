@@ -1,24 +1,56 @@
 # Phone
 
 `fluxcore_phone` provides persistent phone numbers, contacts, offline text
-messages, unread state, read receipts, and an extensible client-side app
-registry. Other resources can add apps without changing the phone resource or
-`fluxcore_core`.
+messages, private voice calls, the anonymous-facing Cipher community, and an
+extensible client-side app registry. Other resources can add apps without
+changing the phone resource or `fluxcore_core`.
 
 ## Player use
 
-Open the phone with `F1` or `/phone`. The default apps provide contacts and
-messages. Phone numbers belong to accounts and remain stable across sessions.
-Messages can be delivered while the recipient is offline.
+Open the phone with `F1` or `/phone`. The bundled apps include Phone, Messages,
+Contacts, Clock, Notes, Calculator, Cipher and Settings. Phone numbers belong
+to accounts and remain stable across sessions. Messages can be delivered while
+the recipient is offline.
 
-Voice calls are not part of the current phone milestone.
+The Phone app supports outgoing and incoming calls, busy state, accept,
+decline and hang-up. Connected calls use non-spatial, server-owned Enhanced
+voice channels. Both participants must be online and have a phone account.
+
+### Cipher
+
+Cipher is a crime-community surface inspired by channel-based chat systems. It
+does not use or display phone numbers. Each character receives a persistent
+random alias such as `ghost-a3f91c` and can use configured text channels and
+their associated voice rooms.
+
+Cipher is pseudonymous to players, not untraceable infrastructure. The server
+stores the character-to-alias relationship so ownership, moderation and data
+cleanup remain enforceable. Cipher messages expose only alias, channel, body
+and timestamp to the client.
+
+Default channels are `Lobby`, `Black Market` and `Operations`. Configure them
+in `config/phone.json`:
+
+```json
+{
+  "cipherChannels": [
+    { "id": "lobby", "name": "Lobby" },
+    { "id": "market", "name": "Black Market" },
+    { "id": "ops", "name": "Operations" }
+  ]
+}
+```
+
+Channel IDs use 2-24 lowercase letters, numbers, `_` or `-`. Changing the list
+does not delete existing history, but removed channels are no longer exposed.
 
 ## Dependencies and start order
 
-Start the core before the phone and start app resources after the phone:
+Start core and voice before the phone, then start app resources after it:
 
 ```cfg
 ensure fluxcore_core
+ensure fluxcore_voice
 ensure fluxcore_phone
 ensure example_phone_app
 ```
@@ -194,6 +226,17 @@ history.
 6. Stop the app resource and confirm its registration disappears.
 7. Restart `fluxcore_phone` and confirm the app registers again.
 8. Test opening, closing, focus release, and Escape in the Enhanced client.
+9. Test calls with two clients and confirm the private channel is removed on
+   hang-up and disconnect.
+10. Confirm Cipher never renders a phone number and that leaving a VC removes
+    the player from the managed voice channel.
+
+## Database migration and backup
+
+Cipher upgrades `data/phone.sqlite` to schema version 2 and adds
+`cipher_profiles` and `cipher_messages`. The migration preserves existing
+numbers, contacts and SMS history. Stop the server and copy the SQLite file
+plus any `-wal` and `-shm` companions before first startup on this version.
 
 See [UI Contracts](ui-contracts.md) and the
 [Enhanced compatibility notes](docs/fivem-enhanced-compatibility.md) for the
