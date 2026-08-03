@@ -40,6 +40,10 @@
                     </button>
 
                     <div id="app-grid" class="app-grid" aria-label="Phone apps">
+                        <button class="app-tile" type="button" data-open-native="phone">
+                            <span class="app-icon phone-icon" aria-hidden="true">●</span>
+                            <span>Phone</span>
+                        </button>
                         <button class="app-tile" type="button" data-open-native="messages">
                             <span class="app-icon messages-icon" aria-hidden="true"><i></i><i></i><i></i></span>
                             <span data-i18n="ui.messages">Messages</span>
@@ -72,9 +76,9 @@
                     </div>
 
                     <div class="home-dock">
+                        <button type="button" data-open-native="phone" aria-label="Phone"><span class="app-icon phone-icon">●</span></button>
                         <button type="button" data-open-native="messages" aria-label="Messages"><span class="app-icon messages-icon"><i></i><i></i><i></i></span></button>
                         <button type="button" data-open-native="contacts" aria-label="Contacts"><span class="app-icon contacts-icon">FC</span></button>
-                        <button type="button" data-open-native="calculator" aria-label="Calculator"><span class="app-icon calculator-icon">+ −<br>× =</span></button>
                     </div>
                 </section>
 
@@ -90,6 +94,7 @@
 
                     <div class="content">
                         <section id="messages-view" class="view">
+                            <button id="new-message-button" class="primary-row" type="button"><span>＋</span><span>New conversation</span></button>
                             <label class="search-field"><span>⌕</span><input id="message-search" type="search" placeholder="Search"></label>
                             <div id="conversation-list" class="list"></div>
                             <div id="messages-empty" class="empty-state">
@@ -97,6 +102,17 @@
                                 <h2 data-i18n="ui.noMessages">No messages yet</h2>
                                 <p data-i18n="ui.noMessagesHint">Add a contact, then start a private text conversation.</p>
                             </div>
+                        </section>
+
+                        <section id="cipher-view" class="view cipher-view is-hidden">
+                            <div class="cipher-identity"><span class="cipher-pulse"></span><span><small>ANONYMOUS AS</small><strong id="cipher-alias">ghost-------</strong></span><button id="cipher-voice" type="button">Join VC</button></div>
+                            <nav id="cipher-channels" class="cipher-channels" aria-label="Cipher channels"></nav>
+                            <div id="cipher-message-list" class="cipher-message-list"></div>
+                            <form id="cipher-form" class="cipher-composer">
+                                <label class="sr-only" for="cipher-input">Encrypted message</label>
+                                <textarea id="cipher-input" maxlength="500" rows="1" placeholder="Message #lobby" required></textarea>
+                                <button type="submit" aria-label="Send encrypted message">↑</button>
+                            </form>
                         </section>
 
                         <section id="thread-view" class="view is-hidden">
@@ -118,6 +134,24 @@
                             </div>
                         </section>
 
+                        <section id="phone-view" class="view phone-view is-hidden">
+                            <div id="dialer-panel">
+                                <output id="dialer-number" aria-label="Phone number">&nbsp;</output>
+                                <div id="dialer-keys" class="dialer-keys">
+                                    <button type="button" data-digit="1">1<small>&nbsp;</small></button><button type="button" data-digit="2">2<small>ABC</small></button><button type="button" data-digit="3">3<small>DEF</small></button>
+                                    <button type="button" data-digit="4">4<small>GHI</small></button><button type="button" data-digit="5">5<small>JKL</small></button><button type="button" data-digit="6">6<small>MNO</small></button>
+                                    <button type="button" data-digit="7">7<small>PQRS</small></button><button type="button" data-digit="8">8<small>TUV</small></button><button type="button" data-digit="9">9<small>WXYZ</small></button>
+                                    <span></span><button type="button" data-digit="0">0<small>＋</small></button><button id="dialer-delete" type="button" aria-label="Delete digit">⌫</button>
+                                </div>
+                                <button id="dial-button" class="call-button" type="button" aria-label="Call">☎</button>
+                            </div>
+                            <div id="call-panel" class="call-panel is-hidden">
+                                <span id="call-avatar" class="call-avatar">?</span>
+                                <p id="call-status">Calling…</p><h2 id="call-name">Unknown</h2><strong id="call-number"></strong>
+                                <div class="call-actions"><button id="decline-call" type="button" class="hangup-button" aria-label="Decline or hang up">☎</button><button id="accept-call" type="button" class="call-button is-hidden" aria-label="Accept call">☎</button></div>
+                            </div>
+                        </section>
+
                         <section id="settings-view" class="view is-hidden">
                             <article class="profile-card">
                                 <span id="profile-avatar" class="profile-avatar">FC</span>
@@ -128,6 +162,13 @@
                                 <div><span class="mini-icon">▦</span><span><strong>Installed apps</strong><small id="installed-count">3 apps</small></span></div>
                                 <div><span class="mini-icon">◈</span><span><strong>App platform</strong><small>External resources can register apps</small></span></div>
                                 <div><span class="mini-icon">i</span><span><strong>Fluxcore OS</strong><small>Developer preview</small></span></div>
+                            </div>
+                            <h2 class="section-title">Appearance</h2>
+                            <div class="appearance-picker" role="group" aria-label="Phone accent">
+                                <button type="button" data-accent="lime" aria-label="Lime accent"></button>
+                                <button type="button" data-accent="blue" aria-label="Blue accent"></button>
+                                <button type="button" data-accent="violet" aria-label="Violet accent"></button>
+                                <button type="button" data-accent="orange" aria-label="Orange accent"></button>
                             </div>
                         </section>
 
@@ -140,6 +181,11 @@
                                 <div><span><strong>Los Santos</strong><small>Local time</small></span><b id="clock-local">12:00</b></div>
                                 <div><span><strong>UTC</strong><small>Coordinated Universal Time</small></span><b id="clock-utc">10:00</b></div>
                             </div>
+                            <h2 class="section-title">Stopwatch</h2>
+                            <article class="stopwatch-card">
+                                <output id="stopwatch-display">00:00.0</output>
+                                <div><button id="stopwatch-reset" type="button">Reset</button><button id="stopwatch-toggle" type="button">Start</button></div>
+                            </article>
                         </section>
 
                         <section id="notes-view" class="view utility-view is-hidden">
@@ -184,6 +230,18 @@
                 <div class="dialog-actions">
                     <button id="contact-cancel" class="button button-ghost" type="button" data-i18n="ui.cancel">Cancel</button>
                     <button class="button button-primary" type="submit" data-i18n="ui.saveContact">Save contact</button>
+                </div>
+            </form>
+        </dialog>
+
+        <dialog id="message-dialog">
+            <form id="new-message-form">
+                <p class="eyebrow">New conversation</p>
+                <h2>Enter a phone number</h2>
+                <label class="field"><span>Phone number</span><input name="phoneNumber" inputmode="numeric" minlength="8" maxlength="15" required></label>
+                <div class="dialog-actions">
+                    <button id="message-cancel" class="button button-ghost" type="button">Cancel</button>
+                    <button class="button button-primary" type="submit">Continue</button>
                 </div>
             </form>
         </dialog>

@@ -30,6 +30,12 @@ function validateConfig(input, resourcePath = process.cwd()) {
   if (!/^[a-z][a-z0-9_]{1,47}$/.test(phoneItem)) {
     throw phoneError('CONFIG_INVALID', 'phoneItem is invalid');
   }
+  const cipherChannels = (Array.isArray(input.cipherChannels) ? input.cipherChannels : [
+    { id: 'lobby', name: 'Lobby' }, { id: 'market', name: 'Black Market' }, { id: 'ops', name: 'Operations' },
+  ]).map((entry) => ({ id: String(entry?.id || '').trim().toLowerCase(), name: String(entry?.name || '').trim() }));
+  if (cipherChannels.length < 1 || cipherChannels.length > 12 || cipherChannels.some((entry) => !/^[a-z0-9_-]{2,24}$/.test(entry.id) || entry.name.length < 1 || entry.name.length > 32)) {
+    throw phoneError('CONFIG_INVALID', 'cipherChannels are invalid');
+  }
   return {
     databaseFile: path.resolve(
       resourcePath,
@@ -51,6 +57,7 @@ function validateConfig(input, resourcePath = process.cwd()) {
       100,
       'conversationPageSize',
     ),
+    cipherChannels,
   };
 }
 

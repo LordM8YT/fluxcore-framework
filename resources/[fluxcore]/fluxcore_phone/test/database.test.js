@@ -76,3 +76,17 @@ test('contacts, idempotent messages, read state, and cascade form one lifecycle'
   assert.deepEqual(database.listContacts(sender.characterId), []);
   assert.deepEqual(database.recentMessages(sender.phoneNumber), []);
 });
+
+test('Cipher uses anonymous aliases and channel messages without phone numbers', (t) => {
+  const database = createDatabase(t);
+  const account = database.ensureAccount('vrd_0123456789abcdef');
+  const profile = database.ensureCipherProfile(account.characterId);
+  assert.match(profile.alias, /^ghost-[a-f0-9]{6}$/);
+  assert.equal('phoneNumber' in profile, false);
+
+  const sent = database.sendCipherMessage(account.characterId, 'ops', profile.alias, 'Move at midnight.', 'cipher:test:0001');
+  assert.equal(sent.message.alias, profile.alias);
+  assert.equal(sent.message.channel, 'ops');
+  assert.equal('phoneNumber' in sent.message, false);
+  assert.deepEqual(database.cipherMessages('ops', 10), [sent.message]);
+});

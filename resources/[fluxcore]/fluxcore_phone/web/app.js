@@ -4,13 +4,18 @@ const elements = Object.fromEntries([
   'app', 'home-view', 'native-app-view', 'custom-app-view', 'app-grid',
   'conversation-list', 'contact-list', 'message-list', 'messages-empty',
   'contacts-empty', 'messages-view', 'thread-view', 'contacts-view',
-  'settings-view', 'clock-view', 'notes-view', 'calculator-view',
+  'settings-view', 'clock-view', 'notes-view', 'calculator-view', 'phone-view',
   'header-title', 'header-kicker', 'back-button', 'toast',
   'contact-dialog', 'unread-badge', 'home-unread', 'widget-badge',
   'widget-title', 'widget-copy', 'profile-number', 'profile-avatar',
   'installed-count', 'custom-app-frame', 'custom-app-title', 'message-search',
   'clock-large', 'clock-seconds', 'clock-date', 'clock-local', 'clock-utc',
   'quick-note', 'note-status', 'calculator-display', 'calculator-keys',
+  'message-dialog', 'stopwatch-display', 'stopwatch-toggle', 'stopwatch-reset',
+  'dialer-number', 'dialer-keys', 'dialer-panel', 'call-panel', 'call-status',
+  'call-name', 'call-number', 'call-avatar', 'accept-call',
+  'cipher-view', 'cipher-alias', 'cipher-channels', 'cipher-message-list',
+  'cipher-input', 'cipher-voice',
 ].map((id) => [id.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase()), document.querySelector(`#${id}`)]));
 
 const state = {
@@ -28,6 +33,10 @@ const state = {
   locale: {},
   localeName: 'en',
   calculator: { display: '0', stored: null, operator: null, reset: false },
+  stopwatch: { startedAt: null, elapsed: 0, timer: null },
+  dialer: '',
+  call: null,
+  cipher: { alias: '', channels: [], activeChannel: null, messages: [], voiceChannel: null },
 };
 
 function translation(key) {
@@ -222,7 +231,7 @@ function renderApps() {
     button.append(makeAppIcon(appDefinition), label);
     elements.appGrid.append(button);
   }
-  elements.installedCount.textContent = `${state.apps.length + 7} apps`;
+  elements.installedCount.textContent = `${state.apps.length + 8} apps`;
 }
 
 function renderHome() {
@@ -246,7 +255,7 @@ function setScreen(screen) {
 
 function renderNative() {
   const inThread = state.view === 'thread';
-  const inMessages = state.view === 'messages' || state.view === 'darkchat';
+  const inMessages = state.view === 'messages';
   const isCipher = state.view === 'darkchat' || (inThread && state.messageMode === 'darkchat');
   elements.nativeAppView.classList.toggle('is-cipher', isCipher);
   elements.messagesView.classList.toggle('is-hidden', !inMessages);
@@ -256,19 +265,21 @@ function renderNative() {
   elements.clockView.classList.toggle('is-hidden', state.view !== 'clock');
   elements.notesView.classList.toggle('is-hidden', state.view !== 'notes');
   elements.calculatorView.classList.toggle('is-hidden', state.view !== 'calculator');
+  elements.phoneView.classList.toggle('is-hidden', state.view !== 'phone');
+  elements.cipherView.classList.toggle('is-hidden', state.view !== 'darkchat');
   if (inThread) {
     elements.headerKicker.textContent = state.activeThread?.phoneNumber || t('ui.conversation', {}, 'Conversation');
     elements.headerTitle.textContent = state.activeThread?.name || state.activeThread?.phoneNumber || t('ui.messages', {}, 'Messages');
   } else {
     elements.headerKicker.textContent = state.account?.phoneNumber || 'Fluxcore';
-    const titles = { contacts: t('ui.contacts', {}, 'Contacts'), settings: 'Settings', clock: 'Clock', notes: 'Notes', calculator: 'Calculator', darkchat: 'CIPHER' };
+    const titles = { phone: 'Phone', contacts: t('ui.contacts', {}, 'Contacts'), settings: 'Settings', clock: 'Clock', notes: 'Notes', calculator: 'Calculator', darkchat: 'CIPHER' };
     elements.headerTitle.textContent = titles[state.view] || t('ui.messages', {}, 'Messages');
     elements.headerKicker.textContent = state.view === 'darkchat' ? 'ENCRYPTED // IN-GAME' : (state.account?.phoneNumber || 'Fluxcore');
   }
 }
 
 function render() {
-  renderHome(); renderNative(); renderConversations(); renderContacts(); renderMessages();
+  renderHome(); renderNative(); renderConversations(); renderContacts(); renderMessages(); renderDialer(); renderCall(); renderCipher();
 }
 
 async function refresh() {
@@ -295,6 +306,36 @@ function openNative(view) {
   state.messages = [];
   setScreen('native');
   render();
+}
+
+function renderCipher() {
+  const cipher = state.cipher;
+  elements.cipherAlias.textContent = cipher.alias || 'ghost-------';
+  elements.cipherChannels.replaceChildren(...cipher.channels.map((channel) => {
+    const button = document.createElement('button'); button.type = 'button'; button.dataset.cipherChannel = channel.id;
+    button.textContent = `# ${channel.name}`; button.classList.toggle('is-active', channel.id === cipher.activeChannel); return button;
+  }));
+  elements.cipherMessageList.replaceChildren(...cipher.messages.map((message) => {
+    const article = document.createElement('article'); article.className = 'cipher-message';
+    const header = document.createElement('header'); const alias = document.createElement('span'); alias.textContent = message.alias;
+    const time = document.createElement('time'); time.textContent = messageTime(message.sentAt); header.append(alias, time);
+    const body = document.createElement('p'); body.textContent = message.body; article.append(header, body); return article;
+  }));
+  elements.cipherMessageList.scrollTop = elements.cipherMessageList.scrollHeight;
+  elements.cipherInput.placeholder = `Message #${cipher.activeChannel || 'lobby'}`;
+  const connected = cipher.voiceChannel === cipher.activeChannel;
+  elements.cipherVoice.textContent = connected ? 'Leave VC' : 'Join VC'; elements.cipherVoice.classList.toggle('is-connected', connected);
+}
+
+async function openCipher() {
+  try {
+    const result = new URLSearchParams(location.search).has('preview') ? {
+      profile: { alias: 'ghost-a3f91c' }, channels: [{ id: 'lobby', name: 'Lobby' }, { id: 'market', name: 'Black Market' }, { id: 'ops', name: 'Operations' }], activeChannel: 'lobby',
+      messages: [{ id: 1, channel: 'lobby', alias: 'ghost-7b110e', body: 'Drop location changed. Check #ops.', sentAt: new Date().toISOString() }],
+    } : await request('cipher:bootstrap');
+    state.cipher = { alias: result.profile.alias, channels: result.channels || [], activeChannel: result.activeChannel, messages: result.messages || [], voiceChannel: state.cipher.voiceChannel };
+    openNative('darkchat'); renderCipher();
+  } catch (error) { showToast(error.message, true); }
 }
 
 async function closeCustomApp() {
@@ -353,7 +394,9 @@ elements.contactList.addEventListener('click', async (event) => {
   } catch (error) { showToast(error.message, true); } finally { state.busy = false; }
 });
 
-document.querySelectorAll('[data-open-native]').forEach((button) => button.addEventListener('click', () => openNative(button.dataset.openNative)));
+document.querySelectorAll('[data-open-native]').forEach((button) => button.addEventListener('click', () => {
+  if (button.dataset.openNative === 'darkchat') void openCipher(); else openNative(button.dataset.openNative);
+}));
 elements.appGrid.addEventListener('click', (event) => {
   const button = event.target.closest('[data-custom-app]');
   if (button) void openCustomApp(button.dataset.customApp);
@@ -400,6 +443,56 @@ document.querySelector('#contact-form').addEventListener('submit', async (event)
     elements.contactDialog.close(); event.currentTarget.reset(); await refresh();
     state.view = 'contacts'; setScreen('native'); render(); showToast(t('ui.contactSaved', {}, 'Contact saved.'));
   } catch (error) { showToast(error.message, true); } finally { state.busy = false; }
+});
+
+document.querySelector('#new-message-button').addEventListener('click', () => elements.messageDialog.showModal());
+document.querySelector('#message-cancel').addEventListener('click', () => elements.messageDialog.close());
+document.querySelector('#new-message-form').addEventListener('submit', (event) => {
+  event.preventDefault();
+  const phoneNumber = String(new FormData(event.currentTarget).get('phoneNumber') || '').trim();
+  if (!phoneNumber) return;
+  elements.messageDialog.close(); event.currentTarget.reset();
+  void openThread(phoneNumber);
+});
+
+const accentStorageKey = 'fluxcore_phone:accent';
+function setAccent(accent) {
+  const safeAccent = ['lime', 'blue', 'violet', 'orange'].includes(accent) ? accent : 'lime';
+  document.documentElement.dataset.accent = safeAccent;
+  document.querySelectorAll('[data-accent]').forEach((button) => button.classList.toggle('is-selected', button.dataset.accent === safeAccent));
+  try { localStorage.setItem(accentStorageKey, safeAccent); } catch (_) {}
+}
+try { setAccent(localStorage.getItem(accentStorageKey) || 'lime'); } catch (_) { setAccent('lime'); }
+document.querySelector('.appearance-picker').addEventListener('click', (event) => {
+  const button = event.target.closest('[data-accent]');
+  if (button) setAccent(button.dataset.accent);
+});
+
+function renderStopwatch() {
+  const watch = state.stopwatch;
+  const elapsed = watch.elapsed + (watch.startedAt === null ? 0 : Date.now() - watch.startedAt);
+  const minutes = Math.floor(elapsed / 60000);
+  const seconds = Math.floor(elapsed / 1000) % 60;
+  const tenths = Math.floor(elapsed / 100) % 10;
+  elements.stopwatchDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}.${tenths}`;
+}
+elements.stopwatchToggle.addEventListener('click', () => {
+  const watch = state.stopwatch;
+  if (watch.startedAt === null) {
+    watch.startedAt = Date.now();
+    watch.timer = setInterval(renderStopwatch, 100);
+    elements.stopwatchToggle.textContent = 'Stop';
+  } else {
+    watch.elapsed += Date.now() - watch.startedAt; watch.startedAt = null;
+    clearInterval(watch.timer); watch.timer = null;
+    elements.stopwatchToggle.textContent = 'Start'; renderStopwatch();
+  }
+});
+elements.stopwatchReset.addEventListener('click', () => {
+  const watch = state.stopwatch;
+  watch.elapsed = 0;
+  if (watch.startedAt !== null) watch.startedAt = Date.now();
+  renderStopwatch();
 });
 
 const noteStorageKey = 'fluxcore_phone:quick-note';
@@ -461,6 +554,59 @@ elements.calculatorKeys.addEventListener('click', (event) => {
   if (button) pressCalculator(button.dataset.calc);
 });
 
+elements.cipherChannels.addEventListener('click', async (event) => {
+  const button = event.target.closest('[data-cipher-channel]');
+  if (!button || button.dataset.cipherChannel === state.cipher.activeChannel) return;
+  try {
+    const result = await request('cipher:messages', { channel: button.dataset.cipherChannel });
+    state.cipher.activeChannel = result.channel; state.cipher.messages = result.messages || []; renderCipher();
+  } catch (error) { showToast(error.message, true); }
+});
+document.querySelector('#cipher-form').addEventListener('submit', async (event) => {
+  event.preventDefault(); const body = elements.cipherInput.value.trim(); if (!body || !state.cipher.activeChannel) return;
+  try {
+    const clientNonce = globalThis.crypto?.randomUUID?.() || `cipher:${Date.now()}:${Math.random().toString(16).slice(2)}`;
+    await request('cipher:send', { channel: state.cipher.activeChannel, body, clientNonce }); elements.cipherInput.value = '';
+  } catch (error) { showToast(error.message, true); }
+});
+elements.cipherVoice.addEventListener('click', async () => {
+  try {
+    if (state.cipher.voiceChannel) await request('cipher:voice:leave');
+    else await request('cipher:voice:join', { channel: state.cipher.activeChannel });
+  } catch (error) { showToast(error.message, true); }
+});
+
+function renderDialer() {
+  elements.dialerNumber.textContent = state.dialer || '\u00a0';
+}
+function renderCall() {
+  const call = state.call;
+  elements.dialerPanel.classList.toggle('is-hidden', Boolean(call));
+  elements.callPanel.classList.toggle('is-hidden', !call);
+  if (!call) return;
+  elements.callStatus.textContent = call.status === 'incoming' ? 'Incoming call' : call.status === 'connected' ? 'Connected' : 'Calling…';
+  elements.callName.textContent = call.name || call.phoneNumber;
+  elements.callNumber.textContent = call.phoneNumber;
+  elements.callAvatar.textContent = initials(call.name || call.phoneNumber);
+  elements.acceptCall.classList.toggle('is-hidden', call.status !== 'incoming');
+}
+elements.dialerKeys.addEventListener('click', (event) => {
+  const button = event.target.closest('[data-digit]');
+  if (!button || state.dialer.length >= 15) return;
+  state.dialer += button.dataset.digit; renderDialer();
+});
+document.querySelector('#dialer-delete').addEventListener('click', () => { state.dialer = state.dialer.slice(0, -1); renderDialer(); });
+document.querySelector('#dial-button').addEventListener('click', async () => {
+  if (!state.dialer) return;
+  try { await request('calls:start', { phoneNumber: state.dialer }); } catch (error) { showToast(error.message, true); }
+});
+elements.acceptCall.addEventListener('click', async () => {
+  try { await request('calls:accept'); } catch (error) { showToast(error.message, true); }
+});
+document.querySelector('#decline-call').addEventListener('click', async () => {
+  try { await request('calls:end'); } catch (error) { showToast(error.message, true); }
+});
+
 async function closePhone() {
   await closeCustomApp();
   elements.app.classList.add('is-hidden');
@@ -473,6 +619,7 @@ window.addEventListener('keydown', (event) => {
   if (event.key !== 'Escape' || elements.app.classList.contains('is-hidden')) return;
   event.preventDefault(); event.stopPropagation();
   if (elements.contactDialog.open) elements.contactDialog.close();
+  else if (elements.messageDialog.open) elements.messageDialog.close();
   else if (state.activeCustomApp) void goHome();
   else if (state.view === 'thread') elements.backButton.click();
   else if (state.view !== 'home') void goHome();
@@ -507,6 +654,15 @@ window.addEventListener('message', (event) => {
       if (message.direction === 'outgoing' && state.activeThread?.phoneNumber === payload.phoneNumber && !message.readAt) message.readAt = payload.readAt;
     }
     renderMessages();
+  } else if (type === 'callState') {
+    state.call = payload?.status === 'ended' ? null : payload;
+    if (payload?.status === 'incoming') { state.view = 'phone'; setScreen('native'); }
+    renderNative(); renderCall();
+    if (payload?.status === 'ended') showToast(payload.reason || 'Call ended.');
+  } else if (type === 'cipherMessage') {
+    if (payload?.channel === state.cipher.activeChannel) { state.cipher.messages.push(payload); renderCipher(); }
+  } else if (type === 'cipherVoice') {
+    state.cipher.voiceChannel = payload?.joined ? payload.channel : null; renderCipher();
   } else if (type === 'close') {
     elements.app.classList.add('is-hidden');
   }

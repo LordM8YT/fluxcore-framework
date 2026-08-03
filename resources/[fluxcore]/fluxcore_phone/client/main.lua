@@ -265,6 +265,27 @@ RegisterNetEvent('fluxcore_phone:client:messagesRead', function(phoneNumber, rea
     end
 end)
 
+RegisterNetEvent('fluxcore_phone:client:callState', function(callState)
+    if not phoneOpen and callState and callState.status == 'incoming' then
+        openPhone()
+    end
+    if phoneOpen then
+        SendNUIMessage({ type = 'callState', payload = callState })
+    end
+end)
+
+RegisterNetEvent('fluxcore_phone:client:cipherMessage', function(cipherMessage)
+    if phoneOpen then
+        SendNUIMessage({ type = 'cipherMessage', payload = cipherMessage })
+    end
+end)
+
+RegisterNetEvent('fluxcore_phone:client:cipherVoice', function(voiceState)
+    if phoneOpen then
+        SendNUIMessage({ type = 'cipherVoice', payload = voiceState })
+    end
+end)
+
 RegisterNetEvent('fluxcore_phone:client:contactsUpdated', function()
     if phoneOpen then
         local response = call('bootstrap', {})

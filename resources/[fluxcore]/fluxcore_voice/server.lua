@@ -4,6 +4,8 @@ local config = {
     defaultProximityIndex = 2
 }
 local channels = {}
+local privateChannels = {}
+local managedChannels = {}
 local members = {}
 local lastCycleAt = {}
 
@@ -55,6 +57,14 @@ local function deleteChannels()
         end
     end
     channels = {}
+    for channel in pairs(privateChannels) do
+        pcall(DeleteVoiceChannel, channel)
+    end
+    privateChannels = {}
+    for channel in pairs(managedChannels) do
+        pcall(DeleteVoiceChannel, channel)
+    end
+    managedChannels = {}
 end
 
 local function ensureChannels()
@@ -265,4 +275,75 @@ exports('GetVoiceState', function()
         channels = channels,
         proximityDistances = config.proximityDistances
     }
+end)
+
+exports('CreatePrivateChannel', function(firstSource, secondSource)
+    local first = tonumber(firstSource)
+    local second = tonumber(secondSource)
+    if not first or not second or first <= 0 or second <= 0 or not voiceAvailable() then
+        return nil
+    end
+    local ok, channel = pcall(CreateVoiceChannel, 0, 0.0)
+    if not ok or type(channel) ~= 'number' or channel < 0 or channel >= 65535 then
+        return nil
+    end
+    local firstAdded = pcall(AddPlayerToVoiceChannel, channel, first)
+    local secondAdded = firstAdded and pcall(AddPlayerToVoiceChannel, channel, second)
+    if not firstAdded or not secondAdded then
+        pcall(RemovePlayerFromVoiceChannel, channel, first)
+        pcall(RemovePlayerFromVoiceChannel, channel, second)
+        pcall(DeleteVoiceChannel, channel)
+        return nil
+    end
+    privateChannels[channel] = { first, second }
+    return channel
+end)
+
+exports('DeletePrivateChannel', function(channelId)
+    local channel = tonumber(channelId)
+    local participants = channel and privateChannels[channel]
+    if not participants then
+        return false
+    end
+    for _, playerSource in ipairs(participants) do
+        pcall(RemovePlayerFromVoiceChannel, channel, playerSource)
+    end
+    pcall(DeleteVoiceChannel, channel)
+    privateChannels[channel] = nil
+    return true
+end)
+
+exports('CreateManagedVoiceChannel', function()
+    if not voiceAvailable() then return nil end
+    local ok, channel = pcall(CreateVoiceChannel, 0, 0.0)
+    if not ok or type(channel) ~= 'number' or channel < 0 or channel >= 65535 then return nil end
+    managedChannels[channel] = {}
+    return channel
+end)
+
+exports('JoinManagedVoiceChannel', function(channelId, playerSource)
+    local channel = tonumber(channelId)
+    local player = tonumber(playerSource)
+    if not channel or not player or not managedChannels[channel] then return false end
+    local ok = pcall(AddPlayerToVoiceChannel, channel, player)
+    if ok then managedChannels[channel][player] = true end
+    return ok
+end)
+
+exports('LeaveManagedVoiceChannel', function(channelId, playerSource)
+    local channel = tonumber(channelId)
+    local player = tonumber(playerSource)
+    if not channel or not player or not managedChannels[channel] then return false end
+    pcall(RemovePlayerFromVoiceChannel, channel, player)
+    managedChannels[channel][player] = nil
+    return true
+end)
+
+exports('DeleteManagedVoiceChannel', function(channelId)
+    local channel = tonumber(channelId)
+    if not channel or not managedChannels[channel] then return false end
+    for player in pairs(managedChannels[channel]) do pcall(RemovePlayerFromVoiceChannel, channel, player) end
+    pcall(DeleteVoiceChannel, channel)
+    managedChannels[channel] = nil
+    return true
 end)

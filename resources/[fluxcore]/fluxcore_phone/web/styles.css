@@ -10,6 +10,10 @@
   --dark: #07100c;
 }
 
+:root[data-accent="blue"] { --lime: #70c7ff; --green: #398eea; }
+:root[data-accent="violet"] { --lime: #c99cff; --green: #8158db; }
+:root[data-accent="orange"] { --lime: #ffbb67; --green: #e97a35; }
+
 * { box-sizing: border-box; }
 
 html, body, #app {
@@ -108,6 +112,8 @@ button { color: inherit; }
 }
 .app-icon img { width: 100%; height: 100%; object-fit: cover; }
 .messages-icon { --app-color: linear-gradient(145deg, #7aec6e, #26a95f); color: white; font-size: .46rem; letter-spacing: -.08rem; }
+.phone-icon { --app-color: linear-gradient(145deg, #70ee7c, #1aaa56); font-size: 0; }
+.phone-icon::before { content: ""; width: .72rem; height: 1.55rem; border: .28rem solid white; border-top-color: transparent; border-bottom-color: transparent; border-radius: 55%; transform: rotate(-42deg); }
 .messages-icon { display: flex; align-items: center; justify-content: center; gap: .13rem; }
 .messages-icon i { width: .3rem; height: .3rem; border-radius: 50%; background: currentColor; }
 .contacts-icon { --app-color: linear-gradient(145deg, #f2f6f4, #bac7c1); color: #1d2924; font-size: .82rem; letter-spacing: -.05em; }
@@ -137,6 +143,15 @@ button { color: inherit; }
 .world-clock-list { display: grid; gap: .5rem; }
 .world-clock-list > div { display: flex; align-items: center; justify-content: space-between; padding: .85rem; border: 1px solid var(--line); border-radius: 1rem; background: var(--surface); }
 .world-clock-list span { display: grid; gap: .16rem; }.world-clock-list strong { font-size: .7rem; }.world-clock-list small { color: var(--muted); font-size: .55rem; }.world-clock-list b { font-size: 1.2rem; letter-spacing: -.04em; }
+.stopwatch-card { display: grid; gap: .85rem; padding: 1rem; border: 1px solid var(--line); border-radius: 1rem; background: var(--surface); }
+.stopwatch-card output { color: var(--lime); font-variant-numeric: tabular-nums; font-size: 2rem; font-weight: 750; letter-spacing: -.04em; text-align: center; }
+.stopwatch-card > div { display: grid; grid-template-columns: 1fr 1fr; gap: .55rem; }
+.stopwatch-card button { padding: .55rem; border: 1px solid var(--line); border-radius: .7rem; background: rgba(255,255,255,.07); cursor: pointer; font-size: .65rem; }
+#stopwatch-toggle { border-color: color-mix(in srgb, var(--lime) 35%, transparent); color: var(--lime); }
+.appearance-picker { display: grid; grid-template-columns: repeat(4, 1fr); gap: .65rem; padding: .75rem; border: 1px solid var(--line); border-radius: 1rem; background: var(--surface); }
+.appearance-picker button { aspect-ratio: 1; padding: 0; border: .18rem solid transparent; border-radius: 50%; background: #caff6a; cursor: pointer; box-shadow: inset 0 1px rgba(255,255,255,.35); }
+.appearance-picker button[data-accent="blue"] { background: #70c7ff; }.appearance-picker button[data-accent="violet"] { background: #c99cff; }.appearance-picker button[data-accent="orange"] { background: #ffbb67; }
+.appearance-picker button.is-selected { border-color: white; box-shadow: 0 0 0 .12rem rgba(255,255,255,.2); }
 .note-editor { display: grid; height: calc(100% - 3rem); gap: .55rem; }
 .note-editor > span { color: var(--lime); font-size: .55rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
 .note-editor textarea { width: 100%; height: 100%; resize: none; outline: 0; padding: 1rem; border: 1px solid rgba(255,220,105,.18); border-radius: 1.1rem; background: linear-gradient(rgba(255,249,231,.96), rgba(247,239,211,.96)); color: #2d2a22; font-size: .75rem; line-height: 1.6; user-select: text; }
@@ -154,6 +169,14 @@ button { color: inherit; }
 .native-app-view.is-cipher .app-header h1 { color: var(--lime); font-family: Consolas, monospace; letter-spacing: .04em; }
 .native-app-view.is-cipher .conversation { border-color: rgba(202,255,106,.12); border-radius: .35rem; background: rgba(7,18,12,.9); }
 .native-app-view.is-cipher .avatar { border-radius: 50%; background: #101a15; color: var(--lime); box-shadow: inset 0 0 0 1px rgba(202,255,106,.22); }
+.cipher-view { display: flex; flex-direction: column; padding: .7rem .8rem .2rem; font-family: Inter, "Segoe UI", sans-serif; }
+.cipher-identity { display: grid; grid-template-columns: auto minmax(0,1fr) auto; align-items: center; gap: .55rem; padding: .65rem; border: 1px solid rgba(202,255,106,.13); border-radius: .55rem; background: rgba(7,18,12,.9); }
+.cipher-pulse { width: .5rem; height: .5rem; border-radius: 50%; background: var(--lime); box-shadow: 0 0 .7rem var(--lime); }.cipher-identity > span:nth-child(2) { display: grid; }.cipher-identity small { color: var(--muted); font-size: .4rem; letter-spacing: .1em; }.cipher-identity strong { color: var(--lime); font-family: Consolas, monospace; font-size: .65rem; }
+#cipher-voice { padding: .42rem .55rem; border: 1px solid rgba(202,255,106,.28); border-radius: .4rem; background: rgba(202,255,106,.08); color: var(--lime); cursor: pointer; font-size: .5rem; font-weight: 800; }
+#cipher-voice.is-connected { background: var(--lime); color: #07100c; }
+.cipher-channels { display: flex; gap: .35rem; overflow-x: auto; padding: .65rem 0; scrollbar-width: none; }.cipher-channels button { flex: 0 0 auto; padding: .38rem .55rem; border: 1px solid var(--line); border-radius: .4rem; background: rgba(255,255,255,.04); color: var(--muted); cursor: pointer; font: 600 .52rem Consolas, monospace; }.cipher-channels button.is-active { border-color: rgba(202,255,106,.3); background: rgba(202,255,106,.1); color: var(--lime); }
+.cipher-message-list { min-height: 0; flex: 1; display: flex; flex-direction: column; gap: .55rem; overflow-y: auto; padding: .2rem; scrollbar-width: none; }.cipher-message { display: grid; gap: .2rem; padding: .55rem .6rem; border-left: .12rem solid rgba(202,255,106,.35); background: rgba(255,255,255,.025); }.cipher-message header { display: flex; justify-content: space-between; color: var(--lime); font: 700 .56rem Consolas, monospace; }.cipher-message time { color: var(--muted); font-size: .45rem; }.cipher-message p { margin: 0; user-select: text; font-size: .62rem; line-height: 1.4; }
+.cipher-composer { display: grid; grid-template-columns: 1fr auto; gap: .4rem; padding-top: .55rem; border-top: 1px solid rgba(202,255,106,.1); }.cipher-composer textarea { min-height: 2.35rem; max-height: 4rem; resize: none; outline: 0; padding: .58rem .65rem; border: 1px solid rgba(202,255,106,.14); border-radius: .45rem; background: #07100c; color: var(--ink); font: .6rem Consolas, monospace; user-select: text; }.cipher-composer button { width: 2.35rem; border: 0; border-radius: .45rem; background: var(--lime); color: #07100c; cursor: pointer; font-size: 1rem; }
 .app-header { display: grid; grid-template-columns: 2.2rem minmax(0,1fr) 2.2rem; align-items: center; gap: .65rem; padding: .5rem 1rem .75rem; border-bottom: 1px solid var(--line); }
 .app-header h1, .app-header p { margin: 0; }
 .app-header h1 { overflow: hidden; font-size: 1.16rem; text-overflow: ellipsis; white-space: nowrap; }
@@ -182,6 +205,18 @@ button { color: inherit; }
 .mini-button { padding: .33rem .45rem; border: 1px solid var(--line); border-radius: .5rem; background: rgba(255,255,255,.07); cursor: pointer; font-size: .52rem; }
 .mini-button.is-danger { color: #ff9ca2; }
 .primary-row { grid-template-columns: auto 1fr; margin-bottom: .7rem; color: var(--lime); font-size: .7rem; font-weight: 750; }
+
+.phone-view { padding-top: .65rem; }
+#dialer-panel { display: grid; justify-items: center; }
+#dialer-number { width: 100%; min-height: 3.25rem; overflow: hidden; padding: .5rem; font-size: 1.45rem; letter-spacing: .04em; text-align: center; text-overflow: ellipsis; white-space: nowrap; }
+.dialer-keys { display: grid; grid-template-columns: repeat(3, 3.4rem); gap: .65rem 1rem; justify-content: center; }
+.dialer-keys button { display: grid; width: 3.4rem; height: 3.4rem; place-items: center; padding: .25rem 0; border: 1px solid var(--line); border-radius: 50%; background: rgba(255,255,255,.09); cursor: pointer; font-size: 1.25rem; line-height: 1; }
+.dialer-keys button:hover { background: rgba(255,255,255,.16); }.dialer-keys small { font-size: .38rem; font-weight: 750; letter-spacing: .12em; }
+#dialer-delete { border-color: transparent; background: transparent; font-size: 1rem; }
+.call-button, .hangup-button { display: grid; width: 3.5rem; height: 3.5rem; place-items: center; margin-top: .85rem; border: 0; border-radius: 50%; background: #35cd6a; color: white; cursor: pointer; font-size: 1.35rem; transform: rotate(-20deg); }
+.hangup-button { background: #f15159; transform: rotate(135deg); }
+.call-panel { display: grid; justify-items: center; padding-top: 2rem; text-align: center; }.call-avatar { display: grid; width: 6.3rem; height: 6.3rem; place-items: center; margin-bottom: 1.3rem; border-radius: 50%; background: linear-gradient(145deg, #d9ff8e, #5dac6e); color: #0b170f; font-size: 1.65rem; font-weight: 850; }
+.call-panel p { margin: 0 0 .35rem; color: var(--lime); font-size: .6rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }.call-panel h2 { margin: 0; font-size: 1.45rem; }.call-panel > strong { margin-top: .3rem; color: var(--muted); font-size: .65rem; }.call-actions { display: flex; gap: 2rem; margin-top: 3.5rem; }
 
 .empty-state { display: grid; justify-items: center; padding: 3rem 1.4rem; color: var(--muted); text-align: center; }
 .empty-state .empty-icon { width: 3.5rem; height: 3.5rem; margin-bottom: .8rem; border-radius: 1.1rem; }

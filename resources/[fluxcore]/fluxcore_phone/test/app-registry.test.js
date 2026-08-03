@@ -42,11 +42,28 @@ test('phone ships useful starter apps and an in-game Cipher surface', () => {
   const html = fs.readFileSync(path.join(resourceRoot, 'web', 'index.html'), 'utf8');
   const script = fs.readFileSync(path.join(resourceRoot, 'web', 'app.js'), 'utf8');
 
-  for (const identifier of ['messages', 'contacts', 'clock', 'notes', 'calculator', 'darkchat', 'settings']) {
+  for (const identifier of ['phone', 'messages', 'contacts', 'clock', 'notes', 'calculator', 'darkchat', 'settings']) {
     assert.match(html, new RegExp(`data-open-native="${identifier}"`));
   }
   assert.match(html, />Cipher</);
   assert.match(script, /ENCRYPTED \/\/ IN-GAME/);
+  assert.match(html, /id="cipher-channels"/);
+  assert.match(html, /id="cipher-voice"/);
+  assert.match(script, /cipher:bootstrap/);
   assert.match(script, /fluxcore_phone:quick-note/);
   assert.match(script, /function pressCalculator/);
+  assert.match(html, /id="dialer-keys"/);
+  assert.match(script, /calls:start/);
+});
+
+test('phone calls are server-owned and use Enhanced private voice channels', () => {
+  const server = fs.readFileSync(path.join(resourceRoot, 'server', 'main.js'), 'utf8');
+  const voice = fs.readFileSync(path.resolve(resourceRoot, '..', 'fluxcore_voice', 'server.lua'), 'utf8');
+
+  assert.match(server, /case 'calls:start'/);
+  assert.match(server, /case 'calls:accept'/);
+  assert.match(server, /activeCalls/);
+  assert.match(voice, /CreateVoiceChannel, 0, 0\.0/);
+  assert.match(voice, /exports\('CreatePrivateChannel'/);
+  assert.match(voice, /exports\('DeletePrivateChannel'/);
 });
