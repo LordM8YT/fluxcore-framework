@@ -41,13 +41,29 @@
 
                     <div id="app-grid" class="app-grid" aria-label="Phone apps">
                         <button class="app-tile" type="button" data-open-native="messages">
-                            <span class="app-icon messages-icon" aria-hidden="true">●●●</span>
+                            <span class="app-icon messages-icon" aria-hidden="true"><i></i><i></i><i></i></span>
                             <span data-i18n="ui.messages">Messages</span>
                             <b id="home-unread" class="app-badge is-hidden">0</b>
                         </button>
                         <button class="app-tile" type="button" data-open-native="contacts">
-                            <span class="app-icon contacts-icon" aria-hidden="true">♙</span>
+                            <span class="app-icon contacts-icon" aria-hidden="true">FC</span>
                             <span data-i18n="ui.contacts">Contacts</span>
+                        </button>
+                        <button class="app-tile" type="button" data-open-native="clock">
+                            <span class="app-icon clock-icon" aria-hidden="true"><i></i><i></i></span>
+                            <span>Clock</span>
+                        </button>
+                        <button class="app-tile" type="button" data-open-native="notes">
+                            <span class="app-icon notes-icon" aria-hidden="true"><i></i><i></i><i></i></span>
+                            <span>Notes</span>
+                        </button>
+                        <button class="app-tile" type="button" data-open-native="calculator">
+                            <span class="app-icon calculator-icon" aria-hidden="true">+ −<br>× =</span>
+                            <span>Calculator</span>
+                        </button>
+                        <button class="app-tile" type="button" data-open-native="darkchat">
+                            <span class="app-icon darkchat-icon" aria-hidden="true">⌁</span>
+                            <span>Cipher</span>
                         </button>
                         <button class="app-tile" type="button" data-open-native="settings">
                             <span class="app-icon settings-icon" aria-hidden="true">⚙</span>
@@ -56,8 +72,9 @@
                     </div>
 
                     <div class="home-dock">
-                        <button type="button" data-open-native="messages" aria-label="Messages"><span class="app-icon messages-icon">●●●</span></button>
-                        <button type="button" data-open-native="contacts" aria-label="Contacts"><span class="app-icon contacts-icon">♙</span></button>
+                        <button type="button" data-open-native="messages" aria-label="Messages"><span class="app-icon messages-icon"><i></i><i></i><i></i></span></button>
+                        <button type="button" data-open-native="contacts" aria-label="Contacts"><span class="app-icon contacts-icon">FC</span></button>
+                        <button type="button" data-open-native="calculator" aria-label="Calculator"><span class="app-icon calculator-icon">+ −<br>× =</span></button>
                     </div>
                 </section>
 
@@ -111,6 +128,33 @@
                                 <div><span class="mini-icon">▦</span><span><strong>Installed apps</strong><small id="installed-count">3 apps</small></span></div>
                                 <div><span class="mini-icon">◈</span><span><strong>App platform</strong><small>External resources can register apps</small></span></div>
                                 <div><span class="mini-icon">i</span><span><strong>Fluxcore OS</strong><small>Developer preview</small></span></div>
+                            </div>
+                        </section>
+
+                        <section id="clock-view" class="view utility-view is-hidden">
+                            <article class="clock-card">
+                                <span id="clock-seconds">00</span><strong id="clock-large">12:00</strong><p id="clock-date">Sunday, 2 August</p>
+                            </article>
+                            <h2 class="section-title">World clock</h2>
+                            <div class="world-clock-list">
+                                <div><span><strong>Los Santos</strong><small>Local time</small></span><b id="clock-local">12:00</b></div>
+                                <div><span><strong>UTC</strong><small>Coordinated Universal Time</small></span><b id="clock-utc">10:00</b></div>
+                            </div>
+                        </section>
+
+                        <section id="notes-view" class="view utility-view is-hidden">
+                            <label class="note-editor"><span>Quick note</span><textarea id="quick-note" maxlength="2000" placeholder="Write something…"></textarea></label>
+                            <div class="note-footer"><small id="note-status">Saved on this device</small><button id="clear-note" type="button">Clear</button></div>
+                        </section>
+
+                        <section id="calculator-view" class="view calculator-view is-hidden">
+                            <output id="calculator-display" aria-live="polite">0</output>
+                            <div id="calculator-keys" class="calculator-keys">
+                                <button type="button" data-calc="clear" class="calc-utility">AC</button><button type="button" data-calc="sign" class="calc-utility">±</button><button type="button" data-calc="percent" class="calc-utility">%</button><button type="button" data-calc="/" class="calc-operator">÷</button>
+                                <button type="button" data-calc="7">7</button><button type="button" data-calc="8">8</button><button type="button" data-calc="9">9</button><button type="button" data-calc="*" class="calc-operator">×</button>
+                                <button type="button" data-calc="4">4</button><button type="button" data-calc="5">5</button><button type="button" data-calc="6">6</button><button type="button" data-calc="-" class="calc-operator">−</button>
+                                <button type="button" data-calc="1">1</button><button type="button" data-calc="2">2</button><button type="button" data-calc="3">3</button><button type="button" data-calc="+" class="calc-operator">+</button>
+                                <button type="button" data-calc="0" class="calc-zero">0</button><button type="button" data-calc=".">,</button><button type="button" data-calc="=" class="calc-operator">=</button>
                             </div>
                         </section>
                     </div>

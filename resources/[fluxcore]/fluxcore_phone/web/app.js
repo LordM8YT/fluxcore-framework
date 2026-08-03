@@ -4,10 +4,13 @@ const elements = Object.fromEntries([
   'app', 'home-view', 'native-app-view', 'custom-app-view', 'app-grid',
   'conversation-list', 'contact-list', 'message-list', 'messages-empty',
   'contacts-empty', 'messages-view', 'thread-view', 'contacts-view',
-  'settings-view', 'header-title', 'header-kicker', 'back-button', 'toast',
+  'settings-view', 'clock-view', 'notes-view', 'calculator-view',
+  'header-title', 'header-kicker', 'back-button', 'toast',
   'contact-dialog', 'unread-badge', 'home-unread', 'widget-badge',
   'widget-title', 'widget-copy', 'profile-number', 'profile-avatar',
   'installed-count', 'custom-app-frame', 'custom-app-title', 'message-search',
+  'clock-large', 'clock-seconds', 'clock-date', 'clock-local', 'clock-utc',
+  'quick-note', 'note-status', 'calculator-display', 'calculator-keys',
 ].map((id) => [id.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase()), document.querySelector(`#${id}`)]));
 
 const state = {
@@ -17,12 +20,14 @@ const state = {
   unread: 0,
   view: 'home',
   activeThread: null,
+  messageMode: 'messages',
   activeCustomApp: null,
   messages: [],
   apps: [],
   busy: false,
   locale: {},
   localeName: 'en',
+  calculator: { display: '0', stored: null, operator: null, reset: false },
 };
 
 function translation(key) {
@@ -217,7 +222,7 @@ function renderApps() {
     button.append(makeAppIcon(appDefinition), label);
     elements.appGrid.append(button);
   }
-  elements.installedCount.textContent = `${state.apps.length + 3} apps`;
+  elements.installedCount.textContent = `${state.apps.length + 7} apps`;
 }
 
 function renderHome() {
@@ -241,16 +246,24 @@ function setScreen(screen) {
 
 function renderNative() {
   const inThread = state.view === 'thread';
-  elements.messagesView.classList.toggle('is-hidden', state.view !== 'messages');
+  const inMessages = state.view === 'messages' || state.view === 'darkchat';
+  const isCipher = state.view === 'darkchat' || (inThread && state.messageMode === 'darkchat');
+  elements.nativeAppView.classList.toggle('is-cipher', isCipher);
+  elements.messagesView.classList.toggle('is-hidden', !inMessages);
   elements.contactsView.classList.toggle('is-hidden', state.view !== 'contacts');
   elements.threadView.classList.toggle('is-hidden', !inThread);
   elements.settingsView.classList.toggle('is-hidden', state.view !== 'settings');
+  elements.clockView.classList.toggle('is-hidden', state.view !== 'clock');
+  elements.notesView.classList.toggle('is-hidden', state.view !== 'notes');
+  elements.calculatorView.classList.toggle('is-hidden', state.view !== 'calculator');
   if (inThread) {
     elements.headerKicker.textContent = state.activeThread?.phoneNumber || t('ui.conversation', {}, 'Conversation');
     elements.headerTitle.textContent = state.activeThread?.name || state.activeThread?.phoneNumber || t('ui.messages', {}, 'Messages');
   } else {
     elements.headerKicker.textContent = state.account?.phoneNumber || 'Fluxcore';
-    elements.headerTitle.textContent = state.view === 'contacts' ? t('ui.contacts', {}, 'Contacts') : state.view === 'settings' ? 'Settings' : t('ui.messages', {}, 'Messages');
+    const titles = { contacts: t('ui.contacts', {}, 'Contacts'), settings: 'Settings', clock: 'Clock', notes: 'Notes', calculator: 'Calculator', darkchat: 'CIPHER' };
+    elements.headerTitle.textContent = titles[state.view] || t('ui.messages', {}, 'Messages');
+    elements.headerKicker.textContent = state.view === 'darkchat' ? 'ENCRYPTED // IN-GAME' : (state.account?.phoneNumber || 'Fluxcore');
   }
 }
 
@@ -276,6 +289,7 @@ async function openThread(phoneNumber) {
 }
 
 function openNative(view) {
+  if (view === 'messages' || view === 'darkchat') state.messageMode = view;
   state.view = view;
   state.activeThread = null;
   state.messages = [];
@@ -352,7 +366,7 @@ document.querySelector('#custom-app-back').addEventListener('click', () => void 
 
 elements.backButton.addEventListener('click', async () => {
   if (state.view === 'thread') {
-    state.view = 'messages'; state.activeThread = null; state.messages = [];
+    state.view = state.messageMode; state.activeThread = null; state.messages = [];
     await refresh().catch((error) => showToast(error.message, true));
     setScreen('native'); render();
   } else {
@@ -386,6 +400,65 @@ document.querySelector('#contact-form').addEventListener('submit', async (event)
     elements.contactDialog.close(); event.currentTarget.reset(); await refresh();
     state.view = 'contacts'; setScreen('native'); render(); showToast(t('ui.contactSaved', {}, 'Contact saved.'));
   } catch (error) { showToast(error.message, true); } finally { state.busy = false; }
+});
+
+const noteStorageKey = 'fluxcore_phone:quick-note';
+try { elements.quickNote.value = localStorage.getItem(noteStorageKey) || ''; } catch (_) {}
+elements.quickNote.addEventListener('input', () => {
+  try { localStorage.setItem(noteStorageKey, elements.quickNote.value); } catch (_) {}
+  elements.noteStatus.textContent = 'Saved just now';
+  clearTimeout(elements.quickNote.saveTimer);
+  elements.quickNote.saveTimer = setTimeout(() => { elements.noteStatus.textContent = 'Saved on this device'; }, 1400);
+});
+document.querySelector('#clear-note').addEventListener('click', () => {
+  elements.quickNote.value = '';
+  elements.quickNote.dispatchEvent(new Event('input'));
+  elements.quickNote.focus();
+});
+
+function calculatorNumber(value) {
+  const number = Number(value);
+  if (!Number.isFinite(number)) return 'Error';
+  return String(Math.round((number + Number.EPSILON) * 1e10) / 1e10).slice(0, 12);
+}
+
+function calculate() {
+  const calc = state.calculator;
+  if (calc.stored === null || !calc.operator) return Number(calc.display);
+  const current = Number(calc.display);
+  if (calc.operator === '+') return calc.stored + current;
+  if (calc.operator === '-') return calc.stored - current;
+  if (calc.operator === '*') return calc.stored * current;
+  if (calc.operator === '/') return current === 0 ? NaN : calc.stored / current;
+  return current;
+}
+
+function pressCalculator(key) {
+  const calc = state.calculator;
+  if (/^\d$/.test(key)) {
+    calc.display = calc.reset || calc.display === '0' || calc.display === 'Error' ? key : `${calc.display}${key}`.slice(0, 12);
+    calc.reset = false;
+  } else if (key === '.') {
+    if (calc.reset || calc.display === 'Error') { calc.display = '0'; calc.reset = false; }
+    if (!calc.display.includes('.')) calc.display += '.';
+  } else if (key === 'clear') {
+    Object.assign(calc, { display: '0', stored: null, operator: null, reset: false });
+  } else if (key === 'sign') {
+    calc.display = calculatorNumber(Number(calc.display) * -1);
+  } else if (key === 'percent') {
+    calc.display = calculatorNumber(Number(calc.display) / 100);
+  } else if (key === '=') {
+    calc.display = calculatorNumber(calculate()); calc.stored = null; calc.operator = null; calc.reset = true;
+  } else {
+    if (calc.operator && !calc.reset) calc.display = calculatorNumber(calculate());
+    calc.stored = Number(calc.display); calc.operator = key; calc.reset = true;
+  }
+  elements.calculatorDisplay.textContent = calc.display.replace('.', ',');
+}
+
+elements.calculatorKeys.addEventListener('click', (event) => {
+  const button = event.target.closest('[data-calc]');
+  if (button) pressCalculator(button.dataset.calc);
 });
 
 async function closePhone() {
@@ -443,5 +516,19 @@ function updateClock() {
   const now = new Date();
   document.querySelector('#clock').textContent = now.toLocaleTimeString(state.localeName, { hour: '2-digit', minute: '2-digit' });
   document.querySelector('#home-date').textContent = now.toLocaleDateString(state.localeName, { weekday: 'long', day: 'numeric', month: 'long' });
+  elements.clockLarge.textContent = now.toLocaleTimeString(state.localeName, { hour: '2-digit', minute: '2-digit' });
+  elements.clockSeconds.textContent = now.toLocaleTimeString(state.localeName, { second: '2-digit' });
+  elements.clockDate.textContent = now.toLocaleDateString(state.localeName, { weekday: 'long', day: 'numeric', month: 'long' });
+  elements.clockLocal.textContent = elements.clockLarge.textContent;
+  elements.clockUtc.textContent = now.toLocaleTimeString(state.localeName, { hour: '2-digit', minute: '2-digit', timeZone: 'UTC' });
 }
-updateClock(); setInterval(updateClock, 15000);
+updateClock(); setInterval(updateClock, 1000);
+
+if (new URLSearchParams(location.search).has('preview')) {
+  state.account = { name: 'Patrik Flux', phoneNumber: '51234567' };
+  state.contacts = [{ id: 1, name: 'Mia Strand', phoneNumber: '59876543' }];
+  state.conversations = [{ name: 'Mia Strand', phoneNumber: '59876543', unread: 2, lastMessage: { body: 'Møtes vi ved garasjen?', sentAt: new Date().toISOString() } }];
+  state.unread = 2;
+  elements.app.classList.remove('is-hidden');
+  render();
+}

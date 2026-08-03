@@ -37,3 +37,16 @@ test('phone NUI starts transparent and custom apps stay sandboxed', () => {
   );
   assert.match(html, /class="app is-hidden"/);
 });
+
+test('phone ships useful starter apps and an in-game Cipher surface', () => {
+  const html = fs.readFileSync(path.join(resourceRoot, 'web', 'index.html'), 'utf8');
+  const script = fs.readFileSync(path.join(resourceRoot, 'web', 'app.js'), 'utf8');
+
+  for (const identifier of ['messages', 'contacts', 'clock', 'notes', 'calculator', 'darkchat', 'settings']) {
+    assert.match(html, new RegExp(`data-open-native="${identifier}"`));
+  }
+  assert.match(html, />Cipher</);
+  assert.match(script, /ENCRYPTED \/\/ IN-GAME/);
+  assert.match(script, /fluxcore_phone:quick-note/);
+  assert.match(script, /function pressCalculator/);
+});

@@ -108,8 +108,18 @@ button { color: inherit; }
 }
 .app-icon img { width: 100%; height: 100%; object-fit: cover; }
 .messages-icon { --app-color: linear-gradient(145deg, #7aec6e, #26a95f); color: white; font-size: .46rem; letter-spacing: -.08rem; }
-.contacts-icon { --app-color: linear-gradient(145deg, #f2f6f4, #bac7c1); color: #1d2924; font-size: 1.55rem; }
+.messages-icon { display: flex; align-items: center; justify-content: center; gap: .13rem; }
+.messages-icon i { width: .3rem; height: .3rem; border-radius: 50%; background: currentColor; }
+.contacts-icon { --app-color: linear-gradient(145deg, #f2f6f4, #bac7c1); color: #1d2924; font-size: .82rem; letter-spacing: -.05em; }
 .settings-icon { --app-color: linear-gradient(145deg, #738079, #313a36); color: white; font-size: 1.45rem; }
+.clock-icon { --app-color: linear-gradient(145deg, #fff, #dbe1de); position: relative; }
+.clock-icon::before { content: ""; width: 2rem; height: 2rem; border: .13rem solid #17211d; border-radius: 50%; }
+.clock-icon i { position: absolute; left: 50%; top: 50%; width: .11rem; height: .78rem; border-radius: 1rem; background: #17211d; transform-origin: 50% 100%; transform: translate(-50%, -100%) rotate(25deg); }
+.clock-icon i + i { height: .58rem; transform: translate(-50%, -100%) rotate(125deg); }
+.notes-icon { --app-color: linear-gradient(#ffdc69 0 24%, #fff9e7 24%); display: flex; flex-direction: column; gap: .28rem; padding: 1rem .7rem .45rem; }
+.notes-icon i { width: 100%; height: .08rem; border-radius: 1rem; background: rgba(81,67,28,.34); }
+.calculator-icon { --app-color: linear-gradient(145deg, #ff9f35, #e86d23); color: white; font-size: .78rem; line-height: 1.05; }
+.darkchat-icon { --app-color: radial-gradient(circle at 35% 25%, #22302b, #020504 70%); color: var(--lime); font-family: Consolas, monospace; font-size: 2rem; text-shadow: 0 0 .7rem rgba(202,255,106,.75); }
 .app-badge { position: absolute; top: -.25rem; right: .1rem; min-width: 1.12rem; height: 1.12rem; padding: 0 .22rem; }
 
 .home-dock {
@@ -119,7 +129,31 @@ button { color: inherit; }
 .home-dock button { padding: 0; border: 0; background: none; cursor: pointer; }
 .home-dock .app-icon { width: 2.85rem; height: 2.85rem; border-radius: .9rem; }
 
+.utility-view { padding-top: 1.1rem; }
+.clock-card { position: relative; display: grid; place-items: center; min-height: 12.5rem; margin-bottom: 1.2rem; border: 1px solid rgba(202,255,106,.16); border-radius: 1.5rem; background: radial-gradient(circle at 50% 40%, rgba(202,255,106,.15), transparent 55%), rgba(14,24,19,.8); }
+.clock-card strong { font-size: 3.25rem; line-height: 1; letter-spacing: -.08em; }
+.clock-card p { margin: -.6rem 0 0; color: var(--muted); font-size: .7rem; }
+.clock-card > span { position: absolute; top: 1rem; right: 1.15rem; color: var(--lime); font-size: .65rem; font-weight: 800; }
+.world-clock-list { display: grid; gap: .5rem; }
+.world-clock-list > div { display: flex; align-items: center; justify-content: space-between; padding: .85rem; border: 1px solid var(--line); border-radius: 1rem; background: var(--surface); }
+.world-clock-list span { display: grid; gap: .16rem; }.world-clock-list strong { font-size: .7rem; }.world-clock-list small { color: var(--muted); font-size: .55rem; }.world-clock-list b { font-size: 1.2rem; letter-spacing: -.04em; }
+.note-editor { display: grid; height: calc(100% - 3rem); gap: .55rem; }
+.note-editor > span { color: var(--lime); font-size: .55rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+.note-editor textarea { width: 100%; height: 100%; resize: none; outline: 0; padding: 1rem; border: 1px solid rgba(255,220,105,.18); border-radius: 1.1rem; background: linear-gradient(rgba(255,249,231,.96), rgba(247,239,211,.96)); color: #2d2a22; font-size: .75rem; line-height: 1.6; user-select: text; }
+.note-footer { display: flex; align-items: center; justify-content: space-between; height: 3rem; color: var(--muted); font-size: .52rem; }
+.note-footer button { padding: .4rem .65rem; border: 1px solid var(--line); border-radius: .55rem; background: rgba(255,255,255,.07); cursor: pointer; }
+.calculator-view { display: flex; flex-direction: column; padding: 1rem; background: #080b0a; }
+#calculator-display { min-height: 7rem; display: flex; align-items: flex-end; justify-content: flex-end; overflow: hidden; padding: 0 .3rem 1rem; font-size: 3rem; letter-spacing: -.06em; white-space: nowrap; }
+.calculator-keys { display: grid; grid-template-columns: repeat(4, 1fr); gap: .52rem; margin-top: auto; }
+.calculator-keys button { aspect-ratio: 1; padding: 0; border: 0; border-radius: 50%; background: #262d2a; cursor: pointer; font-size: 1.05rem; }
+.calculator-keys button:hover { filter: brightness(1.2); }.calculator-keys .calc-utility { background: #aab1ad; color: #07100c; }.calculator-keys .calc-operator { background: #d3ff79; color: #13200e; }.calculator-keys .calc-zero { grid-column: span 2; aspect-ratio: auto; border-radius: 99rem; text-align: left; padding-left: 1.2rem; }
+
 .native-app-view { display: flex; flex-direction: column; padding: 3.7rem 0 1.75rem; background: rgba(7, 13, 10, .82); backdrop-filter: blur(1.2rem); }
+.native-app-view.is-cipher { background: rgba(1, 5, 3, .94); }
+.native-app-view.is-cipher .app-header { border-color: rgba(202,255,106,.18); background: linear-gradient(90deg, rgba(202,255,106,.07), transparent); }
+.native-app-view.is-cipher .app-header h1 { color: var(--lime); font-family: Consolas, monospace; letter-spacing: .04em; }
+.native-app-view.is-cipher .conversation { border-color: rgba(202,255,106,.12); border-radius: .35rem; background: rgba(7,18,12,.9); }
+.native-app-view.is-cipher .avatar { border-radius: 50%; background: #101a15; color: var(--lime); box-shadow: inset 0 0 0 1px rgba(202,255,106,.22); }
 .app-header { display: grid; grid-template-columns: 2.2rem minmax(0,1fr) 2.2rem; align-items: center; gap: .65rem; padding: .5rem 1rem .75rem; border-bottom: 1px solid var(--line); }
 .app-header h1, .app-header p { margin: 0; }
 .app-header h1 { overflow: hidden; font-size: 1.16rem; text-overflow: ellipsis; white-space: nowrap; }
