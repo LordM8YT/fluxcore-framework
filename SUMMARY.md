@@ -5,6 +5,7 @@
 * [Player Experience](player-experience.md)
 * [Chat and Player Controls](chat-and-player-controls.md)
 * [Voice](voice.md)
+* [Phone](phone.md)
 * [Character Creation](character-creation.md)
 * [Contributing](contributing.md)
 * [Architecture](architecture.md)

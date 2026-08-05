@@ -47,6 +47,12 @@ visible while voice is ready and turns green while the local player is talking.
 Players join proximity voice only after selecting a character and leave the
 channels on logout, so the isolated character-preview studio stays private.
 
+The same server-owned API provides non-spatial channels for Phone calls and
+managed Cipher VC rooms. `fluxcore_phone` creates membership only after a call
+is accepted or a player explicitly joins a Cipher VC, and removes membership
+on hang-up, leave, logout or disconnect. Client code never chooses raw channel
+IDs or channel membership.
+
 {% hint style="warning" %}
 Voice needs a current Enhanced server artifact and two connected clients for a
 real audio test. A successful resource start only verifies channel setup, not

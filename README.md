@@ -48,7 +48,7 @@ Fluxcore is an independent, Enhanced-first roleplay framework for FiveM. It is b
 | `fluxcore_properties` | ownership, keys, locks, storage and garage metadata                      |
 | `fluxcore_world`      | server-validated shops, dealerships and persistent job doors             |
 | `fluxcore_admin`      | ACE-secured administration and audit records                             |
-| `fluxcore_phone`      | phone numbers, contacts and offline text messaging                       |
+| `fluxcore_phone`      | phone, messages, calls and pseudonymous Cipher text/voice channels       |
 | `fluxcore_example`    | opt-in development examples for the public API                            |
 
 Read [Player Experience](player-experience.md) and

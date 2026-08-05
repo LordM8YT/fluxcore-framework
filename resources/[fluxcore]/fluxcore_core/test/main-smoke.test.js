@@ -61,6 +61,15 @@ test('Cfx wiring boots and completes connection, creation, and selection', () =>
     GetInvokingResource() {
       return 'smoke_test';
     },
+    GetResourceState() {
+      return 'started';
+    },
+    IsPlayerAceAllowed() {
+      return true;
+    },
+    RegisterCommand(name, handler) {
+      eventHandlers.set(`command:${name}`, handler);
+    },
     Player(source) {
       return {
         state: {
@@ -109,6 +118,8 @@ test('Cfx wiring boots and completes connection, creation, and selection', () =>
     assert.equal(registeredExports.has('AddMoney'), true);
     assert.equal(registeredExports.has('GetPlayer'), true);
     assert.equal(registeredExports.has('Locale'), true);
+    assert.equal(registeredExports.has('GetHealth'), true);
+    assert.equal(eventHandlers.has('command:fluxhealth'), true);
 
     let deferralResult = 'not-called';
     eventHandlers.get('playerConnecting')(

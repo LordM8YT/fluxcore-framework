@@ -16,6 +16,7 @@ test('Cfx wiring boots and protects the admin request channel', () => {
   const netHandlers = new Map();
   const registeredExports = new Map();
   const emitted = [];
+  let moneyWrites = 0;
   const players = new Map([
     [
       7,
@@ -41,6 +42,7 @@ test('Cfx wiring boots and protects the admin request channel', () => {
       }));
     },
     SetMoney() {
+      moneyWrites += 1;
       return { ok: true, data: 0 };
     },
   };
@@ -118,6 +120,25 @@ test('Cfx wiring boots and protects the admin request channel', () => {
       JSON.stringify(response.args[1]),
     );
     assert.equal(response.args[1].data.players.length, 1);
+
+    const operation = {
+      target: 7,
+      currency: 'cash',
+      amount: 500,
+      operationId: 'smoke:money:0001',
+    };
+    netHandlers.get('fluxcore_admin:server:request')(
+      'smoke:2',
+      'economy:set',
+      operation,
+    );
+    netHandlers.get('fluxcore_admin:server:request')(
+      'smoke:3',
+      'economy:set',
+      operation,
+    );
+    assert.equal(moneyWrites, 1);
+    assert.equal(emitted.at(-1).args[1].ok, true);
 
     assert.doesNotThrow(() =>
       eventHandlers.get('onResourceStop')('fluxcore_admin'),

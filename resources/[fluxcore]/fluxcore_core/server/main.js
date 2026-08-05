@@ -360,6 +360,61 @@ globalThis.exports('SavePlayer', (identifier) =>
   exportResult(() => core.save(identifier)),
 );
 
+const healthResources = [
+  'fluxcore_core', 'fluxcore_voice', 'fluxcore_interact', 'fluxcore_jobs',
+  'fluxcore_inventory', 'fluxcore_status', 'fluxcore_banking',
+  'fluxcore_vehicles', 'fluxcore_fuel', 'fluxcore_appearance',
+  'fluxcore_businesses', 'fluxcore_services', 'fluxcore_dispatch',
+  'fluxcore_mdt', 'fluxcore_properties', 'fluxcore_world', 'fluxcore_ui',
+  'fluxcore_admin', 'fluxcore_phone', 'fluxcore_identity',
+];
+
+function healthSnapshot() {
+  const resources = Object.fromEntries(
+    healthResources.map((name) => [name, GetResourceState(name)]),
+  );
+  let voice = null;
+  if (resources.fluxcore_voice === 'started') {
+    try {
+      voice = globalThis.exports.fluxcore_voice.GetVoiceState();
+    } catch (error) {
+      voice = { available: false, error: String(error?.message || error) };
+    }
+  }
+  return {
+    ok: Object.values(resources).every((state) => state === 'started'),
+    onlineCharacters: core.getPlayers().length,
+    resources,
+    voice,
+  };
+}
+
+globalThis.exports('GetHealth', healthSnapshot);
+
+RegisterCommand('fluxhealth', (source) => {
+  const playerSource = Number(source);
+  if (
+    playerSource > 0
+    && !IsPlayerAceAllowed(String(playerSource), 'fluxcore.admin')
+    && !IsPlayerAceAllowed(String(playerSource), 'fluxcore.health')
+  ) {
+    return;
+  }
+  const snapshot = healthSnapshot();
+  const unhealthy = Object.entries(snapshot.resources)
+    .filter(([, state]) => state !== 'started')
+    .map(([name, state]) => `${name}=${state}`);
+  const voiceReady = snapshot.voice?.available === true ? 'ready' : 'unavailable';
+  const summary = `Fluxcore health: ${snapshot.ok ? 'OK' : 'DEGRADED'} | online=${snapshot.onlineCharacters} | voice=${voiceReady}${unhealthy.length ? ` | ${unhealthy.join(', ')}` : ''}`;
+  if (playerSource > 0) {
+    runtime.emitClient(playerSource, 'chat:addMessage', {
+      color: snapshot.ok ? [90, 200, 120] : [230, 170, 70],
+      args: ['Fluxcore', summary],
+    });
+  }
+  runtime.log(snapshot.ok ? 'info' : 'warn', summary);
+}, false);
+
 const saveTimer = setInterval(() => {
   try {
     const saved = core.saveAll();

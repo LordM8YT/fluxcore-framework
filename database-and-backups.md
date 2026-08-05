@@ -11,7 +11,7 @@ Each domain owns one SQLite file. No resource writes another resource's tables.
 | `fluxcore_vehicles`   | `data/vehicles.sqlite`   | vehicles and keys              |
 | `fluxcore_appearance` | `data/appearance.sqlite` | freemode appearance            |
 | `fluxcore_admin`      | `data/admin.sqlite`      | admin audit                    |
-| `fluxcore_phone`      | `data/phone.sqlite`      | numbers, contacts and messages |
+| `fluxcore_phone`      | `data/phone.sqlite`      | numbers, contacts, messages and pseudonymous Cipher data |
 
 Runtime databases, WAL sidecars and backups are ignored by Git.
 

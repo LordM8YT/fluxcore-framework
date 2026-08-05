@@ -152,6 +152,21 @@ RegisterCommand('vadmin', function()
 end, false)
 
 RegisterNUICallback('adminRequest', function(data, callback)
+    if not panelOpen then
+        callback({
+            ok = false,
+            error = { code = 'PANEL_CLOSED', message = 'Admin panel is closed.' }
+        })
+        return
+    end
+    if type(data) ~= 'table' or type(data.method) ~= 'string'
+        or #data.method < 1 or #data.method > 64 then
+        callback({
+            ok = false,
+            error = { code = 'VALIDATION_ERROR', message = 'Invalid admin action.' }
+        })
+        return
+    end
     local response = call(data.method, data.payload or {})
     callback(response)
 end)
@@ -173,6 +188,10 @@ CreateThread(function()
 end)
 
 AddEventHandler('onResourceStop', function(stoppedResource)
+    if stoppedResource == 'fluxcore_core' and panelOpen then
+        closePanel()
+        return
+    end
     if stoppedResource ~= RESOURCE_NAME then
         return
     end

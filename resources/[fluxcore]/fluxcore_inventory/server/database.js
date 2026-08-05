@@ -213,6 +213,12 @@ class InventoryDatabase {
         WHERE from_container = ? OR to_container = ?
         ORDER BY id ASC
       `),
+      hasAuditAction: this.database.prepare(`
+        SELECT 1 AS present
+        FROM inventory_audit
+        WHERE action = ? AND (from_container = ? OR to_container = ?)
+        LIMIT 1
+      `),
       createDrop: this.database.prepare(`
         INSERT INTO inventory_drops (
           container_id, x, y, z, created_at, expires_at
@@ -335,6 +341,12 @@ class InventoryDatabase {
         actor: row.actor,
         createdAt: row.created_at,
       }));
+  }
+
+  hasAuditAction(containerId, action) {
+    return Boolean(
+      this.statements.hasAuditAction.get(action, containerId, containerId),
+    );
   }
 
   createDrop(containerId, position, expiresAt) {

@@ -354,6 +354,47 @@ class PhoneService {
     return this.decorateMessage(result.message, sender);
   }
 
+  cipherChannel(value) {
+    const channel = String(value || '').trim().toLowerCase();
+    if (!this.config.cipherChannels.some((entry) => entry.id === channel)) {
+      throw phoneError('CIPHER_CHANNEL_NOT_FOUND', 'Cipher channel was not found');
+    }
+    return channel;
+  }
+
+  cipherBootstrap(identifier) {
+    const online = this.resolveOnline(identifier);
+    this.ensureAccount(online.characterId);
+    const profile = this.database.ensureCipherProfile(online.characterId);
+    const channel = this.config.cipherChannels[0].id;
+    return { profile: { alias: profile.alias }, channels: this.config.cipherChannels, activeChannel: channel, messages: this.database.cipherMessages(channel, 100) };
+  }
+
+  cipherMessages(identifier, value) {
+    const online = this.resolveOnline(identifier);
+    this.ensureAccount(online.characterId);
+    this.database.ensureCipherProfile(online.characterId);
+    const channel = this.cipherChannel(value?.channel);
+    return { channel, messages: this.database.cipherMessages(channel, 100) };
+  }
+
+  cipherSend(identifier, value) {
+    const online = this.resolveOnline(identifier);
+    this.ensureAccount(online.characterId);
+    const profile = this.database.ensureCipherProfile(online.characterId);
+    const channel = this.cipherChannel(value?.channel);
+    const body = this.messageBody(value?.body);
+    const nonce = this.clientNonce(value?.clientNonce);
+    const result = this.database.sendCipherMessage(online.characterId, channel, profile.alias, body, nonce);
+    if (!result.duplicate) {
+      for (const member of this.database.listCipherProfiles()) {
+        const source = Number(this.integrations.core.getPlayerSource(member.characterId));
+        if (Number.isSafeInteger(source) && source > 0) this.runtime.emitClient(source, 'fluxcore_phone:client:cipherMessage', result.message);
+      }
+    }
+    return result.message;
+  }
+
   deleteCharacter(characterId) {
     if (!CHARACTER_ID_PATTERN.test(String(characterId))) {
       return false;

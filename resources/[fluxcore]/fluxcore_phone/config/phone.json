@@ -5,5 +5,10 @@
   "requirePhoneItem": false,
   "phoneItem": "phone",
   "messageMaxLength": 500,
-  "conversationPageSize": 50
+  "conversationPageSize": 50,
+  "cipherChannels": [
+    { "id": "lobby", "name": "Lobby" },
+    { "id": "market", "name": "Black Market" },
+    { "id": "ops", "name": "Operations" }
+  ]
 }

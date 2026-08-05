@@ -48,6 +48,14 @@ function hydrateMessage(row) {
     : null;
 }
 
+function hydrateCipherProfile(row) {
+  return row ? { characterId: row.character_id, alias: row.alias, createdAt: row.created_at } : null;
+}
+
+function hydrateCipherMessage(row) {
+  return row ? { id: Number(row.id), channel: row.channel, alias: row.alias, body: row.body, sentAt: row.sent_at } : null;
+}
+
 class PhoneDatabase {
   constructor(filename, numberPrefix, numberLength) {
     fs.mkdirSync(path.dirname(filename), { recursive: true });
@@ -68,7 +76,7 @@ class PhoneDatabase {
     const version = Number(
       this.database.prepare('PRAGMA user_version').get().user_version,
     );
-    if (version > 1) {
+    if (version > 2) {
       throw phoneError(
         'DATABASE_NEWER',
         `database schema ${version} is newer than this resource supports`,
@@ -121,6 +129,29 @@ class PhoneDatabase {
           ON phone_messages(recipient_number, read_at, id DESC);
 
         PRAGMA user_version = 1;
+        COMMIT;
+      `);
+    }
+    if (version <= 1) {
+      this.database.exec(`
+        BEGIN IMMEDIATE;
+        CREATE TABLE cipher_profiles (
+          character_id TEXT PRIMARY KEY REFERENCES phone_accounts(character_id) ON DELETE CASCADE,
+          alias TEXT NOT NULL UNIQUE,
+          created_at TEXT NOT NULL
+        ) STRICT;
+        CREATE TABLE cipher_messages (
+          id INTEGER PRIMARY KEY,
+          sender_character_id TEXT NOT NULL REFERENCES cipher_profiles(character_id) ON DELETE CASCADE,
+          channel TEXT NOT NULL,
+          alias TEXT NOT NULL,
+          body TEXT NOT NULL,
+          client_nonce TEXT NOT NULL,
+          sent_at TEXT NOT NULL,
+          UNIQUE (sender_character_id, client_nonce)
+        ) STRICT;
+        CREATE INDEX cipher_messages_channel_idx ON cipher_messages(channel, id DESC);
+        PRAGMA user_version = 2;
         COMMIT;
       `);
     }
@@ -208,6 +239,14 @@ class PhoneDatabase {
       deleteAccount: this.database.prepare(`
         DELETE FROM phone_accounts WHERE character_id = ?
       `),
+      cipherProfileByCharacter: this.database.prepare(`SELECT * FROM cipher_profiles WHERE character_id = ?`),
+      cipherProfileByAlias: this.database.prepare(`SELECT * FROM cipher_profiles WHERE alias = ?`),
+      insertCipherProfile: this.database.prepare(`INSERT INTO cipher_profiles (character_id, alias, created_at) VALUES (?, ?, ?)`),
+      listCipherProfiles: this.database.prepare(`SELECT * FROM cipher_profiles ORDER BY created_at ASC`),
+      cipherMessages: this.database.prepare(`SELECT * FROM cipher_messages WHERE channel = ? ORDER BY id DESC LIMIT ?`),
+      cipherMessageByNonce: this.database.prepare(`SELECT * FROM cipher_messages WHERE sender_character_id = ? AND client_nonce = ?`),
+      insertCipherMessage: this.database.prepare(`INSERT INTO cipher_messages (sender_character_id, channel, alias, body, client_nonce, sent_at) VALUES (?, ?, ?, ?, ?, ?)`),
+      cipherMessageById: this.database.prepare(`SELECT * FROM cipher_messages WHERE id = ?`),
     };
   }
 
@@ -351,6 +390,37 @@ class PhoneDatabase {
       peerNumber,
     );
     return { count: Number(result.changes), readAt: timestamp };
+  }
+
+  ensureCipherProfile(characterId) {
+    let profile = hydrateCipherProfile(this.statements.cipherProfileByCharacter.get(characterId));
+    if (profile) return profile;
+    for (let attempt = 0; attempt < 100; attempt += 1) {
+      const alias = `ghost-${crypto.randomBytes(3).toString('hex')}`;
+      if (this.statements.cipherProfileByAlias.get(alias)) continue;
+      try {
+        this.statements.insertCipherProfile.run(characterId, alias, nowIso());
+        return hydrateCipherProfile(this.statements.cipherProfileByCharacter.get(characterId));
+      } catch (error) {
+        if (!String(error?.message).includes('UNIQUE')) throw error;
+      }
+    }
+    throw phoneError('ALIAS_EXHAUSTED', 'an anonymous alias could not be issued');
+  }
+
+  listCipherProfiles() {
+    return this.statements.listCipherProfiles.all().map(hydrateCipherProfile);
+  }
+
+  cipherMessages(channel, limit = 100) {
+    return this.statements.cipherMessages.all(channel, limit).map(hydrateCipherMessage).reverse();
+  }
+
+  sendCipherMessage(characterId, channel, alias, body, clientNonce) {
+    const existing = hydrateCipherMessage(this.statements.cipherMessageByNonce.get(characterId, clientNonce));
+    if (existing) return { message: existing, duplicate: true };
+    const result = this.statements.insertCipherMessage.run(characterId, channel, alias, body, clientNonce, nowIso());
+    return { message: hydrateCipherMessage(this.statements.cipherMessageById.get(Number(result.lastInsertRowid))), duplicate: false };
   }
 
   deleteCharacter(characterId) {

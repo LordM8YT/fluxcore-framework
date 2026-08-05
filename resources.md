@@ -226,6 +226,11 @@ Every action is reauthorized by the server. See [Security and ACE](security-and-
 
 Text-only communication with persistent numbers, contacts, offline messages, unread state and read receipts.
 
+Other client resources can register sandboxed apps without editing the phone
+core. The bundled phone also provides server-owned voice calls and the
+pseudonymous Cipher text/voice channels. See [Phone](phone.md) for the player features, app API, lifecycle, and
+restart-safe registration pattern.
+
 Open with `F1` or `/phone`.
 
 Server exports:

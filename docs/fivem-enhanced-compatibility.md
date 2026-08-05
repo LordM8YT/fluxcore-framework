@@ -1,9 +1,12 @@
 # FiveM Enhanced compatibility notes
 
-Last reviewed: 2026-07-29
+Last reviewed: 2026-08-04
 Validated locally against: FiveM for GTAV Enhanced early access and Cfx Server
 build `103` (Early Access Hotfix 6, Windows).
-Latest release notes reviewed: FiveM for GTAV Enhanced Early Access Hotfix 6.
+Installed server artifact: Cfx Server build `110` (Windows), pending Enhanced
+client validation.
+Latest release notes reviewed: FiveM for GTAV Enhanced Early Access Patch Notes
+August 4.
 
 This file is Fluxcore's project memory for Enhanced runtime behavior. It
 combines official Cfx documentation with observations reproduced in the local
@@ -110,6 +113,64 @@ re-run; reviewing release notes alone is not runtime validation.
   guarded voice bootstrap remains necessary while the internal voice server is
   unavailable.
 - The Enhanced CEF remote-debugging port matches gen8 again.
+
+### Early Access Hotfix 7
+
+Hotfix 7 has been reviewed but is not yet included in Fluxcore's local
+validation line above. Re-run the required workflow against the installed
+Enhanced client and matching Cfx Server artifact before treating these fixes as
+locally confirmed.
+
+- `GetPlayerEndpoint` returns only the IP address again, matching Legacy,
+  instead of appending the port. Do not depend on the temporary `IP:port`
+  behavior.
+- `IsColshapeEntityTypeSet` and `GetColshapeDimension` return the correct
+  server-side values again.
+- Players no longer remain invisible to other players after exiting a vehicle
+  until they move.
+- Losing game focus no longer freezes the client and causes desync while that
+  client owns networked entities.
+- Synchronization of players swimming underwater has been improved.
+- Releasing NUI input focus on the same frame as a key press no longer carries
+  that key into the game. In particular, Escape used to close an NUI should no
+  longer open the pause menu.
+- Semi-transparent white NUI elements render consistently with Legacy again.
+  Keep Fluxcore's explicit transparent document setup; this fix concerns
+  element composition rather than the full-screen NUI canvas.
+- Node.js resources no longer spam server logs with network permission checks
+  for allowed loopback connections such as `localhost` and `::1`.
+- CEF `console.log` output is visible in the client console again, restoring a
+  useful NUI diagnostic path alongside remote developer tools.
+
+Relevant upstream reports:
+
+- [`GetPlayerEndpoint` IP and port behavior](https://github.com/citizenfx/rfc/discussions/315)
+- [Server-side colshape native values](https://github.com/citizenfx/rfc/discussions/216)
+- [Player invisibility after leaving vehicles](https://github.com/citizenfx/rfc/discussions/320)
+- [NUI close key carrying into the game](https://github.com/citizenfx/rfc/discussions/321)
+- [Semi-transparent white NUI composition](https://github.com/citizenfx/rfc/discussions/301)
+- [Node.js loopback permission log spam](https://github.com/citizenfx/rfc/discussions/245)
+
+### Early Access Patch Notes August 4 (Cfx Server build 110)
+
+Build 110 is installed locally, but the fixes below remain unconfirmed in the
+Enhanced client until the checklist has been run in-game.
+
+- NUI callbacks preserve the original JavaScript value type again.
+- NUI mouse/focus transitions no longer briefly route input into the game, and
+  key mappings do not fire while the onscreen keyboard captures input.
+- Non-spatial channels created through `CreateVoiceChannel` carry audio again,
+  and `NetworkIsPlayerTalking` reports voice activity again. Re-test Fluxcore
+  voice and Cipher voice-channel behavior with at least two clients.
+- Ped head-blend and overlay getters return current appearance data again.
+  Re-test multicharacter appearance loading and editing.
+- Client-only, non-replicated state-bag values work with strict mode enabled.
+- Loading-screen state, resource `provide` state, DUI runtime textures, runtime
+  texture channel order, CObject queries near MLOs, and the `cfx://` protocol
+  handler received upstream fixes.
+
+Relevant upstream reports are linked from the official August 4 patch notes
+and the [Enhanced Early Access reports](https://github.com/citizenfx/rfc/discussions).
 
 ## NUI and transparency
 

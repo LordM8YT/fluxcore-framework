@@ -18,7 +18,8 @@ files {
     'config/ui.json',
     'web/index.html',
     'web/styles.css',
-    'web/app.js'
+    'web/app.js',
+    'web/images/items/*.png'
 }
 
 client_script 'client/main.lua'

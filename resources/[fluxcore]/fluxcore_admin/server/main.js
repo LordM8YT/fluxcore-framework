@@ -107,6 +107,35 @@ const database = new AdminDatabase(config.databaseFile);
 database.prune(config.auditRetentionDays);
 const admin = new AdminService(database, integrations, runtime);
 const requestHistory = new Map();
+const completedOperations = new Map();
+const MUTATING_METHODS = new Set([
+  'player:kick',
+  'player:freeze',
+  'player:heal',
+  'player:goto',
+  'player:bring',
+  'economy:set',
+  'job:assign',
+  'inventory:add',
+]);
+
+function operationKey(source, method, payload) {
+  if (!MUTATING_METHODS.has(method)) return null;
+  const operationId = String(payload?.operationId || '');
+  if (!/^[a-zA-Z0-9:_-]{8,128}$/.test(operationId)) return null;
+  return `${source}:${method}:${operationId}`;
+}
+
+function rememberOperation(key, value) {
+  if (!key) return;
+  completedOperations.set(key, { value, expiresAt: Date.now() + 60_000 });
+  if (completedOperations.size > 1000) {
+    const now = Date.now();
+    for (const [entryKey, entry] of completedOperations) {
+      if (entry.expiresAt <= now) completedOperations.delete(entryKey);
+    }
+  }
+}
 
 function allowRequest(source) {
   const now = Date.now();
@@ -147,7 +176,11 @@ function response(work) {
 onNet('fluxcore_admin:server:request', (requestId, method, payload) => {
   const source = Number(global.source);
   let result;
-  if (!allowRequest(source)) {
+  const key = operationKey(source, method, payload);
+  const cached = key && completedOperations.get(key);
+  if (cached && cached.expiresAt > Date.now()) {
+    result = cached.value;
+  } else if (!allowRequest(source)) {
     result = {
       ok: false,
       error: { code: 'RATE_LIMITED', message: 'too many admin requests' },
@@ -169,6 +202,7 @@ onNet('fluxcore_admin:server:request', (requestId, method, payload) => {
               message: 'admin request payload is too large',
             },
           };
+    rememberOperation(key, result);
   }
   runtime.emitClient(
     source,
@@ -182,6 +216,9 @@ on('playerDropped', () => {
   const source = Number(global.source);
   admin.playerDropped(source);
   requestHistory.delete(source);
+  for (const key of completedOperations.keys()) {
+    if (key.startsWith(`${source}:`)) completedOperations.delete(key);
+  }
 });
 
 globalThis.exports('HasPermission', (source, permission) =>
