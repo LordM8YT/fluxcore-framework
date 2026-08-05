@@ -69,6 +69,12 @@ const integrations = {
     createRoom() { requireResource('fluxcore_voice'); return globalThis.exports.fluxcore_voice.CreateManagedVoiceChannel(); },
     joinRoom(channel, source) { return globalThis.exports.fluxcore_voice.JoinManagedVoiceChannel(channel, source); },
     leaveRoom(channel, source) { return globalThis.exports.fluxcore_voice.LeaveManagedVoiceChannel(channel, source); },
+    deleteRoom(channel) {
+      if (GetResourceState('fluxcore_voice') === 'started') {
+        return globalThis.exports.fluxcore_voice.DeleteManagedVoiceChannel(channel);
+      }
+      return false;
+    },
   },
 };
 
@@ -87,10 +93,65 @@ const cipherVoiceMembership = new Map();
 function leaveCipherVoice(source) {
   const membership = cipherVoiceMembership.get(source);
   if (!membership) return false;
-  integrations.voice.leaveRoom(membership.voiceChannel, source);
+  if (membership.voiceChannel !== null) {
+    integrations.voice.leaveRoom(membership.voiceChannel, source);
+  }
   membership.members.delete(source); cipherVoiceMembership.delete(source);
+  if (membership.members.size === 0) {
+    if (membership.voiceChannel !== null) integrations.voice.deleteRoom(membership.voiceChannel);
+    cipherVoiceRooms.delete(membership.channel);
+  }
   runtime.emitClient(source, 'fluxcore_phone:client:cipherVoice', { channel: membership.channel, joined: false });
   return true;
+}
+
+function recoverVoiceChannels() {
+  const calls = new Set(activeCalls.values());
+  for (const call of calls) {
+    if (call.ended || call.channel !== null || call.needsReconnect !== true) continue;
+    const channel = Number(integrations.voice.create(call.caller.source, call.recipient.source));
+    if (!Number.isSafeInteger(channel)) {
+      finishCall(call, 'Voice reconnection failed.');
+      continue;
+    }
+    call.channel = channel;
+    call.needsReconnect = false;
+    publishCall(call, 'connected');
+  }
+
+  for (const room of cipherVoiceRooms.values()) {
+    const voiceChannel = Number(integrations.voice.createRoom());
+    if (!Number.isSafeInteger(voiceChannel)) {
+      for (const source of [...room.members]) {
+        room.members.delete(source);
+        cipherVoiceMembership.delete(source);
+        runtime.emitClient(source, 'fluxcore_phone:client:cipherVoice', {
+          channel: room.channel,
+          joined: false,
+          reason: 'Voice reconnection failed.',
+        });
+      }
+      cipherVoiceRooms.delete(room.channel);
+      continue;
+    }
+    room.voiceChannel = voiceChannel;
+    for (const source of [...room.members]) {
+      if (!GetPlayerName(String(source)) || !integrations.voice.joinRoom(voiceChannel, source)) {
+        room.members.delete(source);
+        cipherVoiceMembership.delete(source);
+      } else {
+        runtime.emitClient(source, 'fluxcore_phone:client:cipherVoice', {
+          channel: room.channel,
+          joined: true,
+          reconnected: true,
+        });
+      }
+    }
+    if (room.members.size === 0) {
+      integrations.voice.deleteRoom(voiceChannel);
+      cipherVoiceRooms.delete(room.channel);
+    }
+  }
 }
 
 function joinCipherVoice(source, payload) {
@@ -142,9 +203,13 @@ function startCall(source, payload) {
   const recipientSource = Number(integrations.core.getPlayerSource(recipientAccount.characterId));
   if (!Number.isSafeInteger(recipientSource) || recipientSource <= 0) throw phoneError('CALL_UNAVAILABLE', 'that phone is unavailable');
   if (activeCalls.has(source) || activeCalls.has(recipientSource)) throw phoneError('CALL_BUSY', 'the line is busy');
-  const call = { id: `call:${Date.now()}:${++callSequence}`, caller: { source, characterId: callerOnline.characterId, phoneNumber: callerAccount.phoneNumber }, recipient: { source: recipientSource, characterId: recipientAccount.characterId, phoneNumber: recipientAccount.phoneNumber }, channel: null, ended: false };
+  const call = { id: `call:${Date.now()}:${++callSequence}`, caller: { source, characterId: callerOnline.characterId, phoneNumber: callerAccount.phoneNumber }, recipient: { source: recipientSource, characterId: recipientAccount.characterId, phoneNumber: recipientAccount.phoneNumber }, channel: null, needsReconnect: false, ended: false };
   activeCalls.set(source, call); activeCalls.set(recipientSource, call); publishCall(call, 'ringing');
-  setTimeout(() => { if (!call.ended && call.channel === null) finishCall(call, 'No answer.'); }, 30000);
+  setTimeout(() => {
+    if (!call.ended && call.channel === null && call.needsReconnect !== true) {
+      finishCall(call, 'No answer.');
+    }
+  }, 30000);
   return { id: call.id };
 }
 
@@ -153,7 +218,7 @@ function acceptCall(source) {
   if (!call || call.recipient.source !== source || call.channel !== null) throw phoneError('CALL_NOT_FOUND', 'incoming call was not found');
   const channel = integrations.voice.create(call.caller.source, call.recipient.source);
   if (!Number.isSafeInteger(Number(channel))) { finishCall(call, 'Voice is unavailable.'); throw phoneError('CALL_UNAVAILABLE', 'voice is unavailable'); }
-  call.channel = Number(channel); publishCall(call, 'connected'); return true;
+  call.channel = Number(channel); call.needsReconnect = false; publishCall(call, 'connected'); return true;
 }
 
 const limits = {
@@ -308,8 +373,30 @@ globalThis.exports('SendMessage', (fromIdentifier, toNumber, body) =>
 );
 
 on('onResourceStop', (stoppedResource) => {
+  if (stoppedResource === 'fluxcore_voice') {
+    for (const call of new Set(activeCalls.values())) {
+      if (!call.ended && call.channel !== null) {
+        call.channel = null;
+        call.needsReconnect = true;
+        publishCall(call, 'reconnecting', 'Voice is reconnecting.');
+      }
+    }
+    for (const room of cipherVoiceRooms.values()) room.voiceChannel = null;
+  }
   if (stoppedResource === resourceName) {
     database.close();
+  }
+});
+
+on('onResourceStart', (startedResource) => {
+  if (startedResource === 'fluxcore_voice') {
+    setTimeout(() => {
+      try {
+        recoverVoiceChannels();
+      } catch (error) {
+        runtime.log('error', `voice recovery failed: ${error?.stack || error}`);
+      }
+    }, 500);
   }
 });
 

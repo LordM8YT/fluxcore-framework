@@ -18,6 +18,8 @@ const state = {
   busy: false,
   locale: {},
   localeName: 'en',
+  open: false,
+  refreshBusy: false,
 };
 
 function translation(key) {
@@ -70,12 +72,30 @@ function resourceName() {
 }
 
 async function nui(endpoint, payload = {}) {
-  const response = await fetch(`https://${resourceName()}/${endpoint}`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json; charset=UTF-8' },
-    body: JSON.stringify(payload),
-  });
-  return response.json();
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 12000);
+  try {
+    const response = await fetch(`https://${resourceName()}/${endpoint}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json; charset=UTF-8' },
+      body: JSON.stringify(payload),
+      signal: controller.signal,
+    });
+    if (!response.ok) throw new Error(`NUI request failed (${response.status}).`);
+    return await response.json();
+  } catch (error) {
+    if (error?.name === 'AbortError') {
+      throw new Error(t('errors.timeout', {}, 'The admin request timed out.'));
+    }
+    throw error;
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+function operationId(prefix) {
+  return globalThis.crypto?.randomUUID?.()
+    || `${prefix}:${Date.now()}:${Math.random().toString(16).slice(2)}`;
 }
 
 async function request(method, payload = {}) {
@@ -225,14 +245,20 @@ function render() {
 }
 
 async function refreshPlayers() {
-  state.players = await request('players:list');
-  if (
-    state.selectedSource !== null &&
-    !state.players.some((player) => player.source === state.selectedSource)
-  ) {
-    state.selectedSource = null;
+  if (state.refreshBusy || !state.open) return;
+  state.refreshBusy = true;
+  try {
+    state.players = await request('players:list');
+    if (
+      state.selectedSource !== null &&
+      !state.players.some((player) => player.source === state.selectedSource)
+    ) {
+      state.selectedSource = null;
+    }
+    render();
+  } finally {
+    state.refreshBusy = false;
   }
-  render();
 }
 
 async function runAction(
@@ -253,7 +279,11 @@ async function runAction(
     button.disabled = true;
   });
   try {
-    await request(method, { target: player.source, ...payload });
+    await request(method, {
+      target: player.source,
+      ...payload,
+      operationId: operationId(method),
+    });
     showToast(successMessage);
     await refreshPlayers();
   } catch (error) {
@@ -395,10 +425,15 @@ document.querySelector('#audit-close').addEventListener('click', () => {
 });
 
 async function close() {
+  state.open = false;
   app.classList.add('is-hidden');
   state.players = [];
   state.selectedSource = null;
-  await nui('close');
+  try {
+    await nui('close');
+  } catch {
+    // The Lua resource also releases focus during resource shutdown.
+  }
 }
 
 document.querySelector('#close-button').addEventListener('click', close);
@@ -418,6 +453,7 @@ window.addEventListener('keydown', (event) => {
 window.addEventListener('message', (event) => {
   if (event.data?.type === 'open') {
     const payload = event.data.payload || {};
+    state.open = true;
     state.locale = event.data.locale && typeof event.data.locale === 'object'
       ? event.data.locale
       : state.locale;
@@ -431,6 +467,13 @@ window.addEventListener('message', (event) => {
     searchInput.value = '';
     render();
   } else if (event.data?.type === 'close') {
+    state.open = false;
     app.classList.add('is-hidden');
   }
 });
+
+setInterval(() => {
+  if (state.open && !document.hidden && !state.busy) {
+    refreshPlayers().catch((error) => showToast(error.message, true));
+  }
+}, 5000);

@@ -181,6 +181,35 @@ local function removePlayer(playerSource)
     return true
 end
 
+local function removePlayerFromAuxiliaryChannels(playerSource)
+    local id = tonumber(playerSource)
+    if not id then
+        return
+    end
+    for channel, participants in pairs(privateChannels) do
+        local containsPlayer = false
+        for _, participant in ipairs(participants) do
+            if participant == id then
+                containsPlayer = true
+                break
+            end
+        end
+        if containsPlayer then
+            for _, participant in ipairs(participants) do
+                pcall(RemovePlayerFromVoiceChannel, channel, participant)
+            end
+            pcall(DeleteVoiceChannel, channel)
+            privateChannels[channel] = nil
+        end
+    end
+    for channel, channelMembers in pairs(managedChannels) do
+        if channelMembers[id] then
+            pcall(RemovePlayerFromVoiceChannel, channel, id)
+            channelMembers[id] = nil
+        end
+    end
+end
+
 CreateThread(function()
     Wait(0)
     if not ensureChannels() then
@@ -198,6 +227,7 @@ CreateThread(function()
 end)
 
 AddEventHandler('playerDropped', function()
+    removePlayerFromAuxiliaryChannels(source)
     removePlayer(source)
 end)
 
@@ -206,6 +236,7 @@ AddEventHandler('Fluxcore:server:playerLoaded', function(playerSource)
 end)
 
 AddEventHandler('Fluxcore:server:playerLoggedOut', function(playerSource)
+    removePlayerFromAuxiliaryChannels(playerSource)
     removePlayer(playerSource)
 end)
 

@@ -251,16 +251,22 @@ async function perform(method, payload) {
   if (busy) return;
   busy = true;
   renderSelection();
+  clearDragState();
   text(elements.feedback, 'Working…');
-  const response = await request(method, payload);
-  busy = false;
-  elements.feedback.classList.toggle('error', !response?.ok);
-  text(elements.feedback, response?.ok ? 'Done' : response?.error?.message || 'Request failed');
-  if (response?.ok && response.data?.contract) {
-    state = response.data;
-    selected = null;
-    render();
-  } else {
+  try {
+    const response = await request(method, payload);
+    elements.feedback.classList.toggle('error', !response?.ok);
+    text(elements.feedback, response?.ok ? 'Done' : response?.error?.message || 'Request failed');
+    if (response?.ok && response.data?.contract) {
+      state = response.data;
+      selected = null;
+      render();
+    }
+  } catch (error) {
+    elements.feedback.classList.add('error');
+    text(elements.feedback, error?.message || 'Inventory request failed.');
+  } finally {
+    busy = false;
     renderSelection();
   }
 }
@@ -297,10 +303,15 @@ async function transfer() {
 }
 
 async function close() {
+  if (busy) return;
   elements.app.classList.add('hidden');
   clearDragState();
   selected = null;
-  await request('close');
+  try {
+    await request('close');
+  } catch {
+    // The client resource also releases focus during shutdown.
+  }
 }
 
 elements.close.addEventListener('click', () => void close());

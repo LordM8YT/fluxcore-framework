@@ -1,9 +1,12 @@
 # FiveM Enhanced compatibility notes
 
-Last reviewed: 2026-07-30
+Last reviewed: 2026-08-04
 Validated locally against: FiveM for GTAV Enhanced early access and Cfx Server
 build `103` (Early Access Hotfix 6, Windows).
-Latest release notes reviewed: FiveM for GTAV Enhanced Early Access Hotfix 7.
+Installed server artifact: Cfx Server build `110` (Windows), pending Enhanced
+client validation.
+Latest release notes reviewed: FiveM for GTAV Enhanced Early Access Patch Notes
+August 4.
 
 This file is Fluxcore's project memory for Enhanced runtime behavior. It
 combines official Cfx documentation with observations reproduced in the local
@@ -147,6 +150,27 @@ Relevant upstream reports:
 - [NUI close key carrying into the game](https://github.com/citizenfx/rfc/discussions/321)
 - [Semi-transparent white NUI composition](https://github.com/citizenfx/rfc/discussions/301)
 - [Node.js loopback permission log spam](https://github.com/citizenfx/rfc/discussions/245)
+
+### Early Access Patch Notes August 4 (Cfx Server build 110)
+
+Build 110 is installed locally, but the fixes below remain unconfirmed in the
+Enhanced client until the checklist has been run in-game.
+
+- NUI callbacks preserve the original JavaScript value type again.
+- NUI mouse/focus transitions no longer briefly route input into the game, and
+  key mappings do not fire while the onscreen keyboard captures input.
+- Non-spatial channels created through `CreateVoiceChannel` carry audio again,
+  and `NetworkIsPlayerTalking` reports voice activity again. Re-test Fluxcore
+  voice and Cipher voice-channel behavior with at least two clients.
+- Ped head-blend and overlay getters return current appearance data again.
+  Re-test multicharacter appearance loading and editing.
+- Client-only, non-replicated state-bag values work with strict mode enabled.
+- Loading-screen state, resource `provide` state, DUI runtime textures, runtime
+  texture channel order, CObject queries near MLOs, and the `cfx://` protocol
+  handler received upstream fixes.
+
+Relevant upstream reports are linked from the official August 4 patch notes
+and the [Enhanced Early Access reports](https://github.com/citizenfx/rfc/discussions).
 
 ## NUI and transparency
 
