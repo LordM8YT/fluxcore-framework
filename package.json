@@ -6,6 +6,8 @@
   "license": "MIT",
   "scripts": {
     "test": "node tools/test-all.js",
+    "create:resource": "node tools/create-resource.js",
+    "create:bridge": "node tools/create-bridge.js",
     "data:backup": "node tools/fluxcore-data.js backup",
     "data:inspect": "node tools/fluxcore-data.js inspect"
   },

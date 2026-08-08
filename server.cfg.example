@@ -34,6 +34,14 @@ ensure fluxcore_voice
 ensure fluxcore_interact
 ensure fluxcore_jobs
 ensure fluxcore_inventory
+ensure fluxcore_bridge
+# Transitional compatibility for selected QBCore server APIs. Native Fluxcore
+# resources do not need this and production servers may leave it disabled.
+# ensure fluxcore_qb_bridge
+# Experimental server-side porting providers. Enable at most the provider a
+# resource is currently being migrated from.
+# ensure fluxcore_qbx_bridge
+# ensure fluxcore_esx_bridge
 ensure fluxcore_status
 ensure fluxcore_banking
 ensure fluxcore_vehicles

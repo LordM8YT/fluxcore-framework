@@ -362,7 +362,7 @@ globalThis.exports('SavePlayer', (identifier) =>
 
 const healthResources = [
   'fluxcore_core', 'fluxcore_voice', 'fluxcore_interact', 'fluxcore_jobs',
-  'fluxcore_inventory', 'fluxcore_status', 'fluxcore_banking',
+  'fluxcore_inventory', 'fluxcore_bridge', 'fluxcore_status', 'fluxcore_banking',
   'fluxcore_vehicles', 'fluxcore_fuel', 'fluxcore_appearance',
   'fluxcore_businesses', 'fluxcore_services', 'fluxcore_dispatch',
   'fluxcore_mdt', 'fluxcore_properties', 'fluxcore_world', 'fluxcore_ui',

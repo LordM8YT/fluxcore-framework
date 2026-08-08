@@ -30,6 +30,23 @@ test('UI v1 mock payloads are parseable and versioned', () => {
   assert.ok(mocks.length >= 10);
 });
 
+test('UI v1 manifest freezes every checked bootstrap contract', () => {
+  const manifest = fixture('manifest.json');
+  const contracts = fs
+    .readdirSync(contractRoot)
+    .filter((name) => name.endsWith('.bootstrap.json'))
+    .map((name) => fixture(name).contract)
+    .sort();
+
+  assert.equal(manifest.contractSet, 'fluxcore.ui.v1');
+  assert.equal(manifest.status, 'stable');
+  assert.equal(manifest.compatibility.additiveFields, true);
+  assert.equal(manifest.compatibility.removeFields, false);
+  assert.equal(manifest.compatibility.changeFieldMeaning, false);
+  assert.equal(manifest.compatibility.unknownFieldsMustBeIgnored, true);
+  assert.deepEqual(manifest.contracts, contracts);
+});
+
 test('inventory mock uses opaque sides instead of trusted container input', () => {
   const mock = fixture('inventory.bootstrap.json');
   assert.equal(mock.player.type, 'player');

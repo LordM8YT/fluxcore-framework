@@ -16,6 +16,15 @@ talking state without coupling it to the temporary HUD. See [Voice](voice.md).
 
 Fluxcore separates domains into small owning resources. Install all resources together for the complete framework, or omit optional UI/domain resources when their dependants are not used.
 
+## `fluxcore_bridge`
+
+Provides the stable `fluxcore.bridge.v1` server facade and owner-bound adapter
+registry. It owns no gameplay data and adds no UI. `fluxcore_qb_bridge` is an
+optional, deliberately limited migration provider and is disabled by default.
+Equivalent experimental providers exist for Qbox and ESX. They are porting
+tools, not claims that Fluxcore runs those ecosystems unchanged.
+See [Bridges and Compatibility](bridges-and-compatibility.md).
+
 ## `fluxcore_core`
 
 Owns accounts, characters, sessions, wallets, metadata, active job snapshots and position persistence.

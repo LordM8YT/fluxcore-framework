@@ -32,6 +32,14 @@ Native Fluxcore resources must not use:
 
 Future bridges belong in separate adapter resources. Native code uses Fluxcore exports directly.
 
+For a migration or external integration, use the stable facade described in
+[Bridges and Compatibility](bridges-and-compatibility.md). Do not add legacy
+framework globals or events to `fluxcore_core`.
+
+For a resource that already supports multiple frameworks, install the
+copyable adapter from [External Resource Kit](external-resource-kit.md). This
+is preferred over running a legacy compatibility provider permanently.
+
 ## Respect ownership
 
 Only the owner mutates a domain:
@@ -187,6 +195,10 @@ See [UI Contracts](ui-contracts.md).
 ## Resource structure
 
 Start from [Resource Template](resource-template.md):
+
+```bash
+npm run create:resource -- my_resource
+```
 
 ```
 my_resource/

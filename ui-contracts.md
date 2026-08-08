@@ -2,6 +2,10 @@
 
 Versioned contracts are the stable boundary between Fluxcore resources and their NUI frontends. A frontend may be replaced without changing the owning service.
 
+The complete v1 set is now marked `stable` in
+`contracts/ui/v1/manifest.json`. This freezes data and action meaning, not
+visual design: markup, layout, icons, animation and CSS may all be replaced.
+
 Mock payloads live in:
 
 ```
@@ -17,6 +21,7 @@ They are data boundaries for local development, not bundled interfaces.
 * Client input is untrusted and every mutation is validated server-side.
 * Private owner data is sent only to its owner.
 * Additive fields may be introduced in v1.
+* Consumers ignore unknown fields so additive changes remain compatible.
 * Removing or changing a field requires a new contract version.
 * Timestamps use UTC ISO 8601 strings.
 * Weights are integer grams.

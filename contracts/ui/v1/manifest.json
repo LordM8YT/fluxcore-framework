@@ -1,0 +1,23 @@
+{
+  "contractSet": "fluxcore.ui.v1",
+  "status": "stable",
+  "compatibility": {
+    "additiveFields": true,
+    "removeFields": false,
+    "changeFieldMeaning": false,
+    "unknownFieldsMustBeIgnored": true
+  },
+  "contracts": [
+    "fluxcore.banking.bootstrap.v1",
+    "fluxcore.businesses.bootstrap.v1",
+    "fluxcore.dispatch.bootstrap.v1",
+    "fluxcore.hud.bootstrap.v1",
+    "fluxcore.interact.bootstrap.v1",
+    "fluxcore.inventory.bootstrap.v1",
+    "fluxcore.mdt.bootstrap.v1",
+    "fluxcore.phone.bootstrap.v1",
+    "fluxcore.properties.bootstrap.v1",
+    "fluxcore.services.bootstrap.v1",
+    "fluxcore.world.bootstrap.v1"
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "contract": "fluxcore.resource-bridge.v1",
+  "status": "stable",
+  "compatibility": {
+    "additiveMethods": true,
+    "removeMethods": false,
+    "changeMethodMeaning": false
+  },
+  "server": [
+    "IsAvailable",
+    "GetPlayer",
+    "GetIdentifier",
+    "GetName",
+    "GetJob",
+    "GetMoney",
+    "AddMoney",
+    "RemoveMoney",
+    "SetMoney",
+    "HasItem",
+    "AddItem",
+    "RemoveItem",
+    "SetJob",
+    "SetDuty",
+    "Notify",
+    "GetVehicles",
+    "RegisterOwnedVehicle",
+    "HasVehicleKey",
+    "GiveVehicleKey",
+    "GetBusinesses",
+    "CreditBusiness",
+    "DebitBusiness"
+  ],
+  "client": [
+    "IsAvailable",
+    "GetPlayerData",
+    "GetIdentifier",
+    "GetJob",
+    "IsLoggedIn",
+    "HasItem",
+    "Notify"
+  ]
+}

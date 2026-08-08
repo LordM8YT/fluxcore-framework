@@ -12,6 +12,25 @@ It demonstrates modern Fluxcore patterns without Qbox, QBCore or ESX imports.
 
 ## Copy and rename
 
+The generator performs the copy and namespace replacement safely:
+
+```bash
+npm run create:resource -- my_resource
+```
+
+By default it creates `resources/[local]/my_resource`. To generate into a
+different server-data directory, pass an explicit destination as the second
+argument. It refuses invalid names and existing destinations.
+
+To add Fluxcore to an existing multi-framework resource instead of creating a
+new resource:
+
+```bash
+npm run create:bridge -- path/to/my_resource/framework
+```
+
+See [External Resource Kit](external-resource-kit.md).
+
 {% stepper %}
 {% step %}
 ### Copy `templates/fluxcore_resource` into the server's resources directory.
