@@ -13,6 +13,8 @@
 * [Database and Backups](database-and-backups.md)
 * [Developer Guide](developer-guide.md)
 * [Core API](core-api.md)
+* [Bridges and Compatibility](bridges-and-compatibility.md)
+* [External Resource Kit](external-resource-kit.md)
 * [Localization](localization.md)
 * [Installation](installation.md)
 * [Enhanced Test Plan](enhanced-test-plan.md)
